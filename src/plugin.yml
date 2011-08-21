@@ -1,0 +1,48 @@
+name: ChannelChat
+main: feildmaster.ChanChat.Chat
+version: 0.1
+author: feildmaster
+description: Simple channel chats.
+permissions:
+  ChanChat.all:
+    description: Gives all permissions to user
+    children:
+      ChanChat.admin: true
+      ChanChat.create: true
+  ChanChat.admin:
+    description: Player can delete any channel
+    default: op
+  ChanChat.create:
+    desription: Player can create channels
+    default: true
+commands:
+  channel-admin:
+    description: Admin Channels
+    aliases:
+      - ca
+      - admin
+  channel-chat:
+    description: Base Channel Commands
+    aliases:
+      - chat
+      - cc
+  channel-join:
+    description: Join Channels
+    aliases:
+      - cj
+      - join
+  channel-delete:
+    description: Delete Channels
+    aliases:
+      - cd
+      - delete
+  channel-invite:
+    description: Channel Chat command.
+    aliases:
+      - ci
+      - invite
+  channel-leave:
+    description: Channel Chat command.
+    aliases:
+      - cl
+      - leave
