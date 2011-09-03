@@ -3,6 +3,7 @@ package feildmaster.ChanChat.Listeners;
 import feildmaster.ChanChat.Chan.Channel;
 import feildmaster.ChanChat.Chan.ChannelManager;
 import feildmaster.ChanChat.Util.ChatUtil;
+import java.util.HashSet;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -13,10 +14,15 @@ import org.bukkit.event.player.PlayerListener;
  *      Handles player chat
  */
 public class chatListener extends PlayerListener {
-    private final ChannelManager cm = ChatUtil.getChatPlugin().getCM();
+    private final ChannelManager cm = ChatUtil.getCM();
 
     public void onPlayerChat(PlayerChatEvent event) {
+        if(event.isCancelled()) return;
         Player player = event.getPlayer();
+
+        if(ChatUtil.getFactionPlugin() != null && ChatUtil.getFactionPlugin().isPlayerFactionChatting(player))
+            return;
+
         if(cm.inWaitlist(player)) {
             Channel chan =cm.getWaitingChan(player);
             if(chan.getPass().equals(event.getMessage())) {
@@ -25,17 +31,23 @@ public class chatListener extends PlayerListener {
             } else if(event.getMessage().equalsIgnoreCase("cancel")) {
                 cm.dfWaitlist(player);
             } else
-                player.sendMessage("");
+                player.sendMessage(ChatColor.GRAY+"Password incorrect, try again. (cancel to stop)");
+            event.setCancelled(true);
         } else if(cm.getJoinedChannels(player).isEmpty()) {
             player.sendMessage(ChatColor.YELLOW+"You are not in any channels.");
             event.setCancelled(true);
         } else {
             cm.checkActive(player);
             Channel chan = cm.getActiveChan(player);
-            if(chan != null && cm.channelExists(chan.getName())) {
-                cm.sendMessage(player, chan, event.getMessage());
+
+            if(chan != null && chan.isMember(player)) {
+                for(Player p : new HashSet<Player>(event.getRecipients()))
+                    if(!chan.isMember(p))
+                        event.getRecipients().remove(p);
+
+                event.setFormat(chan.format(event.getFormat()));
+            } else
                 event.setCancelled(true);
-            }
         }
     }
 }
