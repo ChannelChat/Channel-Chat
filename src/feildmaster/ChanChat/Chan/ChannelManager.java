@@ -11,9 +11,8 @@ import org.bukkit.entity.Player;
 
 public class ChannelManager {
     private Map<Player, String> waitList = new HashMap<Player, String>();
-    /*
-     * Waitlist functions
-     */
+
+    //Waitlist functions
     public void dfWaitlist(Player player) {
         waitList.remove(player);
     }
@@ -26,19 +25,16 @@ public class ChannelManager {
     public Channel getWaitingChan(Player player) {
         return getChannel(waitList.get(player));
     }
-    /*
-     * Reserved name settings/functions
-     */
-    private static final String[] reserved = { "admin", "all", "create", "delete", "add", "join",
+
+    //Reserved name settings/functions
+    private static final String[] reserved = { "active", "admin", "all", "create", "delete", "add", "join",
         "kick", "leave", "list", "reload", "who", "?" };
 
     public Boolean isReserved(String n) {
         return Arrays.asList(reserved).contains(n);
     }
 
-    /*
-     * Channel manager
-     */
+    //Channel manager
     private List<Channel> registry = new ArrayList<Channel>();
     private Map<String, String> activeChannel = new HashMap<String, String>();
 
@@ -52,7 +48,7 @@ public class ChannelManager {
 
     // Channel Functions
     public Channel getChannel(String name) {
-        if(name == null || getChannels().isEmpty()) return null;
+        if(name == null) return null;
 
         for(Channel chan : getChannels())
             if(chan.getName().equalsIgnoreCase(name))
@@ -61,7 +57,7 @@ public class ChannelManager {
         return null;
     }
     public Boolean channelExists(String name) {
-        if(name != null && !getChannels().isEmpty())
+        if(name != null)
           for(Channel chan : getChannels())
             if(chan.getName().equalsIgnoreCase(name))
                 return true;
@@ -77,26 +73,43 @@ public class ChannelManager {
         if(!channelExists(name)) {
             getChannels().add(new Channel(name, player));
             player.sendMessage(info("["+name+"] Created!"));
-            if(getActiveName(player) == null) {
+            if(getActiveName(player) == null)
                 setActiveChan(player,name);
-            }
         } else
             player.sendMessage(info("["+name+"] Already exists!"));
     }
-    public void addChannel(String name, String owner, String pass, Boolean auto, Boolean alert) { // Server adding channel
+    public void addChannel(String name, Boolean alert) {
+        addChannel(name, null, null, null, null, 0, false, false, alert);
+    }
+    public void addChannel(String name, String type, String tag, String owner, String pass, Integer range, Boolean listed, Boolean auto, Boolean alert) { // Server adding channel
         if(name == null) return;
 
         if(isReserved(name)) {
             System.out.println("["+name+"] Blacklisted.");
             return;
         }
+        Channel chan;
 
-        if(!channelExists(name)) {
-            getChannels().add(new Channel(name, owner, pass, auto));
+        // Crappy check for "fake" types
+        if(type == null || !Channel.Type.contains(type)) type = "Global";
+
+        if(!channelExists(name))
+            getChannels().add(chan = new Channel(name));
+        else
+            chan = getChannel(name);
+
+        // Apply changes
+        if(chan != null) {
+            chan.setType(type);
+            chan.setAuto(auto);
+            chan.setOwner(owner);
+            chan.setPass(pass);
+            chan.setTag(tag);
+            chan.setRange(range);
+            chan.setListed(listed);
             if(alert)
                 System.out.println(name+" created!");
-        } else
-            System.out.println("["+getChannel(name).getName()+"] Already exists!");
+        }
     }
     public void delChannel(String name) {
         if(channelExists(name)) {
@@ -125,12 +138,13 @@ public class ChannelManager {
         setActiveChan(player, chan.getName());
     }
     public void checkActive() {
-        for(String name : activeChannel.keySet()) {
-            Player player = ChatUtil.getPlayer(name);
-            checkActive(player);
-        }
+        if(!activeChannel.isEmpty()) // Keyset errors on empty maps
+        for(String name : activeChannel.keySet())
+            checkActive(ChatUtil.getPlayer(name));
     }
     public void checkActive(Player player) {
+        if(player == null) return;
+
         String channel = getActiveName(player);
 
         // All is well with the world. :o
@@ -165,6 +179,13 @@ public class ChannelManager {
         List<Channel> list = new ArrayList<Channel>();
         for(Channel chan : getChannels())
             if(chan.isAuto())
+                list.add(chan);
+        return list;
+    }
+    public List<Channel> getSavedChannels() {
+        List<Channel> list = new ArrayList<Channel>();
+        for(Channel chan : getChannels())
+            if(chan.isSaved())
                 list.add(chan);
         return list;
     }

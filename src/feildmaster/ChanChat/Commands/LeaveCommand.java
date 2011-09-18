@@ -22,6 +22,7 @@ public class LeaveCommand extends BaseCommands{
     }
 
     public void invalidCommand(CommandSender sender, String name) {
+        // String.format("Format String", "Object", "Object");
         sender.sendMessage(ChatColor.RED+"Syntax: /"+name.toLowerCase()+" [channels...]");
     }
 

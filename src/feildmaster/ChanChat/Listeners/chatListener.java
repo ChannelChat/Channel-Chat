@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerListener;
  * ChatListener
  *      Handles player chat
  */
-public class chatListener extends PlayerListener {
+public class ChatListener extends PlayerListener {
     private final ChannelManager cm = ChatUtil.getCM();
 
     public void onPlayerChat(PlayerChatEvent event) {
@@ -23,31 +23,32 @@ public class chatListener extends PlayerListener {
         if(ChatUtil.getFactionPlugin() != null && ChatUtil.getFactionPlugin().isPlayerFactionChatting(player))
             return;
 
-        if(cm.inWaitlist(player)) {
-            Channel chan =cm.getWaitingChan(player);
-            if(chan.getPass().equals(event.getMessage())) {
-                chan.addMember(player);
-                chan.sendMessage(ChatColor.YELLOW+ChatColor.stripColor(player.getDisplayName())+" has joined.");
-            } else if(event.getMessage().equalsIgnoreCase("cancel")) {
-                cm.dfWaitlist(player);
-            } else
-                player.sendMessage(ChatColor.GRAY+"Password incorrect, try again. (cancel to stop)");
-            event.setCancelled(true);
-        } else if(cm.getJoinedChannels(player).isEmpty()) {
+        if(cm.getJoinedChannels(player).isEmpty()) {
             player.sendMessage(ChatColor.YELLOW+"You are not in any channels.");
             event.setCancelled(true);
         } else {
             cm.checkActive(player);
             Channel chan = cm.getActiveChan(player);
 
-            if(chan != null && chan.isMember(player)) {
-                for(Player p : new HashSet<Player>(event.getRecipients()))
-                    if(!chan.isMember(p))
-                        event.getRecipients().remove(p);
-
+            if(chan != null) {
+                boolean local = chan.getType().equals(Channel.Type.Local);
+                boolean world = chan.getType().equals(Channel.Type.World);
+                if(local || world) {
+                    if(world && chan.getTag().equals("{World}")) chan.setTag(player.getWorld().getName());
+                    for(Player p : new HashSet<Player>(event.getRecipients()))
+                        if(!p.getWorld().equals(player.getWorld()) || (local && chan.outOfRange(p.getLocation(),player.getLocation())))
+                            event.getRecipients().remove(p);
+                //} else if (chan.getType().equals(Channel.Type.Faction)) {
+                } else if(chan.isMember(player)) {
+                    for(Player p : new HashSet<Player>(event.getRecipients()))
+                        if(!chan.isMember(p))
+                            event.getRecipients().remove(p);
+                }
                 event.setFormat(chan.format(event.getFormat()));
-            } else
+            } else {
+                ChatUtil.log().info("[ChannelChat] Error Occured That Shouldn't Happen (chatListener.java)");
                 event.setCancelled(true);
+            }
         }
     }
 }

@@ -12,21 +12,17 @@ import org.bukkit.entity.Player;
 public abstract class BaseCommands implements ChatInterface {
     private final ChannelManager cm = ChatUtil.getCM();
 
-    /*
-     * "list" commands
-     */
-    protected void listChannels(Player player) {
+    // "list" commands
+    protected void listChannels(Player player, Boolean mem) {
         StringBuilder string = new StringBuilder();
         Boolean color = true;
         for(Channel chan : cm.getChannels())
-            if(chan.isSaved() && chan.getPass() == null && !chan.isMember(player))
-                string.append(string.length()!=0?", ":"").append((color=!color)?ChatColor.GRAY:ChatColor.WHITE).append(chan.getName());
-        player.sendMessage("Global Channels: "+string.toString());
+            if(chan.isListed() && chan.getPass() == null)
+                string.append(string.length()!=0?", ":"").append((color=!color)?ChatColor.GRAY:ChatColor.WHITE).append(chan.isMember(player)?"*":"").append(chan.getName());
+        player.sendMessage("Channels: "+string.toString());
     }
 
-    /*
-     * "quick chat"
-     */
+    // "quick chat"
     protected void quickChat(String name, Player player, String[] args) {
         Channel chan = cm.getChannel(name);
         if(chan == null)
@@ -40,9 +36,7 @@ public abstract class BaseCommands implements ChatInterface {
             player.sendMessage(info("You are not a member of \""+chan.getName()+".\""));
     }
 
-    /*
-     * "who" commands
-     */
+    // "who" commands
     protected void getChannelMembers(String name, Player player) {
         if(cm.channelExists(name) && cm.getChannel(name).isMember(player)) {
             StringBuilder string = new StringBuilder();
@@ -59,9 +53,7 @@ public abstract class BaseCommands implements ChatInterface {
         getChannelMembers(cm.getActiveName(player), player);
     }
 
-    /*
-     * "create" commands
-     */
+    // "create" commands
     protected void createChannel(String name, CommandSender sender) {
         if(sender instanceof Player)
             if(((Player)sender).hasPermission("ChanChat.create"))
@@ -69,12 +61,10 @@ public abstract class BaseCommands implements ChatInterface {
             else
                 sender.sendMessage("You can't do that.");
         else
-            cm.addChannel(name, null, null, false, true);
+            cm.addChannel(name, true);
     }
 
-    /*
-     * "delete" commands
-     */
+    // "delete" commands
     protected void deleteActiveChannel(Player player) {
         deleteChannel(cm.getActiveName(player), player);
     }
@@ -92,9 +82,8 @@ public abstract class BaseCommands implements ChatInterface {
             sender.sendMessage("The channel doesn't exists!");
     }
 
-    /*
-     * "join" commands
-     */
+    // "join" commands
+    // TODO: Better "Silent Join"
     protected void joinChannel(String name, Player player) {
         if(cm.channelExists(name)) {
             Channel chan = cm.getChannel(name);
@@ -106,16 +95,15 @@ public abstract class BaseCommands implements ChatInterface {
                     cm.addToWaitlist(player, name);
                 } else {
                     chan.addMember(player);
-                    chan.sendMessage(info(ChatColor.stripColor(player.getDisplayName())+" has joined."));
+                    if(chan.getTypeName() != "World")
+                        chan.sendMessage(info(ChatColor.stripColor(player.getDisplayName())+" has joined."));
                 }
             }
         } else
             cm.addChannel(name, player);
     }
 
-    /*
-     * "leave" commands
-     */
+    // "leave" commands
     protected void leaveChannel(String name, Player player) {
         if(name.equalsIgnoreCase("all"))
             leaveAll(player);
@@ -144,9 +132,7 @@ public abstract class BaseCommands implements ChatInterface {
         player.sendMessage(info("You have left all channels."));
     }
 
-    /*
-     * "add" commands
-     */
+    // "add" commands
     protected void addPlayer(Player player, String i) {
         Player added = ChatUtil.getPlayer(i);
         if(added == null) {
@@ -154,20 +140,21 @@ public abstract class BaseCommands implements ChatInterface {
             return;
         }
         Channel chan = cm.getActiveChan(player);
-        if(chan.isMember(player) && !chan.isMember(added)) {
+
+        if(chan == null)
+            player.sendMessage(error("Active channel not set, or you have not joined a channel."));
+        else if(chan.isMember(player) && !chan.isMember(added)) {
             chan.sendMessage(info(ChatColor.stripColor(added.getDisplayName())+
                     " has been added by "+ChatColor.stripColor(player.getDisplayName())));
             chan.addMember(added);
             added.sendMessage(info("You have been added to \""+chan.getName()+".\""));
         } else if (chan.isMember(player) && chan.isMember(added))
             player.sendMessage(info("Player is already in channel \""+chan.getName()+".\""));
-        else
-            player.sendMessage(error("Active channel not set, or you have not joined a channel."));
+
     }
 
-    /*
-     * "set" commands
-     */
+
+    // "set" commands
     protected void setChannel(String name, Player player) {
         if(cm.channelExists(name)) {
             Channel chan = cm.getChannel(name);
@@ -180,9 +167,27 @@ public abstract class BaseCommands implements ChatInterface {
             player.sendMessage(error("Channel \""+name+"\" doesn't exist."));
     }
 
-    /*
-     * Booleans
-     */
+    // Reload
+    protected Boolean reload(CommandSender sender) {
+        if(isPlayer(sender)) {
+            Player p = (Player)sender;
+            if(p.hasPermission("ChanChat.reload")) {
+                ChatUtil.reload();
+                p.sendMessage("[CC] Reloaded");
+            }
+        } else {
+            ChatUtil.reload();
+            sender.sendMessage("[CC] Reloaded");
+        }
+        return true;
+    }
+
+    //
+    protected void replyActive(Player player) {
+        player.sendMessage("Active Channel: "+cm.getActiveName(player));
+    }
+
+    // Booleans
     protected Boolean isReserved(String name) {
         return cm.isReserved(name);
     }
@@ -202,15 +207,5 @@ public abstract class BaseCommands implements ChatInterface {
     }
     public String info(String msg) {
         return ChatColor.YELLOW+msg;
-    }
-
-    protected Boolean reload(CommandSender sender) {
-        if(sender instanceof Player) {
-            Player p = (Player)sender;
-            if(p.hasPermission("ChanChat.reload"))
-                ChatUtil.reload();
-        } else
-            ChatUtil.reload();
-        return true;
     }
 }

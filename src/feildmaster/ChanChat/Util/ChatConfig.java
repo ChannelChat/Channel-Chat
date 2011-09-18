@@ -1,35 +1,22 @@
 package feildmaster.ChanChat.Util;
 
+import java.io.File;
 import org.bukkit.util.config.Configuration;
 
-// TODO: Normal Config Options
-public class ChatConfig {
-    // Default config handler
-    private final Configuration config;
-
-    public ChatConfig(Configuration c) {
-        config = c;
-        config.load();
-        config.setHeader("# Configuration",
-                "# Options not enabled at the moment.");
-        if(config.getAll().isEmpty())
-            loadConfig();
-        else
-            load();
-    }
-
-    public void save() {
-        config.save();
+public class ChatConfig extends Configuration {
+    public ChatConfig(File file) {
+        super(file);
+        load();
+        setHeader("# Configuration",
+                  "# Creates automagically every start/reload");
+        load_config();
+        save();
     }
 
     public void reload() {
-//        do nothing for now. (No settings)
+        load();
+        load_config();
     }
-    private void load() {
-        reload();
-    }
-    private void loadConfig() {
-        config.save();
-        reload();
+    private void load_config() {
     }
 }

@@ -52,4 +52,7 @@ public class ChatUtil {
         getChatPlugin().getCC1().save();
         getChatPlugin().getCC2().save();
     }
+    public static Logger log() {
+        return getServer().getLogger();
+    }
 }

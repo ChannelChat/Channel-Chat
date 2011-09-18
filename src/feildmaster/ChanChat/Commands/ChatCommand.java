@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class ChatCommand extends BaseCommands {
-    String playerCommands = "create, delete, join, leave, add, set, list, who";
+    String playerCommands = "active, create, delete, join, leave, add, set, list, who";
     String serverCommands = "create, delete";
     public boolean onCommand(CommandSender sender, Command cmd, String name, String[] args) {
         int size = args.length;
@@ -21,10 +21,12 @@ public class ChatCommand extends BaseCommands {
                 joinChannel(args[0], (Player)sender);
             } else if (!isReserved(args[0])) {
                 createChannel(args[0], sender);
+            } else if(isPlayer(sender) && args[0].equals("active")) {
+                replyActive((Player)sender);
             } else if(isPlayer(sender) && args[0].equalsIgnoreCase("leave")) {
                 leaveActiveChannel((Player)sender);
             } else if(isPlayer(sender) && args[0].equalsIgnoreCase("list")) {
-                listChannels((Player)sender);
+                listChannels((Player)sender, false);
             } else if(isPlayer(sender) && args[0].equalsIgnoreCase("delete")) {
                 deleteActiveChannel((Player)sender);
             } else if(isPlayer(sender) && args[0].equalsIgnoreCase("who")) {
