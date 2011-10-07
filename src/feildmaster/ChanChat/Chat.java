@@ -2,16 +2,8 @@ package feildmaster.ChanChat;
 
 import feildmaster.ChanChat.Chan.Channel;
 import feildmaster.ChanChat.Chan.ChannelManager;
-import feildmaster.ChanChat.Commands.ChatCommand;
-import feildmaster.ChanChat.Commands.AddCommand;
-import feildmaster.ChanChat.Commands.CreateCommand;
-import feildmaster.ChanChat.Commands.DeleteCommand;
-import feildmaster.ChanChat.Commands.JoinCommand;
-import feildmaster.ChanChat.Commands.LeaveCommand;
-import feildmaster.ChanChat.Commands.SetCommand;
-import feildmaster.ChanChat.Listeners.ChatListener;
-import feildmaster.ChanChat.Listeners.PasswordListener;
-import feildmaster.ChanChat.Listeners.logInOut;
+import feildmaster.ChanChat.Commands.*;
+import feildmaster.ChanChat.Listeners.*;
 import feildmaster.ChanChat.Util.*;
 import java.io.File;
 import org.bukkit.entity.Player;
@@ -48,6 +40,7 @@ public class Chat extends JavaPlugin {
         cConfig = new ChanConfig(new Configuration(new File(getDataFolder(), "channels.yml")));
 
         // Commands
+        getCommand("channel-admin").setExecutor(new AdminCommand());
         getCommand("channel-chat").setExecutor(new ChatCommand());
         getCommand("channel-join").setExecutor(new JoinCommand());
         getCommand("channel-leave").setExecutor(new LeaveCommand());

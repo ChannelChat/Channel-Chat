@@ -1,12 +1,12 @@
 package feildmaster.ChanChat.Chan;
 
+import feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
 import feildmaster.ChanChat.Util.ChatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class ChannelManager {
@@ -42,11 +42,28 @@ public class ChannelManager {
     public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChan(sender), msg);}
     public void sendMessage(Player sender, String channel, String msg) {sendMessage(sender, getChannel(channel), msg);}
     public void sendMessage (Player sender, Channel channel, String msg) {
-        if(channel == null) return;
-        channel.sendMessage(sender.getDisplayName()+": "+msg);
+        if(channel == null || sender == null || msg == null) {
+            sender.sendMessage(ChatUtil.error("Missing info while trying to send message"));
+            return;
+        }
+
+        ChannelPlayerChatEvent event = new ChannelPlayerChatEvent(sender, channel, msg);
+        ChatUtil.getPluginManager().callEvent(event);
+
+        if(event.isCancelled()) return;
+
+        msg = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
+        //((CraftServer)getServer()).getServer().console.sendMessage(s); // ColorConsoleSender
+        System.out.println(msg);
+        for(Player p1 : event.getRecipients())
+            p1.sendMessage(msg);
     }
 
     // Channel Functions
+    /**
+     * @param name of Channel to return
+     * @return Channel if exists, else NULL
+     */
     public Channel getChannel(String name) {
         if(name == null) return null;
 
@@ -56,6 +73,10 @@ public class ChannelManager {
 
         return null;
     }
+    /**
+     * @param name Name of Channel to check
+     * @return True if channel is found
+     */
     public Boolean channelExists(String name) {
         if(name != null)
           for(Channel chan : getChannels())
@@ -64,21 +85,36 @@ public class ChannelManager {
 
         return false;
     }
+    /**
+     * Player Adding Channel
+     *
+     * @param name Name of Channel
+     * @param player Owner of Channel
+     */
     public void addChannel(String name, Player player) { // Player adding channel
         if(isReserved(name)) {
-            player.sendMessage(error("["+name+"] Blacklisted."));
+            player.sendMessage(ChatUtil.error("["+name+"] Blacklisted."));
             return;
         }
 
         if(!channelExists(name)) {
-            getChannels().add(new Channel(name, player));
-            player.sendMessage(info("["+name+"] Created!"));
+            Channel chan = new Channel(name);
+            chan.setOwner(player);
+            chan.addMember(player);
+            getChannels().add(chan);
+            chan.sendMessage("Created!");
             if(getActiveName(player) == null)
                 setActiveChan(player,name);
         } else
-            player.sendMessage(info("["+name+"] Already exists!"));
+            player.sendMessage(ChatUtil.info("["+name+"] Already exists!"));
     }
-    public void addChannel(String name, Boolean alert) {
+    /**
+     * Server/Console Adding Channel
+     *
+     * @param name Name of Channel
+     * @param alert True to display "created" message
+     */
+    public void addChannel(String name, Boolean alert) { // Server/Console Adding Channel
         addChannel(name, null, null, null, null, 0, false, false, alert);
     }
     public void addChannel(String name, String type, String tag, String owner, String pass, Integer range, Boolean listed, Boolean auto, Boolean alert) { // Server adding channel
@@ -151,7 +187,6 @@ public class ChannelManager {
         if((channel == null && getJoinedChannels(player).isEmpty()) ||
                 (channelExists(channel) && getChannel(channel).isMember(player))) return;
 
-
         if (channel != null && getJoinedChannels(player).isEmpty()) {
             setActiveChan(player, null);
         } else if (channel == null && !getJoinedChannels(player).isEmpty()) {
@@ -159,7 +194,7 @@ public class ChannelManager {
         } else if (channel != null && channelExists(channel) && !getChannel(channel).isMember(player)) {
             String nChan = getJoinedChannels(player).get(0).getName();
             setActiveChan(player, nChan);
-            player.sendMessage(info("You are now in channel \""+nChan+".\""));
+            player.sendMessage(ChatUtil.info("You are now in channel \""+nChan+".\""));
         }
     }
 
@@ -188,12 +223,5 @@ public class ChannelManager {
             if(chan.isSaved())
                 list.add(chan);
         return list;
-    }
-
-    public String error(String msg) {
-        return ChatColor.RED+msg;
-    }
-    public String info(String msg) {
-        return ChatColor.YELLOW+msg;
     }
 }

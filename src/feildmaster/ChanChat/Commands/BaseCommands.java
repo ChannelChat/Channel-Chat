@@ -31,6 +31,7 @@ public abstract class BaseCommands implements ChatInterface {
             StringBuilder str = new StringBuilder();
             for(int x=1; x<args.length; x++)
                 str.append(x!=1?" ":"").append(args[x]);
+
             cm.sendMessage(player, chan, str.toString());
         } else
             player.sendMessage(info("You are not a member of \""+chan.getName()+".\""));

@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerChatEvent;
 
-// TODO: FactionChannel, WorldChannel, LocalChannel
+// TODO: FactionChannel, WorldChannel, LocalChannel, TownyChannel
+// TODO: AutoJoin on ChannelChange...
+// TODO: Channel Joining based on Permissions? Channel Permissions?
 public class Channel {
     private String name;
     private String tag;
@@ -41,6 +45,7 @@ public class Channel {
         }
     }
 
+    public Channel() {}
     public Channel(String n) {
         name = n;
     }
@@ -51,7 +56,7 @@ public class Channel {
     }
 
     public String format(String old) {
-        return "["+getDisplayName()+"]"+(old.equals("<%1$s> %2$s")?" ":"")+old;
+        return getDisplayName()+(old.equals("<%1$s> %2$s")?" ":"")+old;
     }
 
     public void sendMessage(String msg) {
@@ -61,7 +66,7 @@ public class Channel {
 
     //
     private String getDisplayName() {
-        return tag==null||tag.equals("{World}")?name:tag;
+        return tag==null||tag.equals("{World}")?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-F])", "\u00A7")+ChatColor.WHITE);
     }
 
     // Channel Name Functions
@@ -169,6 +174,19 @@ public class Channel {
     }
     public int getRange() {
         return range;
+    }
+
+    public void handleEvent(PlayerChatEvent event) {
+        if(isMember(event.getPlayer())) {
+            for(Player p : new HashSet<Player>(event.getRecipients()))
+                if(!isMember(p))
+                    event.getRecipients().remove(p);
+            event.setFormat(format(event.getFormat()));
+        } else {
+            event.getPlayer().sendMessage(format("Not a member"));
+            event.setCancelled(true);
+            // Shouldn't happen, but I'll add an error here later.
+        }
     }
 
     // Lovely Booleans

@@ -2,6 +2,7 @@ package feildmaster.ChanChat.Listeners;
 
 import feildmaster.ChanChat.Chan.Channel;
 import feildmaster.ChanChat.Chan.ChannelManager;
+import feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
 import feildmaster.ChanChat.Util.ChatUtil;
 import java.util.HashSet;
 import org.bukkit.ChatColor;
@@ -11,7 +12,8 @@ import org.bukkit.event.player.PlayerListener;
 
 /*
  * ChatListener
- *      Handles player chat
+ * <p>
+ * Handles player chat
  */
 public class ChatListener extends PlayerListener {
     private final ChannelManager cm = ChatUtil.getCM();
@@ -28,7 +30,12 @@ public class ChatListener extends PlayerListener {
             event.setCancelled(true);
         } else {
             cm.checkActive(player);
-            Channel chan = cm.getActiveChan(player);
+            Channel chan = null;
+
+            if(event instanceof ChannelPlayerChatEvent) {
+                chan = ((ChannelPlayerChatEvent)event).getChannel();
+            } else
+                chan = cm.getActiveChan(player);
 
             if(chan != null) {
                 boolean local = chan.getType().equals(Channel.Type.Local);
@@ -39,12 +46,8 @@ public class ChatListener extends PlayerListener {
                         if(!p.getWorld().equals(player.getWorld()) || (local && chan.outOfRange(p.getLocation(),player.getLocation())))
                             event.getRecipients().remove(p);
                 //} else if (chan.getType().equals(Channel.Type.Faction)) {
-                } else if(chan.isMember(player)) {
-                    for(Player p : new HashSet<Player>(event.getRecipients()))
-                        if(!chan.isMember(p))
-                            event.getRecipients().remove(p);
-                }
-                event.setFormat(chan.format(event.getFormat()));
+                } else // Fall back on normal channel
+                    chan.handleEvent(event);
             } else {
                 ChatUtil.log().info("[ChannelChat] Error Occured That Shouldn't Happen (chatListener.java)");
                 event.setCancelled(true);

@@ -1,9 +1,6 @@
-change-log:
-  - Space removed using "custom format"
-
 name: ChannelChat
 main: feildmaster.ChanChat.Chat
-version: 0.2 beta
+version: 0.3 beta
 author: feildmaster
 description: Simple channel chats.
 
@@ -30,6 +27,10 @@ permissions:
 commands:
   channel-admin:
     description: Admin Channels
+    aliases:
+      - ch
+      - chan
+      - channel
 
   channel-chat:
     description: Base Commands

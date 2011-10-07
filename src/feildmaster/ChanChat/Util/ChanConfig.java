@@ -6,7 +6,6 @@ import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 
 public class ChanConfig {
-    // Channels.yml
     private final Configuration config;
 
     public ChanConfig(Configuration c) {
@@ -21,15 +20,15 @@ public class ChanConfig {
     private void createDefault() {
         setHeader();
         config.setProperty("General.auto_join", true);
-        config.setProperty("General.tag", "G");
+        config.setProperty("General.tag", "[G]");
         config.setProperty("General.listed", true);
 
         config.setProperty("Local.type", "Local");
-        config.setProperty("Local.tag", "L");
+        config.setProperty("Local.tag", "[L]");
         config.setProperty("Local.range", 1000);
 
         config.setProperty("World.type", "World");
-        config.setProperty("World.tag", "{World}");
+        config.setProperty("World.tag", "[{World}]");
 
         config.save();
     }
