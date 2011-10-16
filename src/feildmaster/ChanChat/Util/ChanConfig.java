@@ -1,6 +1,6 @@
 package feildmaster.ChanChat.Util;
 
-import feildmaster.ChanChat.Chan.Channel;
+import feildmaster.ChanChat.Chan.*;
 import java.util.List;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
@@ -39,16 +39,21 @@ public class ChanConfig {
 
         for(Channel chan : ChatUtil.getCM().getChannels())
             if(chan.isSaved()) {
-                String tag = chan.getName();
-                config.setProperty(tag+".type", chan.getTypeName());
-                config.setProperty(tag+".tag", chan.getTag());
-                config.setProperty(tag+".owner", chan.getOwner());
-                config.setProperty(tag+".password", chan.getPass());
-                config.setProperty(tag+".listed", chan.isListed());
-                config.setProperty(tag+".auto_join", chan.isAuto());
-                config.setProperty(tag+".range", chan.getRange());
-            }
+                config.setProperty(chan.getName()+".type", chan.getType().name());
+                config.setProperty(chan.getName()+".tag", chan.getTag());
+                config.setProperty(chan.getName()+".owner", chan.getOwner());
+                config.setProperty(chan.getName()+".password", chan.getPass());
+                config.setProperty(chan.getName()+".listed", chan.isListed());
+                config.setProperty(chan.getName()+".auto_join", chan.isAuto());
 
+                // Channel Type Data
+                switch(chan.getType()) {
+                    case Local:
+                        config.setProperty(chan.getName()+".range", chan.toLocal().getRange());
+                        config.setProperty(chan.getName()+".null_message", chan.toLocal().getNullMessage());
+                        break;
+                }
+            }
         config.save();
     }
 
@@ -61,32 +66,46 @@ public class ChanConfig {
                 ChatUtil.getCM().delChannel(chan.getName());
 
         for(String name : keys) {
-            ConfigurationNode node = config.getNode(name);
-            if(node == null)
-                ChatUtil.getCM().addChannel(name, false);
+            Channel chan;
+
+            if(ChatUtil.getCM().channelExists(name))
+                chan = ChatUtil.getCM().getChannel(name);
             else
-                ChatUtil.getCM().addChannel(name,
-                    node.getString("type"),
-                    node.getString("tag"),
-                    node.getString("owner"),
-                    node.getString("password"),
-                    node.getInt("range", 0),
-                    node.getBoolean("listed", false),
-                    node.getBoolean("auto_join", false),
-                    false);
+                chan = new Channel(name, Channel.Type.Global);
+
+            ConfigurationNode node = config.getNode(name);
+            if(node != null) {
+                chan.setType(node.getString("type"));
+                chan.setTag(node.getString("tag"));
+                chan.setOwner(node.getString("owner"));
+                chan.setPass(node.getString("password"));
+                chan.setListed(node.getBoolean("listed", false));
+                chan.setAuto(node.getBoolean("auto_join", false));
+
+                // Type specific information
+                switch(chan.getType()) {
+                    case Local:
+                        chan.toLocal().setNullMessage(node.getString("null_message"));
+                        chan.toLocal().setRange(node.getInt("range", 1000));
+                        break;
+                }
+            }
+
+            ChatUtil.getCM().addChannel(chan);
         }
     }
 
     private void setHeader() {
         config.setHeader(
-            "# ChannelName: #No spaces",
-            "#    listed: #true/false",
-            "#    range: # For local chats",
-            "#    tag: #Channel Tag",
-            "#    owner: #Owner Name",
+            "#ChannelName: #No spaces in name",
             "#    auto_join: #true/false",
+            "#    listed: #true/false",
+            "#    owner: #Owner Name",
+            "#    range: #For Local Channels",
+            "#    tag: #Channel Tag",
             "#    type: #Global/Local/World",
-            "#    password: #Channel Password");
+            "#    password: #Channel Password",
+            "#    shortcut: #Not yet. ;)");
     }
     private void loadChannels() { // For now, I keep this function
         reload();

@@ -15,9 +15,9 @@ public abstract class BaseCommands implements ChatInterface {
     // "list" commands
     protected void listChannels(Player player, Boolean mem) {
         StringBuilder string = new StringBuilder();
-        Boolean color = true;
+        boolean color = true;
         for(Channel chan : cm.getChannels())
-            if(chan.isListed() && chan.getPass() == null)
+            if(chan.isListed())
                 string.append(string.length()!=0?", ":"").append((color=!color)?ChatColor.GRAY:ChatColor.WHITE).append(chan.isMember(player)?"*":"").append(chan.getName());
         player.sendMessage("Channels: "+string.toString());
     }
@@ -41,11 +41,12 @@ public abstract class BaseCommands implements ChatInterface {
     protected void getChannelMembers(String name, Player player) {
         if(cm.channelExists(name) && cm.getChannel(name).isMember(player)) {
             StringBuilder string = new StringBuilder();
-            for(String p : cm.getChannel(name).getMembers())
-                if(!p.equals(player.getName()))
-                    string.append(string.length()!=0?", ":"").append(ChatColor.stripColor(ChatUtil.getPlayer(p).getDisplayName()));
-            if(string.length() == 0)
-                string.append("Only you");
+            boolean color = true;
+            if(cm.getChannel(name).getMembers().size() > 1)
+                for(String p : cm.getChannel(name).getMembers())
+                    string.append(string.length()!=0?", ":"").append((color=!color)?ChatColor.GRAY:ChatColor.WHITE).append(ChatColor.stripColor(ChatUtil.getPlayer(p).getDisplayName()));
+            else
+                string.append(ChatColor.WHITE).append("Only you");
             player.sendMessage(string.insert(0, ChatColor.GRAY+"Members: ").toString());
         } else
             player.sendMessage(ChatColor.GRAY+"The channel doesn't exist!");
@@ -56,13 +57,21 @@ public abstract class BaseCommands implements ChatInterface {
 
     // "create" commands
     protected void createChannel(String name, CommandSender sender) {
+        if(cm.channelExists(name)) {
+            sender.sendMessage("Channel Already Exists!");
+            return;
+        } else if(cm.isReserved(name)) {
+            sender.sendMessage("Channel Blacklisted.");
+            return;
+        }
+
         if(sender instanceof Player)
             if(((Player)sender).hasPermission("ChanChat.create"))
-                cm.addChannel(name, (Player)sender);
+                cm.addChannel(new Channel(name), (Player)sender);
             else
                 sender.sendMessage("You can't do that.");
         else
-            cm.addChannel(name, true);
+            cm.addChannel(new Channel(name, Channel.Type.Global));
     }
 
     // "delete" commands
@@ -84,7 +93,6 @@ public abstract class BaseCommands implements ChatInterface {
     }
 
     // "join" commands
-    // TODO: Better "Silent Join"
     protected void joinChannel(String name, Player player) {
         if(cm.channelExists(name)) {
             Channel chan = cm.getChannel(name);
@@ -96,7 +104,7 @@ public abstract class BaseCommands implements ChatInterface {
                     cm.addToWaitlist(player, name);
                 } else {
                     chan.addMember(player);
-                    if(chan.getTypeName() != "World")
+                    if(!chan.getType().name().equals("World")) // TODO: Better "Silent Join"
                         chan.sendMessage(info(ChatColor.stripColor(player.getDisplayName())+" has joined."));
                 }
             }

@@ -2,9 +2,10 @@ package feildmaster.ChanChat.Listeners;
 
 import feildmaster.ChanChat.Chan.Channel;
 import feildmaster.ChanChat.Chan.ChannelManager;
+import feildmaster.ChanChat.Chan.LocalChannel;
+import feildmaster.ChanChat.Chan.WorldChannel;
 import feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
 import feildmaster.ChanChat.Util.ChatUtil;
-import java.util.HashSet;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -30,24 +31,22 @@ public class ChatListener extends PlayerListener {
             event.setCancelled(true);
         } else {
             cm.checkActive(player);
-            Channel chan = null;
-
-            if(event instanceof ChannelPlayerChatEvent) {
-                chan = ((ChannelPlayerChatEvent)event).getChannel();
-            } else
-                chan = cm.getActiveChan(player);
+            Channel chan = event instanceof ChannelPlayerChatEvent ? ((ChannelPlayerChatEvent)event).getChannel() : cm.getActiveChan(player);
 
             if(chan != null) {
-                boolean local = chan.getType().equals(Channel.Type.Local);
-                boolean world = chan.getType().equals(Channel.Type.World);
-                if(local || world) {
-                    if(world && chan.getTag().equals("{World}")) chan.setTag(player.getWorld().getName());
-                    for(Player p : new HashSet<Player>(event.getRecipients()))
-                        if(!p.getWorld().equals(player.getWorld()) || (local && chan.outOfRange(p.getLocation(),player.getLocation())))
-                            event.getRecipients().remove(p);
-                //} else if (chan.getType().equals(Channel.Type.Faction)) {
-                } else // Fall back on normal channel
-                    chan.handleEvent(event);
+                switch(chan.getType()) {
+                    case Faction:
+                        chan.toFaction().handleEvent(event);
+                        break;
+                    case World:
+                        chan.toWorld().handleEvent(event);
+                        break;
+                    case Local:
+                        chan.toLocal().handleEvent(event);
+                        break;
+                    default:
+                        chan.handleEvent(event);
+                }
             } else {
                 ChatUtil.log().info("[ChannelChat] Error Occured That Shouldn't Happen (chatListener.java)");
                 event.setCancelled(true);

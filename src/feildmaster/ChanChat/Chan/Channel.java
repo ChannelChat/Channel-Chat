@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
@@ -14,23 +13,20 @@ import org.bukkit.event.player.PlayerChatEvent;
 // TODO: AutoJoin on ChannelChange...
 // TODO: Channel Joining based on Permissions? Channel Permissions?
 public class Channel {
-    private String name;
-    private String tag;
-    private String owner;
-    private String pass;
+    private final String name;
+    private String tag = null;
+    private String owner = null;
+    private String pass = null;
     private Type type = Type.Private;
-    private int range = 0;
-    private int range_squared;
     private Boolean auto_join = false;
     private Boolean listed = false;
     private Set<String> members = new HashSet<String>();
 
     public enum Type {
-        //Faction,
+        Faction,
         Global,
         Local,
         Private,
-        //Private_Saved,
         World;
 
         static final List<String> list = new ArrayList<String>();
@@ -45,7 +41,10 @@ public class Channel {
         }
     }
 
-    public Channel() {}
+    public Channel(String n, Type t) {
+        name = n;
+        type = t;
+    }
     public Channel(String n) {
         name = n;
     }
@@ -65,38 +64,26 @@ public class Channel {
     }
 
     //
-    private String getDisplayName() {
-        return tag==null||tag.equals("{World}")?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-F])", "\u00A7")+ChatColor.WHITE);
+    protected String getDisplayName() {
+        return tag==null?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-F])", "\u00A7")+ChatColor.WHITE);
     }
 
     // Channel Name Functions
     public String getName() {
         return name;
     }
-    public void setName(String n) {
-        name = n;
-    }
 
     // Channel Type
     public Type getType() {
-        if(type == null) return Type.Private;
         return type;
     }
-    public String getTypeName() {
-        if(type == null) return Type.Private.name();
-        return type.name();
-    }
     public void setType(String t) {
-        if(t == null)
-            type = Type.Private;
-        else if(Type.contains(t))
-            type = Type.valueOf(t);
+        if(t == null || !Type.contains(t)) return;
+        setType(Type.valueOf(t));
     }
-    public void setType(Type t) {
-        if(t == null)
-            type = Type.Private;
-        else
-            type = t;
+    public Channel setType(Type t) {
+        type = t;
+        return this;
     }
 
     // Channel Tag
@@ -112,10 +99,12 @@ public class Channel {
         return owner;
     }
     public void setOwner(Player player) {
-        owner = player.getName();
+        setOwner(player.getName());
     }
     public void setOwner(String name) {
         owner = name;
+        if(!isMember(name))
+            addMember(name, false);
     }
 
     // Member Functions
@@ -123,7 +112,10 @@ public class Channel {
         return members;
     }
     public Boolean isMember(Player player) {
-        return getMembers().contains(player.getName());
+        return isMember(player.getName());
+    }
+    public Boolean isMember(String player) {
+        return getMembers().contains(player);
     }
     public void addMember(Player player) {
         addMember(player.getName(), false);
@@ -167,15 +159,6 @@ public class Channel {
         auto_join = v;
     }
 
-    // Range functions
-    public void setRange(int r) {
-        range = r;
-        range_squared = (int) Math.pow(r, 2);
-    }
-    public int getRange() {
-        return range;
-    }
-
     public void handleEvent(PlayerChatEvent event) {
         if(isMember(event.getPlayer())) {
             for(Player p : new HashSet<Player>(event.getRecipients()))
@@ -203,12 +186,15 @@ public class Channel {
     public Boolean isSaved() {
         return type.equals(Type.Global) || type.equals(Type.Local) || type.equals(Type.World);
     }
-    public Boolean outOfRange(Location l, Location ll) {
-        if(l.equals(ll))
-            return false;
-        if(l.distanceSquared(ll)>range_squared)
-            return true;
 
-        return false;
+    public FactionChannel toFaction() {
+        return (FactionChannel)this;
     }
+    public LocalChannel toLocal() {
+        return (LocalChannel)this;
+    }
+    public WorldChannel toWorld() {
+        return (WorldChannel)this;
+    }
+
 }

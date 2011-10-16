@@ -118,79 +118,25 @@ public class ChannelManager {
         if(!channelExists(chan.getName()))
             getChannels().add(chan);
     }
-
     /**
-     * Server/Console Adding Channel
+     * Add a channel to the registry, with the player owner
      *
-     * @param name Name of Channel
-     * @param alert True to display "created" message
-     * @deprecated Because I hate it.
+     * @param chan The channel to add
      */
-    public void addChannel(String name, Boolean alert) { // Server/Console Adding Channel
-        addChannel(name, null, null, null, null, 0, false, false, alert);
-    }
-    /**
-     * Server/Console Adding Channel.
-     * I actually hate this code :D It should just pass a channel, and then add it to registry. :3
-     *
-     * @param name
-     * @param type
-     * @param tag
-     * @param owner
-     * @param pass
-     * @param range
-     * @param listed
-     * @param auto
-     * @param alert
-     *
-     * @deprecated Because I hate it.
-     */
-    public void addChannel(String name, String type, String tag, String owner, String pass, Integer range, Boolean listed, Boolean auto, Boolean alert) { // Server adding channel
-        if(name == null) return;
-
-        if(isReserved(name)) {
-            System.out.println("["+name+"] Blacklisted.");
-            return;
-        }
-        Channel chan = null;
-
-        // Crappy check for "fake" types
-        if(type == null || !Channel.Type.contains(type)) type = "Global";
-
-        if(!channelExists(name)) {
-            switch(Channel.Type.valueOf(type)) {
-                case World:
-                    chan = new WorldChannel(name);
-                    break;
-                case Local:
-                    chan = new LocalChannel(name);
-                    break;
-                case Private:
-                    chan = new Channel(name, Channel.Type.Private);
-                    break;
-                case Global:
-                    chan = new Channel(name, Channel.Type.Global);
-                    break;
-                default:
-                    return;
-            }
-            getChannels().add(chan);
-        } else
-            chan = getChannel(name);
-
-        // Apply changes
-        if(chan != null) {
-            //chan.setType(type); // Done automagically.
-            chan.setAuto(auto);
-            chan.setOwner(owner);
-            chan.setPass(pass);
-            chan.setTag(tag);
-            //chan.setRange(range);
-            chan.setListed(listed);
-            if(alert)
-                System.out.println(name+" created!");
+    public void addChannel(Channel chan, Player player) {
+        if(!channelExists(chan.getName())) {
+            addChannel(chan);
+            chan.setOwner(player);
+            if(getActiveName(player) == null)
+                setActiveChan(player, chan.getName());
         }
     }
+
+    /**
+     * Remove channel from registry
+     *
+     * @param name Name of channel to remove
+     */
     public void delChannel(String name) {
         if(channelExists(name)) {
             getChannel(name).sendMessage("Has been deleted");

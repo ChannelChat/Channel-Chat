@@ -5,7 +5,19 @@ import org.bukkit.command.CommandSender;
 
 public class AdminCommand extends BaseCommands {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        /* Commands:
+         * - Ban
+         * - Unban
+         * - password
+         * - adding ability
+         * - tag
+         * - mute (join, no talking)
+         * Future:
+         * - mods?
+         */
+
+
+        return true;
     }
 
     public void invalidCommand(CommandSender sender, String name) {
