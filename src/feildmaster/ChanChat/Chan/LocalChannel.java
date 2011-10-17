@@ -13,6 +13,9 @@ public class LocalChannel extends Channel {
     public LocalChannel(String name) {
         super(name, Type.Local);
     }
+    public LocalChannel(Channel chan) {
+        super(chan, Type.Local);
+    }
 
     // Range functions
     public Channel setRange(int r) {

@@ -85,29 +85,6 @@ public class ChannelManager {
 
         return false;
     }
-    /**
-     * Player Adding Channel
-     *
-     * @param name Name of Channel
-     * @param player Owner of Channel
-     */
-    public void addChannel(String name, Player player) { // Player adding channel
-        if(isReserved(name)) {
-            player.sendMessage(ChatUtil.error("["+name+"] Blacklisted."));
-            return;
-        }
-
-        if(!channelExists(name)) {
-            Channel chan = new Channel(name);
-            chan.setOwner(player);
-            chan.addMember(player);
-            getChannels().add(chan);
-            chan.sendMessage("Created!");
-            if(getActiveName(player) == null)
-                setActiveChan(player,name);
-        } else
-            player.sendMessage(ChatUtil.info("["+name+"] Already exists!"));
-    }
 
     /**
      * Add a channel to the registry

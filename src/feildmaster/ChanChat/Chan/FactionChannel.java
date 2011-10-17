@@ -14,8 +14,12 @@ public class FactionChannel extends Channel {
     private final Factions plugin = ChatUtil.getFactionPlugin();
     private Set<String> members;
 
-    public FactionChannel() {
-        super("Faction", Type.Faction);
+    public FactionChannel(String name) {
+        super(name, Type.Faction);
+    }
+
+    public FactionChannel(Channel chan) {
+        super(chan, Type.Faction);
     }
 
     public Boolean isMember(Player player) {

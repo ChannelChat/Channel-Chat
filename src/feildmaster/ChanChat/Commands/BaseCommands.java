@@ -67,7 +67,7 @@ public abstract class BaseCommands implements ChatInterface {
 
         if(sender instanceof Player)
             if(((Player)sender).hasPermission("ChanChat.create"))
-                cm.addChannel(new Channel(name), (Player)sender);
+                cm.addChannel(new Channel(name, Channel.Type.Private), (Player)sender);
             else
                 sender.sendMessage("You can't do that.");
         else
@@ -109,7 +109,7 @@ public abstract class BaseCommands implements ChatInterface {
                 }
             }
         } else
-            cm.addChannel(name, player);
+            createChannel(name, player);
     }
 
     // "leave" commands

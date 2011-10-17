@@ -14,10 +14,10 @@ import org.bukkit.event.player.PlayerChatEvent;
 // TODO: Channel Joining based on Permissions? Channel Permissions?
 public class Channel {
     private final String name;
+    private final Type type;
     private String tag = null;
     private String owner = null;
     private String pass = null;
-    private Type type = Type.Private;
     private Boolean auto_join = false;
     private Boolean listed = false;
     private Set<String> members = new HashSet<String>();
@@ -35,21 +35,40 @@ public class Channel {
             return list.contains(name);
         }
 
+        public static Type betterValueOf(String name) {
+            if(name == null) return Type.Global;
+
+            for(Type t : values())
+                if(t.toString().equals(name))
+                    return t;
+
+            return Type.Global;
+        }
+
         static {
             for(Type t : values())
                 list.add(t.name());
         }
     }
 
+    public Channel(Channel c, Type t) {
+        name = c.name;
+        type = t;
+        tag = c.tag;
+        owner = c.owner;
+        pass = c.pass;
+        auto_join = c.auto_join;
+        listed = c.listed;
+        members = c.members;
+    }
+
     public Channel(String n, Type t) {
         name = n;
         type = t;
     }
-    public Channel(String n) {
-        name = n;
-    }
     public Channel(String n, Player player) {
         name = n;
+        type = Type.Private;
         owner = player.getName();
         members.add(player.getName());
     }
@@ -76,14 +95,6 @@ public class Channel {
     // Channel Type
     public Type getType() {
         return type;
-    }
-    public void setType(String t) {
-        if(t == null || !Type.contains(t)) return;
-        setType(Type.valueOf(t));
-    }
-    public Channel setType(Type t) {
-        type = t;
-        return this;
     }
 
     // Channel Tag
@@ -184,7 +195,7 @@ public class Channel {
         return listed;
     }
     public Boolean isSaved() {
-        return type.equals(Type.Global) || type.equals(Type.Local) || type.equals(Type.World);
+        return !type.equals(Type.Private);
     }
 
     public FactionChannel toFaction() {

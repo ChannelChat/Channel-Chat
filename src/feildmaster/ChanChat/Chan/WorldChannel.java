@@ -9,8 +9,10 @@ public class WorldChannel extends Channel {
     private String world_name = null;
 
     public WorldChannel(String name) {
-        super(name);
-        setType(Type.World);
+        super(name, Type.World);
+    }
+    public WorldChannel(Channel chan) {
+        super(chan, Type.World);
     }
 
     protected String getDisplayName() {

@@ -68,14 +68,34 @@ public class ChanConfig {
         for(String name : keys) {
             Channel chan;
 
-            if(ChatUtil.getCM().channelExists(name))
-                chan = ChatUtil.getCM().getChannel(name);
-            else
-                chan = new Channel(name, Channel.Type.Global);
-
             ConfigurationNode node = config.getNode(name);
+
+            if(ChatUtil.getCM().channelExists(name)) // TODO: Fix Channel type thing...
+                chan = ChatUtil.getCM().getChannel(name);
+            else {
+                if(node != null) {
+                    switch(Channel.Type.betterValueOf(node.getString("tag"))) {
+                        case Local:
+                            chan = new LocalChannel(name);
+                            break;
+                        case World:
+                            chan = new WorldChannel(name);
+                            break;
+                        case Faction:
+                            if(ChatUtil.getFactionPlugin() != null) {
+                                chan = new FactionChannel(name);
+                                break;
+                            }
+                        case Global:
+                        default:
+                            chan = new Channel(name, Channel.Type.Global);
+                    }
+                } else
+                    chan = new Channel(name, Channel.Type.Global);
+            }
+
             if(node != null) {
-                chan.setType(node.getString("type"));
+                //chan.setType(node.getString("type"));
                 chan.setTag(node.getString("tag"));
                 chan.setOwner(node.getString("owner"));
                 chan.setPass(node.getString("password"));
