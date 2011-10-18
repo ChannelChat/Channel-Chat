@@ -14,11 +14,11 @@ public class FactionChannel extends Channel {
     private final Factions plugin = ChatUtil.getFactionPlugin();
     private Set<String> members;
 
-    public FactionChannel(String name) {
+    protected FactionChannel(String name) {
         super(name, Type.Faction);
     }
 
-    public FactionChannel(Channel chan) {
+    protected FactionChannel(Channel chan) {
         super(chan, Type.Faction);
     }
 
@@ -28,6 +28,7 @@ public class FactionChannel extends Channel {
 
     public void handleEvent(PlayerChatEvent event) {
         members = plugin.getOnlinePlayersInFaction(plugin.getPlayerFactionTag(event.getPlayer()));
+        
         super.handleEvent(event);
     }
 

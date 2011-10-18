@@ -70,32 +70,21 @@ public class ChanConfig {
 
             ConfigurationNode node = config.getNode(name);
 
-            if(ChatUtil.getCM().channelExists(name)) // TODO: Fix Channel type thing...
+            if(ChatUtil.getCM().channelExists(name)) { // TODO: Fix Channel type thing...
                 chan = ChatUtil.getCM().getChannel(name);
-            else {
                 if(node != null) {
-                    switch(Channel.Type.betterValueOf(node.getString("tag"))) {
-                        case Local:
-                            chan = new LocalChannel(name);
-                            break;
-                        case World:
-                            chan = new WorldChannel(name);
-                            break;
-                        case Faction:
-                            if(ChatUtil.getFactionPlugin() != null) {
-                                chan = new FactionChannel(name);
-                                break;
-                            }
-                        case Global:
-                        default:
-                            chan = new Channel(name, Channel.Type.Global);
-                    }
-                } else
-                    chan = new Channel(name, Channel.Type.Global);
+                    Channel.Type type = Channel.Type.betterValueOf(node.getString("type"));
+                    if(!chan.getType().equals(type))
+                        chan = ChatUtil.getCM().convertChannel(chan, type);
+                }
+            } else {
+                if(node != null)
+                    chan = ChatUtil.getCM().createChannel(name, Channel.Type.betterValueOf(node.getString("type")));
+                else
+                    chan = ChatUtil.getCM().createChannel(name, Channel.Type.Global);
             }
 
             if(node != null) {
-                //chan.setType(node.getString("type"));
                 chan.setTag(node.getString("tag"));
                 chan.setOwner(node.getString("owner"));
                 chan.setPass(node.getString("password"));

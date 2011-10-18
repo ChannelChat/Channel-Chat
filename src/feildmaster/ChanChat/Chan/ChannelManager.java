@@ -1,5 +1,6 @@
 package feildmaster.ChanChat.Chan;
 
+import feildmaster.ChanChat.Chan.Channel.Type;
 import feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
 import feildmaster.ChanChat.Util.ChatUtil;
 import java.util.ArrayList;
@@ -30,6 +31,10 @@ public class ChannelManager {
     private static final String[] reserved = { "active", "admin", "all", "create", "delete", "add", "join",
         "kick", "leave", "list", "reload", "who", "?" };
 
+    public static Boolean isNameReserved(String n) {
+        return Arrays.asList(reserved).contains(n);
+    }
+
     public Boolean isReserved(String n) {
         return Arrays.asList(reserved).contains(n);
     }
@@ -39,6 +44,13 @@ public class ChannelManager {
     private Map<String, String> activeChannel = new HashMap<String, String>();
 
     // Message Handlers
+    public void sendMessage(String channel, String msg) {sendMessage(getChannel(channel), msg);}
+    public void sendMessage(Channel channel, String msg) {
+        if(channel == null || msg == null) return;
+
+        System.out.println(msg);
+        channel.sendMessage(msg);
+    }
     public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChan(sender), msg);}
     public void sendMessage(Player sender, String channel, String msg) {sendMessage(sender, getChannel(channel), msg);}
     public void sendMessage (Player sender, Channel channel, String msg) {
@@ -93,7 +105,7 @@ public class ChannelManager {
      */
     public void addChannel(Channel chan) {
         if(!channelExists(chan.getName()))
-            getChannels().add(chan);
+            registry.add(chan);
     }
     /**
      * Add a channel to the registry, with the player owner
@@ -116,10 +128,54 @@ public class ChannelManager {
      */
     public void delChannel(String name) {
         if(channelExists(name)) {
-            getChannel(name).sendMessage("Has been deleted");
-            getChannels().remove(getChannel(name));
+            sendMessage(getChannel(name), "Has been deleted");
+            registry.remove(getChannel(name));
             checkActive();
         }
+    }
+
+    public Channel createChannel(String name, Type type) {
+        Channel chan;
+
+        if(type == Type.Local)
+            chan = new LocalChannel(name);
+        else if (type == Type.World)
+            chan = new WorldChannel(name);
+        else if (type == Type.Faction && ChatUtil.getFactionPlugin() != null)
+            chan = new FactionChannel(name);
+        else if (type == Type.Private)
+            chan = new Channel(name, Type.Private);
+        else
+            chan = new Channel(name, Type.Global);
+
+        return chan;
+    }
+
+    /**
+     * Usage of this funciton should be limited
+     */
+    public Channel convertChannel(Channel chan, Type type) {
+        if(chan.getType().equals(type)) return chan;
+
+        Channel chan1;
+
+        if(type == Type.Local)
+            chan1 = new LocalChannel(chan);
+        else if (type == Type.World)
+            chan1 = new WorldChannel(chan);
+        else if (type == Type.Faction && ChatUtil.getFactionPlugin() != null)
+            chan1 = new FactionChannel(chan);
+        else if (type == Type.Private)
+            chan1 = new Channel(chan, Type.Private);
+        else
+            chan1 = new Channel(chan, Type.Global);
+
+        if(registry.contains(chan)) {
+            registry.remove(chan);
+            registry.add(chan1);
+        }
+
+        return chan1;
     }
 
     // Active Channel Functions
@@ -175,7 +231,7 @@ public class ChannelManager {
     }
 
     public List<Channel> getChannels() {
-        return registry;
+        return new ArrayList<Channel>(registry);
     }
     public List<Channel> getAutoChannels() {
         List<Channel> list = new ArrayList<Channel>();

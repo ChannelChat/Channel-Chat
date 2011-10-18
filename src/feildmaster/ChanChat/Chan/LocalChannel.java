@@ -1,6 +1,5 @@
 package feildmaster.ChanChat.Chan;
 
-import java.util.HashSet;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -10,10 +9,12 @@ public class LocalChannel extends Channel {
     private int range_squared = 1000000;
     private String out_of_range = "No one within range of your voice...";
 
-    public LocalChannel(String name) {
+    private Location location;
+
+    protected LocalChannel(String name) {
         super(name, Type.Local);
     }
-    public LocalChannel(Channel chan) {
+    protected LocalChannel(Channel chan) {
         super(chan, Type.Local);
     }
 
@@ -28,11 +29,11 @@ public class LocalChannel extends Channel {
         return range;
     }
 
-    public Boolean outOfRange(Location l, Location ll) {
-        if(l.equals(ll))
-            return false;
-        if(l.distanceSquared(ll)>range_squared)
-            return true;
+    public Boolean outOfRange(Location l) {
+        if(!location.getWorld().equals(l.getWorld())) return true;
+
+        if(location.equals(l)) return false;
+        if(location.distanceSquared(l)>range_squared) return true;
 
         return false;
     }
@@ -47,11 +48,16 @@ public class LocalChannel extends Channel {
         return out_of_range;
     }
 
-    public void handleEvent(PlayerChatEvent event) {
-        for(Player p : new HashSet<Player>(event.getRecipients()))
-            if(!p.getWorld().equals(event.getPlayer().getWorld()) || outOfRange(event.getPlayer().getLocation(), p.getLocation()))
-                event.getRecipients().remove(p);
+    public Boolean isMember(Player player) {
+        return !outOfRange(player.getLocation());
+    }
 
+    public void handleEvent(PlayerChatEvent event) {
+        System.out.println("Local Called");
+        location = event.getPlayer().getLocation();
+
+        super.handleEvent(event);
+        System.out.println("Local Handled");
         if(event.getRecipients().size() == 1 && getNullMessage() != null) {
             event.getPlayer().sendMessage(getNullMessage());
             event.setCancelled(true);

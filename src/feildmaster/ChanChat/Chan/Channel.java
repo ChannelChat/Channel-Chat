@@ -39,7 +39,7 @@ public class Channel {
             if(name == null) return Type.Global;
 
             for(Type t : values())
-                if(t.toString().equals(name))
+                if(t.name().equals(name))
                     return t;
 
             return Type.Global;
@@ -51,7 +51,7 @@ public class Channel {
         }
     }
 
-    public Channel(Channel c, Type t) {
+    protected Channel(Channel c, Type t) {
         name = c.name;
         type = t;
         tag = c.tag;
@@ -62,15 +62,9 @@ public class Channel {
         members = c.members;
     }
 
-    public Channel(String n, Type t) {
+    protected Channel(String n, Type t) {
         name = n;
         type = t;
-    }
-    public Channel(String n, Player player) {
-        name = n;
-        type = Type.Private;
-        owner = player.getName();
-        members.add(player.getName());
     }
 
     public String format(String old) {
@@ -207,5 +201,7 @@ public class Channel {
     public WorldChannel toWorld() {
         return (WorldChannel)this;
     }
-
+    public TownyChannel toTowny() {
+        return (TownyChannel)this;
+    }
 }
