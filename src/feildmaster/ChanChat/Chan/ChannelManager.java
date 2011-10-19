@@ -14,7 +14,7 @@ public class ChannelManager {
     private Map<Player, String> waitList = new HashMap<Player, String>();
 
     //Waitlist functions
-    public void dfWaitlist(Player player) {
+    public void deleteFromWaitlist(Player player) {
         waitList.remove(player);
     }
     public void addToWaitlist(Player player, String chan) {
@@ -48,7 +48,6 @@ public class ChannelManager {
     public void sendMessage(Channel channel, String msg) {
         if(channel == null || msg == null) return;
 
-        System.out.println(msg);
         channel.sendMessage(msg);
     }
     public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChan(sender), msg);}
@@ -66,9 +65,19 @@ public class ChannelManager {
 
         msg = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
         //((CraftServer)getServer()).getServer().console.sendMessage(s); // ColorConsoleSender
-        System.out.println(msg);
+        System.out.println(msg.replaceAll("\u00A7.", ""));
         for(Player p1 : event.getRecipients())
             p1.sendMessage(msg);
+    }
+    public void sendJoinMessage(Channel chan, Player player) {
+        if(chan.getType() == Type.World)
+            chan.toWorld().sendJoinMessage(player);
+        else if (chan.getType() == Type.Local)
+            chan.toLocal().sendJoinMessage(player);
+        else if (chan.getType() == Type.Custom)
+            chan.toCustom().passJoinMessage(player);
+        else
+            chan.sendJoinMessage(player);
     }
 
     // Channel Functions
@@ -90,10 +99,11 @@ public class ChannelManager {
      * @return True if channel is found
      */
     public Boolean channelExists(String name) {
-        if(name != null)
-          for(Channel chan : getChannels())
-            if(chan.getName().equalsIgnoreCase(name))
-                return true;
+        if(name == null) return false;
+
+        for(Channel chan : getChannels())
+        if(chan.getName().equalsIgnoreCase(name))
+            return true;
 
         return false;
     }
@@ -104,8 +114,11 @@ public class ChannelManager {
      * @param chan The channel to add
      */
     public void addChannel(Channel chan) {
-        if(!channelExists(chan.getName()))
-            registry.add(chan);
+        if(channelExists(chan.getName())) {
+            return;
+        }
+
+        registry.add(chan);
     }
     /**
      * Add a channel to the registry, with the player owner
@@ -113,12 +126,18 @@ public class ChannelManager {
      * @param chan The channel to add
      */
     public void addChannel(Channel chan, Player player) {
-        if(!channelExists(chan.getName())) {
-            addChannel(chan);
-            chan.setOwner(player);
-            if(getActiveName(player) == null)
-                setActiveChan(player, chan.getName());
+        if(isReserved(chan.getName())) {
+            return;
         }
+
+        if(channelExists(chan.getName())) {
+            return;
+        }
+
+        addChannel(chan);
+        chan.setOwner(player);
+        if(getActiveName(player) == null)
+            setActiveChan(player, chan.getName());
     }
 
     /**
@@ -141,8 +160,6 @@ public class ChannelManager {
             chan = new LocalChannel(name);
         else if (type == Type.World)
             chan = new WorldChannel(name);
-        else if (type == Type.Faction && ChatUtil.getFactionPlugin() != null)
-            chan = new FactionChannel(name);
         else if (type == Type.Private)
             chan = new Channel(name, Type.Private);
         else
@@ -155,7 +172,8 @@ public class ChannelManager {
      * Usage of this funciton should be limited
      */
     public Channel convertChannel(Channel chan, Type type) {
-        if(chan.getType().equals(type)) return chan;
+        if(chan.getType().equals(type) || chan.getType().equals(Type.Custom) || type.equals(Type.Custom))
+            return chan;
 
         Channel chan1;
 
@@ -163,8 +181,6 @@ public class ChannelManager {
             chan1 = new LocalChannel(chan);
         else if (type == Type.World)
             chan1 = new WorldChannel(chan);
-        else if (type == Type.Faction && ChatUtil.getFactionPlugin() != null)
-            chan1 = new FactionChannel(chan);
         else if (type == Type.Private)
             chan1 = new Channel(chan, Type.Private);
         else
@@ -187,7 +203,7 @@ public class ChannelManager {
     }
     public void setActiveChan(Player player, String channel) {
         if (channel != null) {
-            if(channelExists(channel) && getChannel(channel).isMember(player))
+            if(channelExists(channel) && isMember(getChannel(channel), player))
                 activeChannel.put(player.getName(), channel);
         } else {
             activeChannel.remove(player.getName());
@@ -206,16 +222,18 @@ public class ChannelManager {
 
         String channel = getActiveName(player);
 
-        // All is well with the world. :o
-        if((channel == null && getJoinedChannels(player).isEmpty()) ||
-                (channelExists(channel) && getChannel(channel).isMember(player))) return;
+        List<Channel> joinedChannels = getJoinedChannels(player);
 
-        if (channel != null && getJoinedChannels(player).isEmpty()) {
+        // All is well with the world. :o
+        if((channel == null && joinedChannels.isEmpty()) ||
+                (channelExists(channel) && isMember(getChannel(channel),player))) return;
+
+        if (channel != null && joinedChannels.isEmpty()) {
             setActiveChan(player, null);
-        } else if (channel == null && !getJoinedChannels(player).isEmpty()) {
-            setActiveChan(player, getJoinedChannels(player).get(0).getName());
-        } else if (channel != null && channelExists(channel) && !getChannel(channel).isMember(player)) {
-            String nChan = getJoinedChannels(player).get(0).getName();
+        } else if (channel == null && !joinedChannels.isEmpty()) {
+            setActiveChan(player, joinedChannels.get(0).getName());
+        } else if (channel != null && channelExists(channel) && !isMember(getChannel(channel), player)) {
+            String nChan = joinedChannels.get(0).getName();
             setActiveChan(player, nChan);
             player.sendMessage(ChatUtil.info("You are now in channel \""+nChan+".\""));
         }
@@ -225,7 +243,7 @@ public class ChannelManager {
     public List<Channel> getJoinedChannels(Player player) {
         List<Channel> list = new ArrayList<Channel>();
         for (Channel chan : getChannels())
-            if(chan.isMember(player))
+            if(isMember(chan, player))
                 list.add(chan);
         return list;
     }
@@ -246,5 +264,18 @@ public class ChannelManager {
             if(chan.isSaved())
                 list.add(chan);
         return list;
+    }
+
+    public Boolean isMember(Channel chan, Player player) {
+        if(chan == null || player == null) return false;
+
+        if(chan.getType() == Type.World)
+            return chan.toWorld().isMember(player);
+        else if (chan.getType() == Type.Local)
+            return chan.toLocal().isMember(player);
+        else if (chan.getType() == Type.Custom)
+            return chan.toCustom().passIsMember(player);
+        else
+            return chan.isMember(player);
     }
 }

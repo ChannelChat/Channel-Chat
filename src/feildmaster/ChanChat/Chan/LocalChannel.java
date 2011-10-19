@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
-public class LocalChannel extends Channel {
+public final class LocalChannel extends Channel {
     private int range = 1000;
     private int range_squared = 1000000;
     private String out_of_range = "No one within range of your voice...";
@@ -49,18 +49,20 @@ public class LocalChannel extends Channel {
     }
 
     public Boolean isMember(Player player) {
-        return !outOfRange(player.getLocation());
+        if(super.isMember(player) && location == null) return true;
+        if(location == null) return false;
+        return super.isMember(player) && !outOfRange(player.getLocation());
     }
 
     public void handleEvent(PlayerChatEvent event) {
-        System.out.println("Local Called");
         location = event.getPlayer().getLocation();
 
         super.handleEvent(event);
-        System.out.println("Local Handled");
         if(event.getRecipients().size() == 1 && getNullMessage() != null) {
             event.getPlayer().sendMessage(getNullMessage());
             event.setCancelled(true);
         }
+
+        location = null;
     }
 }

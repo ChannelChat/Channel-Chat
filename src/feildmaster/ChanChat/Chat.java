@@ -14,9 +14,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 public class Chat extends JavaPlugin {
-    private final ChannelManager cm = new ChannelManager();
+    private static final ChannelManager cm = new ChannelManager();
+    public static File module_folder;
     private ChatConfig config;
     private ChanConfig cConfig;
+
+    public Chat() {
+        module_folder = new File(getDataFolder(),"/modules/");
+    }
 
     public void onDisable() {
         ChatUtil.save();
@@ -61,42 +66,15 @@ public class Chat extends JavaPlugin {
         return cm;
     }
 
+    public static ChannelManager getChannelManager() {
+        return cm;
+    }
+
     public ChatConfig getCC1() {
         return config;
     }
     public ChanConfig getCC2() {
         return cConfig;
     }
-//    public void setAliases(List<String> l1) {
-//        List<String> a;
-//        if(!l1.isEmpty()) {
-//            getCommand("channel-chat").setAliases(l1);
-//        }
-//        if(!l2.isEmpty()) {
-//            a = getCommand("channel-join").getAliases();
-//            a.clear();
-//            a.addAll(l2);
-//        }
-//        if(!l3.isEmpty()) {
-//            a = getCommand("channel-leave").getAliases();
-//            a.clear();
-//            a.addAll(l3);
-//        }
-//        if(!l4.isEmpty()) {
-//            a = getCommand("channel-delete").getAliases();
-//            a.clear();
-//            a.addAll(l4);
-//        }
-//        if(!l5.isEmpty()) {
-//            a = getCommand("channel-add").getAliases();
-//            a.clear();
-//            a.addAll(l5);
-//        }
-//        if(!l6.isEmpty()) {
-//            a = getCommand("channel-set").getAliases();
-//            a.clear();
-//            a.addAll(l6);
-//        }
-//    }
 }
 

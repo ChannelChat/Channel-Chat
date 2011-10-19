@@ -39,12 +39,12 @@ public class ChatListener extends PlayerListener {
             return;
         }
 
-        if(chan.getType() == Type.Faction)
-            chan.toFaction().handleEvent(event);
-        else if (chan.getType() == Type.World)
+        if (chan.getType() == Type.World)
             chan.toWorld().handleEvent(event);
         else if (chan.getType() == Type.Local)
             chan.toLocal().handleEvent(event);
+        else if (chan.getType() == Type.Custom)
+            chan.toCustom().passEvent(event);
         else
             chan.handleEvent(event);
     }

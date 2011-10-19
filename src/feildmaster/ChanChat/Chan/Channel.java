@@ -13,6 +13,11 @@ import org.bukkit.event.player.PlayerChatEvent;
 // TODO: AutoJoin on ChannelChange...
 // TODO: Channel Joining based on Permissions? Channel Permissions?
 public class Channel {
+    // Channel Stores
+    private LocalChannel local_chan;
+    private WorldChannel world_chan;
+    private CustomChannel custom_chan;
+
     private final String name;
     private final Type type;
     private String tag = null;
@@ -23,11 +28,11 @@ public class Channel {
     private Set<String> members = new HashSet<String>();
 
     public enum Type {
-        Faction,
         Global,
+        World,
         Local,
         Private,
-        World;
+        Custom;
 
         static final List<String> list = new ArrayList<String>();
 
@@ -63,6 +68,7 @@ public class Channel {
     }
 
     protected Channel(String n, Type t) {
+        //if(ChannelManager.isNameReserved(n)) {}
         name = n;
         type = t;
     }
@@ -71,14 +77,20 @@ public class Channel {
         return getDisplayName()+(old.equals("<%1$s> %2$s")?" ":"")+old;
     }
 
-    public void sendMessage(String msg) {
-        for(String n : getMembers())
-            ChatUtil.getPlayer(n).sendMessage(format(msg));
+    public String getDisplayName() {
+        return tag==null?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-F])", "\u00A7")+ChatColor.WHITE);
     }
 
-    //
-    protected String getDisplayName() {
-        return tag==null?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-F])", "\u00A7")+ChatColor.WHITE);
+    public void sendMessage(String msg) {
+        if(getMembers().isEmpty()) return;
+
+        msg = format(msg);
+
+        System.out.print(msg.replaceAll("\u00A7.", ""));
+
+        for(String n : getMembers())
+            if(isMember(n)) // Check "is member" in case of an override
+                ChatUtil.getPlayer(n).sendMessage(msg);
     }
 
     // Channel Name Functions
@@ -116,10 +128,13 @@ public class Channel {
     public Set<String> getMembers() {
         return members;
     }
+    public Boolean isSenderMember(Player player) {
+        return player.hasPermission("ChannelChat.admin") || isMember(player);
+    }
     public Boolean isMember(Player player) {
         return isMember(player.getName());
     }
-    public Boolean isMember(String player) {
+    private Boolean isMember(String player) {
         return getMembers().contains(player);
     }
     public void addMember(Player player) {
@@ -127,10 +142,13 @@ public class Channel {
     }
     public void addMember(Player player, Boolean alert) {
         addMember(player.getName(), alert);
+        
+        if(alert) sendJoinMessage(player);
     }
     private void addMember(String player, Boolean alert) {
+        if(player == null) return;
+
         getMembers().add(player);
-        if(alert) sendMessage(" "+player+" has joined.");
     }
     public void delMember(Player player) {
         delMember(player.getName(), false);
@@ -164,8 +182,12 @@ public class Channel {
         auto_join = v;
     }
 
+    public void sendJoinMessage(Player player) {
+        sendMessage(" "+ChatColor.YELLOW+ChatColor.stripColor(player.getDisplayName())+" has joined.");
+    }
+
     public void handleEvent(PlayerChatEvent event) {
-        if(isMember(event.getPlayer())) {
+        if(isSenderMember(event.getPlayer())) {
             for(Player p : new HashSet<Player>(event.getRecipients()))
                 if(!isMember(p))
                     event.getRecipients().remove(p);
@@ -173,7 +195,6 @@ public class Channel {
         } else {
             event.getPlayer().sendMessage(format("Not a member"));
             event.setCancelled(true);
-            // Shouldn't happen, but I'll add an error here later.
         }
     }
 
@@ -189,19 +210,19 @@ public class Channel {
         return listed;
     }
     public Boolean isSaved() {
-        return !type.equals(Type.Private);
+        return !type.equals(Type.Private) && !type.equals(Type.Custom);
     }
 
-    public FactionChannel toFaction() {
-        return (FactionChannel)this;
-    }
     public LocalChannel toLocal() {
-        return (LocalChannel)this;
+        if(local_chan == null) local_chan = (LocalChannel)this;
+        return local_chan;
     }
     public WorldChannel toWorld() {
-        return (WorldChannel)this;
+        if(world_chan == null) world_chan = (WorldChannel)this;
+        return world_chan;
     }
-    public TownyChannel toTowny() {
-        return (TownyChannel)this;
+    public CustomChannel toCustom() {
+        if(custom_chan == null) custom_chan = (CustomChannel)this;
+        return custom_chan;
     }
 }

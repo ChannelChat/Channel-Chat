@@ -15,44 +15,44 @@ public class ChatCommand extends BaseCommands {
             return reload(sender);
 
         if (size==1) {
-            if(channelExists(args[0]) && isPlayer(sender) && getChannel(args[0]).isMember((Player)sender)) {
+            if(channelExists(args[0]) && isPlayer(sender) && isMember(getChannel(args[0]), (Player)sender))
                 setChannel(args[0], (Player)sender);
-            } else if (channelExists(args[0]) && isPlayer(sender)) {
+            else if (channelExists(args[0]) && isPlayer(sender))
                 joinChannel(args[0], (Player)sender);
-            } else if (!isReserved(args[0])) {
+            else if (!isReserved(args[0]))
                 createChannel(args[0], sender);
-            } else if(isPlayer(sender) && args[0].equals("active")) {
+            else if(isPlayer(sender) && args[0].equals("active"))
                 replyActive((Player)sender);
-            } else if(isPlayer(sender) && args[0].equalsIgnoreCase("leave")) {
+            else if(isPlayer(sender) && args[0].equalsIgnoreCase("leave"))
                 leaveActiveChannel((Player)sender);
-            } else if(isPlayer(sender) && args[0].equalsIgnoreCase("list")) {
+            else if(isPlayer(sender) && args[0].equalsIgnoreCase("list"))
                 listChannels((Player)sender, false);
-            } else if(isPlayer(sender) && args[0].equalsIgnoreCase("delete")) {
+            else if(isPlayer(sender) && args[0].equalsIgnoreCase("delete"))
                 deleteActiveChannel((Player)sender);
-            } else if(isPlayer(sender) && args[0].equalsIgnoreCase("who")) {
+            else if(isPlayer(sender) && args[0].equalsIgnoreCase("who"))
                 getChannelMembers((Player)sender);
-            } else
+            else
                 invalidCommand(sender, name);
         } else if (size == 2 && !channelExists(args[0])) {
-            if(args[0].equalsIgnoreCase("create")) {
+            if(args[0].equalsIgnoreCase("create"))
                 createChannel(args[1], sender);
-            } else if(args[0].equalsIgnoreCase("set") && isPlayer(sender)) {
+            else if(args[0].equalsIgnoreCase("set") && isPlayer(sender))
                 setChannel(args[1], (Player) sender);
-            } else if(args[0].equalsIgnoreCase("join") && isPlayer(sender)) {
+            else if(args[0].equalsIgnoreCase("join") && isPlayer(sender))
                 joinChannel(args[1], (Player)sender);
-            } else if(args[0].equalsIgnoreCase("leave") && isPlayer(sender)) {
+            else if(args[0].equalsIgnoreCase("leave") && isPlayer(sender))
                 leaveChannel(args[1], (Player)sender);
-            } else if(args[0].equalsIgnoreCase("add") && isPlayer(sender)) {
+            else if(args[0].equalsIgnoreCase("add") && isPlayer(sender))
                 addPlayer((Player)sender, args[1]);
-            } else if(args[0].equalsIgnoreCase("delete")) {
+            else if(args[0].equalsIgnoreCase("delete"))
                 deleteChannel(args[1], sender);
-            } else if(args[0].equalsIgnoreCase("who") && isPlayer(sender)) {
+            else if(args[0].equalsIgnoreCase("who") && isPlayer(sender))
                 getChannelMembers(args[1], (Player)sender);
-            } else
+            else
                 invalidCommand(sender, name);
-        } else if (size > 1 && channelExists(args[0]) && isPlayer(sender)) {
+        } else if (size > 1 && channelExists(args[0]) && isPlayer(sender))
             quickChat(args[0], (Player)sender, args);
-        } else
+        else
             invalidCommand(sender, name);
 
         return true;

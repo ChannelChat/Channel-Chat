@@ -19,9 +19,9 @@ public class PasswordListener extends PlayerListener {
             if(chan.getPass().equals(event.getMessage())) {
                 chan.addMember(player);
                 chan.sendMessage(ChatColor.YELLOW+ChatColor.stripColor(player.getDisplayName())+" has joined.");
-                cm.dfWaitlist(player);
+                cm.deleteFromWaitlist(player);
             } else if(event.getMessage().equalsIgnoreCase("cancel")) {
-                cm.dfWaitlist(player);
+                cm.deleteFromWaitlist(player);
             } else
                 player.sendMessage(ChatColor.GRAY+"Password incorrect, try again. (cancel to stop)");
             event.setCancelled(true);
