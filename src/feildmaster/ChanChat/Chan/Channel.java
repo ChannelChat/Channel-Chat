@@ -9,15 +9,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
-// TODO: FactionChannel, WorldChannel, LocalChannel, TownyChannel
 // TODO: AutoJoin on ChannelChange...
 // TODO: Channel Joining based on Permissions? Channel Permissions?
 public class Channel {
-    // Channel Stores
-    private LocalChannel local_chan;
-    private WorldChannel world_chan;
-    private CustomChannel custom_chan;
-
     private final String name;
     private final Type type;
     private String tag = null;
@@ -73,41 +67,47 @@ public class Channel {
         type = t;
     }
 
-    public String format(String old) {
-        return getDisplayName()+(old.equals("<%1$s> %2$s")?" ":"")+old;
-    }
-
-    public String getDisplayName() {
-        return tag==null?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-F])", "\u00A7")+ChatColor.WHITE);
-    }
-
-    public void sendMessage(String msg) {
+    // Send messages to channel
+    public final void sendMessage(String msg) {
         if(getMembers().isEmpty()) return;
 
         msg = format(msg);
 
         System.out.print(msg.replaceAll("\u00A7.", ""));
 
-        for(String n : getMembers())
-            if(isMember(n)) // Check "is member" in case of an override
-                ChatUtil.getPlayer(n).sendMessage(msg);
+        for(String n : getMembers()) {
+            Player p = ChatUtil.getPlayer(n);
+            if(isMember(p)) // Check "is member" in case of an override
+                p.sendMessage(msg);
+        }
+    }
+    public void sendJoinMessage(Player player) {
+        sendMessage(" "+ChatColor.YELLOW+ChatColor.stripColor(player.getDisplayName())+" has joined.");
+    }
+    public void sendLeaveMessage(Player player) {
+        sendMessage(" "+ChatColor.YELLOW+ChatColor.stripColor(player.getDisplayName())+" has left.");
     }
 
-    // Channel Name Functions
-    public String getName() {
+    // Channel Formatting
+    public final String format(String old) {
+        return getDisplayName()+(old.equals("<%1$s> %2$s")?" ":"")+old;
+    }
+    public String getDisplayName() {
+        return tag==null?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-F])", "\u00A7")+ChatColor.WHITE);
+    }
+
+    public final String getName() {
         return name;
     }
-
-    // Channel Type
-    public Type getType() {
+    public final Type getType() {
         return type;
     }
 
-    // Channel Tag
-    public void setTag(String t) {
+    // Tag functions
+    public final void setTag(String t) {
         tag = t;
     }
-    public String getTag() {
+    public final String getTag() {
         return tag;
     }
 
@@ -120,70 +120,86 @@ public class Channel {
     }
     public void setOwner(String name) {
         owner = name;
-        if(!isMember(name))
-            addMember(name, false);
+    }
+    public final Boolean isOwner(Player player) {
+        if(owner == null || owner.isEmpty()) return false;
+        return owner.equalsIgnoreCase(player.getName());
     }
 
     // Member Functions
-    public Set<String> getMembers() {
+    private Set<String> getMembers() {
+        return getMembers(null);
+    }
+    public Set<String> getMembers(Player player) {
         return members;
     }
+    // If member functions
     public Boolean isSenderMember(Player player) {
-        return player.hasPermission("ChannelChat.admin") || isMember(player);
+        return player.hasPermission("ChannelChat.admin") || isOwner(player) || isMember(player);
     }
     public Boolean isMember(Player player) {
+        if(player == null) return false;
         return isMember(player.getName());
     }
     private Boolean isMember(String player) {
         return getMembers().contains(player);
     }
-    public void addMember(Player player) {
-        addMember(player.getName(), false);
+    // Add members
+    public final void addMember(Player player) {
+        addMember(player, false);
     }
-    public void addMember(Player player, Boolean alert) {
-        addMember(player.getName(), alert);
-        
+    public final void addMember(Player player, Boolean alert) {
+        if(player == null) return;
+
+        addMember(player.getName());
+
         if(alert) sendJoinMessage(player);
     }
-    private void addMember(String player, Boolean alert) {
+    private void addMember(String player) {
         if(player == null) return;
 
         getMembers().add(player);
     }
-    public void delMember(Player player) {
-        delMember(player.getName(), false);
+    // Remove members
+    public final void delMember(Player player) {
+        delMember(player, false);
     }
-    public void delMember(Player player, Boolean alert) {
-        delMember(player.getName(), alert);
+    public final void delMember(Player player, Boolean alert) {
+        if(player == null || !isMember(player)) return;
+
+        if(alert) sendLeaveMessage(player);
+
+        delMember(player.getName());
     }
-    private void delMember(String player, Boolean alert) {
-        if(alert) sendMessage(" "+player+" has left.");
+    private void delMember(String player) {
         getMembers().remove(player);
     }
 
     // Password Functions
-    public void removePass() { // Not used. :o
+    public final void removePass() {
         setPass(null);
     }
-    public String getPass() {
+    public final String getPass() {
         return pass;
     }
-    public void setPass(String p) {
+    public final void setPass(String p) {
         pass = p;
     }
 
     // Listed functions
-    public void setListed(Boolean l) {
+    public final void setListed(Boolean l) {
         listed = l;
+    }
+    public final Boolean isListed() {
+        return listed;
     }
 
     // Auto functions
-    public void setAuto(Boolean v) {
+    public final void setAuto(Boolean v) {
         auto_join = v;
     }
-
-    public void sendJoinMessage(Player player) {
-        sendMessage(" "+ChatColor.YELLOW+ChatColor.stripColor(player.getDisplayName())+" has joined.");
+    public final Boolean isAuto() {
+        return auto_join;
     }
 
     public void handleEvent(PlayerChatEvent event) {
@@ -198,31 +214,11 @@ public class Channel {
         }
     }
 
-    // Lovely Booleans
-    public Boolean isOwner(Player player) {
-        if(owner == null || owner.isEmpty()) return false;
-        return owner.equalsIgnoreCase(player.getName());
-    }
-    public Boolean isAuto() {
-        return auto_join;
-    }
-    public Boolean isListed() {
-        return listed;
-    }
-    public Boolean isSaved() {
-        return !type.equals(Type.Private) && !type.equals(Type.Custom);
-    }
+    // Custom Channel Methods
+    public void callSave() {}
 
-    public LocalChannel toLocal() {
-        if(local_chan == null) local_chan = (LocalChannel)this;
-        return local_chan;
-    }
-    public WorldChannel toWorld() {
-        if(world_chan == null) world_chan = (WorldChannel)this;
-        return world_chan;
-    }
-    public CustomChannel toCustom() {
-        if(custom_chan == null) custom_chan = (CustomChannel)this;
-        return custom_chan;
+    // Lovely Booleans
+    public final Boolean isSaved() {
+        return !type.equals(Type.Private) && !type.equals(Type.Custom);
     }
 }

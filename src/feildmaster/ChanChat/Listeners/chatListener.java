@@ -1,11 +1,9 @@
 package feildmaster.ChanChat.Listeners;
 
 import feildmaster.ChanChat.Chan.Channel;
-import feildmaster.ChanChat.Chan.Channel.Type;
 import feildmaster.ChanChat.Chan.ChannelManager;
 import feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
 import feildmaster.ChanChat.Util.ChatUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
@@ -25,7 +23,7 @@ public class ChatListener extends PlayerListener {
         if(ChatUtil.getFactionPlugin() != null && ChatUtil.getFactionPlugin().isPlayerFactionChatting(player)) return;
 
         if(cm.getJoinedChannels(player).isEmpty()) {
-            player.sendMessage(ChatColor.YELLOW+"You are not in any channels.");
+            player.sendMessage(ChatUtil.info("You are not in any channels."));
             event.setCancelled(true);
             return;
         }
@@ -39,13 +37,6 @@ public class ChatListener extends PlayerListener {
             return;
         }
 
-        if (chan.getType() == Type.World)
-            chan.toWorld().handleEvent(event);
-        else if (chan.getType() == Type.Local)
-            chan.toLocal().handleEvent(event);
-        else if (chan.getType() == Type.Custom)
-            chan.toCustom().passEvent(event);
-        else
-            chan.handleEvent(event);
+        chan.handleEvent(event);
     }
 }

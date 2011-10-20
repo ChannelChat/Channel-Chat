@@ -15,12 +15,12 @@ import org.bukkit.util.config.Configuration;
 
 public class Chat extends JavaPlugin {
     private static final ChannelManager cm = new ChannelManager();
-    public static File module_folder;
+    private static File module_folder;
     private ChatConfig config;
     private ChanConfig cConfig;
 
     public Chat() {
-        module_folder = new File(getDataFolder(),"/modules/");
+        module_folder = new File(getDataFolder(), "modules");
     }
 
     public void onDisable() {
@@ -60,6 +60,10 @@ public class Chat extends JavaPlugin {
                 chan.addMember(player);
 
         ChatUtil.log.info(getDescription().getName()+" v"+getDescription().getVersion()+" enabled");
+    }
+
+    public static File getModuleFolder() {
+        return module_folder;
     }
 
     public ChannelManager getCM() {

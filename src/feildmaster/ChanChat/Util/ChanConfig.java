@@ -1,6 +1,7 @@
 package feildmaster.ChanChat.Util;
 
 import feildmaster.ChanChat.Chan.*;
+import feildmaster.ChanChat.Chan.Channel.Type;
 import java.util.List;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
@@ -37,7 +38,7 @@ public class ChanConfig {
         for(String key : config.getKeys())
             config.removeProperty(key);
 
-        for(Channel chan : ChatUtil.getCM().getChannels())
+        for(Channel chan : ChatUtil.getCM().getChannels()) {
             if(chan.isSaved()) {
                 config.setProperty(chan.getName()+".type", chan.getType().name());
                 config.setProperty(chan.getName()+".tag", chan.getTag());
@@ -47,13 +48,13 @@ public class ChanConfig {
                 config.setProperty(chan.getName()+".auto_join", chan.isAuto());
 
                 // Channel Type Data
-                switch(chan.getType()) {
-                    case Local:
-                        config.setProperty(chan.getName()+".range", chan.toLocal().getRange());
-                        config.setProperty(chan.getName()+".null_message", chan.toLocal().getNullMessage());
-                        break;
+                if(chan.getType().equals(Channel.Type.Local)) {
+                    config.setProperty(chan.getName()+".range", ((LocalChannel)chan).getRange());
+                    config.setProperty(chan.getName()+".null_message", ((LocalChannel)chan).getNullMessage());
                 }
             }
+            chan.callSave();
+        }
         config.save();
     }
 
@@ -92,11 +93,9 @@ public class ChanConfig {
                 chan.setAuto(node.getBoolean("auto_join", false));
 
                 // Type specific information
-                switch(chan.getType()) {
-                    case Local:
-                        chan.toLocal().setNullMessage(node.getString("null_message"));
-                        chan.toLocal().setRange(node.getInt("range", 1000));
-                        break;
+                if(chan.getType() == Type.Local) {
+                    ((LocalChannel)chan).setNullMessage(node.getString("null_message"));
+                    ((LocalChannel)chan).setRange(node.getInt("range", 1000));
                 }
             }
 

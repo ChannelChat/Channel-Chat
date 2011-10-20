@@ -3,6 +3,7 @@ main: feildmaster.ChanChat.Chat
 version: 0.4 in-dev
 author: feildmaster
 description: Simple channel chats.
+dev-url: http://dev.bukkit.org/server-mods/channel-chat/
 
 permissions:
   ChanChat.all:
@@ -14,12 +15,8 @@ permissions:
 
   ChanChat.reload:
     description: Player can reload files
-    default: op
-
   ChanChat.admin:
     description: Player can delete any channel
-    default: op
-
   ChanChat.create:
     description: Player can create channels
     default: true
@@ -28,13 +25,13 @@ commands:
   channel-admin:
     description: Admin Channels
     aliases:
-      - ch
       - chan
       - channel
 
   channel-chat:
     description: Base Commands
     aliases:
+      - ch
       - cc
       - chat
 

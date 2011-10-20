@@ -16,12 +16,10 @@ public class AdminCommand extends BaseCommands {
          * - mods?
          */
 
-
         return true;
     }
 
     public void invalidCommand(CommandSender sender, String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

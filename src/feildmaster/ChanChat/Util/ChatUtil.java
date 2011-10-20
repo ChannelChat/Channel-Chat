@@ -1,10 +1,8 @@
 package feildmaster.ChanChat.Util;
 
 import com.massivecraft.factions.Factions;
-import feildmaster.ChanChat.Chan.Channel;
 import feildmaster.ChanChat.Chan.ChannelManager;
 import feildmaster.ChanChat.Chat;
-import feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,21 +47,6 @@ public class ChatUtil {
         return getServer().getPlayer(name);
     }
 
-    public static void chatEvent(Player p, Channel c, String s) {
-        if(p==null||c==null||s==null) return;
-
-        ChannelPlayerChatEvent event = new ChannelPlayerChatEvent(p, c, s);
-        getPluginManager().callEvent(event);
-
-        if(event.isCancelled()) return;
-
-        s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-        //((CraftServer)getServer()).getServer().console.sendMessage(s); // ColorConsoleSender
-        System.out.println(s);
-        for(Player p1 : event.getRecipients())
-            p1.sendMessage(s);
-    }
-
     public static void reload() {
         getChatPlugin().getCC1().reload();
         getChatPlugin().getCC2().reload();
@@ -76,6 +59,7 @@ public class ChatUtil {
         return getServer().getLogger();
     }
 
+    // Convenience Methods
     public static String error(String msg) {
         return ChatColor.RED+msg;
     }

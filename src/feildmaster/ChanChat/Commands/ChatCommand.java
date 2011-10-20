@@ -15,7 +15,7 @@ public class ChatCommand extends BaseCommands {
             return reload(sender);
 
         if (size==1) {
-            if(channelExists(args[0]) && isPlayer(sender) && isMember(getChannel(args[0]), (Player)sender))
+            if(channelExists(args[0]) && isPlayer(sender) && getChannel(args[0]).isMember((Player)sender))
                 setChannel(args[0], (Player)sender);
             else if (channelExists(args[0]) && isPlayer(sender))
                 joinChannel(args[0], (Player)sender);
