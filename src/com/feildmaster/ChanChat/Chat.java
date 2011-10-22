@@ -1,10 +1,10 @@
-package feildmaster.ChanChat;
+package com.feildmaster.ChanChat;
 
-import feildmaster.ChanChat.Chan.Channel;
-import feildmaster.ChanChat.Chan.ChannelManager;
-import feildmaster.ChanChat.Commands.*;
-import feildmaster.ChanChat.Listeners.*;
-import feildmaster.ChanChat.Util.*;
+import com.feildmaster.ChanChat.Chan.Channel;
+import com.feildmaster.ChanChat.Chan.ChannelManager;
+import com.feildmaster.ChanChat.Commands.*;
+import com.feildmaster.ChanChat.Listeners.*;
+import com.feildmaster.ChanChat.Util.*;
 import java.io.File;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;

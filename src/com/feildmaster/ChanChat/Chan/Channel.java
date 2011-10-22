@@ -1,6 +1,6 @@
-package feildmaster.ChanChat.Chan;
+package com.feildmaster.ChanChat.Chan;
 
-import feildmaster.ChanChat.Util.ChatUtil;
+import com.feildmaster.ChanChat.Util.ChatUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

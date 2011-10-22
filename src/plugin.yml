@@ -1,5 +1,5 @@
 name: ChannelChat
-main: feildmaster.ChanChat.Chat
+main: com.feildmaster.ChanChat.Chat
 version: 0.4 in-dev
 author: feildmaster
 description: Simple channel chats.

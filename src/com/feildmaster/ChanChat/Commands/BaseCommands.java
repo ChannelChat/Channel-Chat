@@ -1,8 +1,8 @@
-package feildmaster.ChanChat.Commands;
+package com.feildmaster.ChanChat.Commands;
 
-import feildmaster.ChanChat.Chan.Channel;
-import feildmaster.ChanChat.Chan.ChannelManager;
-import feildmaster.ChanChat.Util.ChatUtil;
+import com.feildmaster.ChanChat.Chan.Channel;
+import com.feildmaster.ChanChat.Chan.ChannelManager;
+import com.feildmaster.ChanChat.Util.ChatUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

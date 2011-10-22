@@ -1,7 +1,7 @@
-package feildmaster.ChanChat.Util;
+package com.feildmaster.ChanChat.Util;
 
-import feildmaster.ChanChat.Chan.*;
-import feildmaster.ChanChat.Chan.Channel.Type;
+import com.feildmaster.ChanChat.Chan.*;
+import com.feildmaster.ChanChat.Chan.Channel.Type;
 import java.util.List;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;

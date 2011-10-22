@@ -1,4 +1,4 @@
-package feildmaster.ChanChat.Util;
+package com.feildmaster.ChanChat.Util;
 
 import java.io.File;
 import org.bukkit.util.config.Configuration;

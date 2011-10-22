@@ -1,8 +1,8 @@
-package feildmaster.ChanChat.Util;
+package com.feildmaster.ChanChat.Util;
 
 import com.massivecraft.factions.Factions;
-import feildmaster.ChanChat.Chan.ChannelManager;
-import feildmaster.ChanChat.Chat;
+import com.feildmaster.ChanChat.Chan.ChannelManager;
+import com.feildmaster.ChanChat.Chat;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

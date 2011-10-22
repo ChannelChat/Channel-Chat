@@ -1,4 +1,4 @@
-package feildmaster.ChanChat.Chan;
+package com.feildmaster.ChanChat.Chan;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

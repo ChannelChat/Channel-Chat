@@ -1,19 +1,16 @@
-package feildmaster.ChanChat.Commands;
+package com.feildmaster.ChanChat.Commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-public class SetCommand extends BaseCommands {
+public class CreateCommand extends BaseCommands {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(!(sender instanceof Player)) return false;
-
-        if(args.length == 0 || args.length > 1 || args[0].equals("?"))
+        if(args.length == 0 || args[0].equals("?"))
             invalidCommand(sender, label);
         else
-            setChannel(args[0], (Player) sender);
+            createChannel(args[0], sender);
 
         return true;
     }
