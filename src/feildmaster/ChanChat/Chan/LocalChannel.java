@@ -39,8 +39,6 @@ public final class LocalChannel extends Channel {
     }
 
     public void setNullMessage(String string) {
-        if(string == null) return;
-
         out_of_range = string;
     }
 
@@ -58,6 +56,7 @@ public final class LocalChannel extends Channel {
         location = event.getPlayer().getLocation();
 
         super.handleEvent(event);
+
         if(event.getRecipients().size() == 1 && getNullMessage() != null) {
             event.getPlayer().sendMessage(getNullMessage());
             event.setCancelled(true);

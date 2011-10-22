@@ -21,6 +21,10 @@ public class Channel {
     private Boolean listed = false;
     private Set<String> members = new HashSet<String>();
 
+    private Boolean readOnly = false;
+    private ChatColor fontColor = ChatColor.WHITE;
+    private String permission = "";
+
     public enum Type {
         Global,
         World,
@@ -35,11 +39,10 @@ public class Channel {
         }
 
         public static Type betterValueOf(String name) {
-            if(name == null) return Type.Global;
-
-            for(Type t : values())
-                if(t.name().equals(name))
-                    return t;
+            if(name != null)
+                for(Type t : values())
+                    if(t.name().equals(name))
+                        return t;
 
             return Type.Global;
         }
@@ -69,13 +72,13 @@ public class Channel {
 
     // Send messages to channel
     public final void sendMessage(String msg) {
-        if(getMembers().isEmpty()) return;
+        if(members.isEmpty()) return;
 
         msg = format(msg);
 
         System.out.print(msg.replaceAll("\u00A7.", ""));
 
-        for(String n : getMembers()) {
+        for(String n : members) {
             Player p = ChatUtil.getPlayer(n);
             if(isMember(p)) // Check "is member" in case of an override
                 p.sendMessage(msg);
@@ -93,7 +96,7 @@ public class Channel {
         return getDisplayName()+(old.equals("<%1$s> %2$s")?" ":"")+old;
     }
     public String getDisplayName() {
-        return tag==null?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-F])", "\u00A7")+ChatColor.WHITE);
+        return tag==null?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-9A-F])", "\u00A7")+ChatColor.WHITE);
     }
 
     public final String getName() {
@@ -126,23 +129,20 @@ public class Channel {
         return owner.equalsIgnoreCase(player.getName());
     }
 
-    // Member Functions
-    private Set<String> getMembers() {
-        return getMembers(null);
-    }
+    // Member Functions - For use with /cc who
     public Set<String> getMembers(Player player) {
-        return members;
+        return new HashSet<String>(members);
     }
     // If member functions
     public Boolean isSenderMember(Player player) {
-        return player.hasPermission("ChannelChat.admin") || isOwner(player) || isMember(player);
+        return player.hasPermission("ChanChat.admin") || isMember(player);
     }
     public Boolean isMember(Player player) {
         if(player == null) return false;
         return isMember(player.getName());
     }
     private Boolean isMember(String player) {
-        return getMembers().contains(player);
+        return members.contains(player);
     }
     // Add members
     public final void addMember(Player player) {
@@ -158,7 +158,7 @@ public class Channel {
     private void addMember(String player) {
         if(player == null) return;
 
-        getMembers().add(player);
+        members.add(player);
     }
     // Remove members
     public final void delMember(Player player) {
@@ -172,7 +172,7 @@ public class Channel {
         delMember(player.getName());
     }
     private void delMember(String player) {
-        getMembers().remove(player);
+        members.remove(player);
     }
 
     // Password Functions
@@ -207,9 +207,10 @@ public class Channel {
             for(Player p : new HashSet<Player>(event.getRecipients()))
                 if(!isMember(p))
                     event.getRecipients().remove(p);
+            // Should be moved into ChatListener on Monitor..
             event.setFormat(format(event.getFormat()));
         } else {
-            event.getPlayer().sendMessage(format("Not a member"));
+            event.getPlayer().sendMessage(format(" Not a member"));
             event.setCancelled(true);
         }
     }

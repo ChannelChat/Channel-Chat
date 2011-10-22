@@ -7,9 +7,7 @@ import org.bukkit.command.CommandSender;
 public class CreateCommand extends BaseCommands {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(!sender.hasPermission("ChanChat.create"))
-            sender.sendMessage("You can not do that");
-        else if(args.length == 0 || args[0].equals("?"))
+        if(args.length == 0 || args[0].equals("?"))
             invalidCommand(sender, label);
         else
             createChannel(args[0], sender);

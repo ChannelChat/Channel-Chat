@@ -1,8 +1,8 @@
-package feildmaster.ChanChat.Listeners;
+package com.feildmaster.ChanChat.Listeners;
 
-import feildmaster.ChanChat.Chan.Channel;
-import feildmaster.ChanChat.Chan.ChannelManager;
-import feildmaster.ChanChat.Util.ChatUtil;
+import com.feildmaster.ChanChat.Chan.Channel;
+import com.feildmaster.ChanChat.Chan.ChannelManager;
+import com.feildmaster.ChanChat.Util.ChatUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;

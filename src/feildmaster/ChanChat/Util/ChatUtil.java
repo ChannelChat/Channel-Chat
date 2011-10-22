@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.config.Configuration;
 
-public class ChatUtil {
+public final class ChatUtil {
     private static final Server server = Bukkit.getServer();
     public static final Logger log = getServer().getLogger();
     private static Chat chatPlugin;

@@ -13,16 +13,15 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
+
+// TODO: Default "set" channel
+// TODO: Option for "leaving/joining" message
+// TODO: Something secret with events... ;) (PlayerLogin/Logout)
 public class Chat extends JavaPlugin {
     private static final ChannelManager cm = new ChannelManager();
-    private static File module_folder;
+    private static File module_folder = new File("plugins/ChannelChat/modules");
     private ChatConfig config;
     private ChanConfig cConfig;
-
-    public Chat() {
-        module_folder = new File(getDataFolder(), "modules");
-    }
-
     public void onDisable() {
         ChatUtil.save();
 
@@ -38,7 +37,7 @@ public class Chat extends JavaPlugin {
         pm.registerEvent(Type.PLAYER_QUIT, loginout, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_KICK, loginout, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_CHAT, new ChatListener(), Priority.Highest, this);
-        pm.registerEvent(Type.PLAYER_CHAT, new PasswordListener(), Priority.Lowest, this);
+        pm.registerEvent(Type.PLAYER_CHAT, new EarlyChatListener(), Priority.Lowest, this);
 
         // Setup configs. :D
         config = new ChatConfig(new File(getDataFolder(), "config.yml"));

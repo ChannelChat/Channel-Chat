@@ -4,12 +4,12 @@ import feildmaster.ChanChat.Chan.Channel.Type;
 import feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
 import feildmaster.ChanChat.Util.ChatUtil;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.entity.Player;
 
+// TODO: Alias
 public final class ChannelManager {
     private Map<Player, String> waitList = new HashMap<Player, String>();
 
@@ -28,19 +28,13 @@ public final class ChannelManager {
     }
 
     // Reserved name settings/functions
-    private static final String[] reserved = { "active", "admin", "all", "create", "delete", "add", "join",
-        "kick", "leave", "list", "reload", "who", "?" };
-
-    public static Boolean isNameReserved(String n) {
-        return Arrays.asList(reserved).contains(n);
-    }
-
     public Boolean isReserved(String n) {
-        return Arrays.asList(reserved).contains(n);
+        return n.matches("(?i)(active|add|admin|all|create|delete|join|leave|list|reload|who|\\?)");
     }
 
     //Channel manager
     private List<Channel> registry = new ArrayList<Channel>();
+    private Map<String, String> aliases = new HashMap<String, String>();
     private Map<String, String> activeChannel = new HashMap<String, String>();
 
     // Message Handlers

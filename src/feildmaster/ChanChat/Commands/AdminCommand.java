@@ -9,9 +9,10 @@ public class AdminCommand extends BaseCommands {
          * - Ban
          * - Unban
          * - password
-         * - adding ability
+         * - kick
+         * - toggle adding ability
          * - tag
-         * - mute (join, no talking)
+         * - mute (can join, no talking)
          * Future:
          * - mods?
          */
