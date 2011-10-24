@@ -2,7 +2,6 @@ package com.feildmaster.ChanChat.Util;
 
 import com.feildmaster.ChanChat.Chat;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -79,7 +78,7 @@ public class ModuleConfiguration extends YamlConfiguration {
     public final void closeDefaults() {
         try {
             stream.close();
-        } catch (IOException ex) {}
+        } catch (Exception ex) {}
         stream = null;
     }
 }
