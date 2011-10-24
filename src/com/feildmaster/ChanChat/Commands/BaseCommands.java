@@ -154,7 +154,6 @@ public abstract class BaseCommands implements ChatInterface {
     }
 
     // "add" commands
-    // TODO: way to deny adding
     protected void addPlayer(Player player, String i) {
         Player added = ChatUtil.getPlayer(i);
         if(added == null) {

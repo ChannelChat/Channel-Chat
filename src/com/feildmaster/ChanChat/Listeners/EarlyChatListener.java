@@ -27,8 +27,24 @@ public class EarlyChatListener extends PlayerListener {
                 player.sendMessage(ChatColor.GRAY+"Password incorrect, try again. (cancel to stop)");
             event.setCancelled(true);
         } else if (msg.startsWith("#")) {
-            String chan = msg.substring(1, msg.indexOf(' '));
-            cm.sendMessage(player, chan, msg.substring(msg.indexOf(' ')+1));
+            msg = msg.substring(1);
+
+            String[] args = msg.split(" ");
+
+            if(args.length > 1 && cm.channelExists(args[0])) {
+                StringBuilder msg1 = new StringBuilder();
+                for(int x = 1; x<args.length; x++)
+                    msg1.append(msg1.length() == 0?"":" ").append(args[x]);
+                if(msg1.length() > 0)
+                    cm.sendMessage(player, args[0], msg1.toString());
+            } else if (args.length == 1 && cm.channelExists(args[0]))
+                player.sendMessage(ChatColor.YELLOW+"Please include a message");
+            else if (args.length == 1 && !cm.channelExists(args[0]))
+                player.sendMessage(ChatColor.RED+"Channel not found");
+            else
+                player.sendMessage(ChatColor.RED+"Pleasy specify a channel.");
+
+            event.setCancelled(true);
         }
     }
 }

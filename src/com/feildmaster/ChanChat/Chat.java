@@ -13,9 +13,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
-
+// TODO: ModuleConfig for easier Module setup!
 // TODO: Default "set" channel
-// TODO: Option for "leaving/joining" message
 // TODO: Something secret with events... ;) (PlayerLogin/Logout)
 public class Chat extends JavaPlugin {
     private static final ChannelManager cm = new ChannelManager();

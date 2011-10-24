@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 public class Channel {
     private final String name;
     private final Type type;
+    private String alias = null;
     private String tag = null;
     private String owner = null;
     private String pass = null;
@@ -104,6 +105,19 @@ public class Channel {
     }
     public final Type getType() {
         return type;
+    }
+
+    public final String getAlias() {
+        return alias;
+    }
+    public final boolean setAlias(String s) {
+        if(alias == s) return true;
+        
+        if(s != null && ChatUtil.getCM().getChannel(s) != null) return false;
+
+        alias = s;
+
+        return true;
     }
 
     // Tag functions

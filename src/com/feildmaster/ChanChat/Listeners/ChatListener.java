@@ -18,6 +18,7 @@ public class ChatListener extends PlayerListener {
 
     public void onPlayerChat(PlayerChatEvent event) {
         if(event.isCancelled()) return;
+
         Player player = event.getPlayer();
 
         if(ChatUtil.getFactionPlugin() != null && ChatUtil.getFactionPlugin().isPlayerFactionChatting(player)) return;

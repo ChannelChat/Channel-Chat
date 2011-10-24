@@ -66,14 +66,14 @@ public final class ChannelManager {
 
     // Channel Functions
     /**
-     * @param name of Channel to return
+     * @param name Name or Alias of Channel to return
      * @return Channel if exists, else NULL
      */
     public Channel getChannel(String name) {
         if(name == null) return null;
 
         for(Channel chan : getChannels())
-            if(chan.getName().equalsIgnoreCase(name))
+            if(chan.getName().equalsIgnoreCase(name) || (chan.getAlias() != null && chan.getAlias().equalsIgnoreCase(name)))
                 return chan;
 
         return null;
@@ -97,9 +97,8 @@ public final class ChannelManager {
      * @param chan The channel to add
      */
     public void addChannel(Channel chan) {
-        if(channelExists(chan.getName())) {
-            return;
-        }
+        // TODO: Message? No. Not with the current system
+        if(channelExists(chan.getName())) return;
 
         registry.add(chan);
     }
@@ -227,5 +226,8 @@ public final class ChannelManager {
             if(chan.isSaved())
                 list.add(chan);
         return list;
+    }
+
+    public void setAlias(Channel chan, String alias) {
     }
 }
