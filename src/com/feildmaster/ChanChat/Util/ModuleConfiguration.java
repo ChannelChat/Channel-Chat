@@ -1,6 +1,6 @@
-package com.feildmaster.ChanChat.Util;
+package com.feildmaster.chanchat.Util;
 
-import com.feildmaster.ChanChat.Chat;
+import com.feildmaster.chanchat.Chat;
 import java.io.File;
 import java.io.InputStream;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -53,6 +53,25 @@ public class ModuleConfiguration extends YamlConfiguration {
     }
 
     /**
+     * Saves current configuration (plus defaults) to disk.
+     *
+     * If defaults and configuration are empty, saves blank file.
+     *
+     * @return True if saved successfully
+     */
+    public final boolean saveDefaults() {
+        try {
+            options().copyDefaults(true);
+            save(file);
+        } catch (Exception ex) {
+            return false;
+        } finally {
+            options().copyDefaults(false);
+            return true;
+        }
+    }
+
+    /**
      * Saves the configuration to disk
      *
      * @return True if saved successfully
@@ -66,16 +85,35 @@ public class ModuleConfiguration extends YamlConfiguration {
         }
     }
 
+    /**
+     * Simple function for if the Module file exists
+     *
+     * @return True if configuration exists on disk
+     */
+    public final boolean exists() {
+        return file.exists();
+    }
+
+    /**
+     * Loads a file from the plugin jar and sets as default
+     *
+     * @param filename The filename to open
+     */
     public final void loadDefaults(String filename) {
+        if(stream != null) closeStream(); // Close before loading new defaults
+
         stream = plugin.getResource(filename);
+
         if(stream != null)
             setDefaults(YamlConfiguration.loadConfiguration(stream));
     }
 
     /**
      * Call this function when disabling your plugin to prevent errors!!!
+     *
+     * This action "might" not be necissary, in this particular case, will test later.
      */
-    public final void closeDefaults() {
+    public final void closeStream() {
         try {
             stream.close();
         } catch (Exception ex) {}
