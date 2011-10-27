@@ -110,7 +110,7 @@ public final class ChannelManager {
         // TODO: Channels Disposable, Does it effect usage?
         if(channelExists(name)) {
             Channel chan = getChannel(name);
-            sendMessage(chan, " Has been deleted");
+            sendMessage(chan, " Channel has been deleted");
             registry.remove(chan);
             checkActive();
         }

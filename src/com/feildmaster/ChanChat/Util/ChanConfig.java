@@ -93,6 +93,7 @@ public class ChanConfig {
                 chan.setPass(node.getString("password"));
                 chan.setListed(node.getBoolean("listed", false));
                 chan.setAuto(node.getBoolean("auto_join", false));
+                chan.setAlias(node.getString("alias"));
 
                 // Type specific information
                 if(chan.getType() == Type.Local) {
