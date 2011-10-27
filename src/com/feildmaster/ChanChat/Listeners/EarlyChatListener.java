@@ -36,7 +36,7 @@ public class EarlyChatListener extends PlayerListener {
                 StringBuilder msg1 = new StringBuilder();
                 for(int x = 1; x<args.length; x++)
                     msg1.append(msg1.length() == 0?"":" ").append(args[x]);
-                if(msg1.length() > 0 && cm.getChannel(msg).isMember(player))
+                if(msg1.length() > 0 && cm.getChannel(args[0]).isMember(player))
                     cm.sendMessage(player, args[0], msg1.toString());
                 else
                     player.sendMessage("Not member of channel");
