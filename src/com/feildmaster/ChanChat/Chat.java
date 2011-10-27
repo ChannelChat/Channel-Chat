@@ -1,10 +1,10 @@
-package com.feildmaster.ChanChat;
+package com.feildmaster.chanchat;
 
-import com.feildmaster.ChanChat.Chan.Channel;
-import com.feildmaster.ChanChat.Chan.ChannelManager;
-import com.feildmaster.ChanChat.Commands.*;
-import com.feildmaster.ChanChat.Listeners.*;
-import com.feildmaster.ChanChat.Util.*;
+import com.feildmaster.chanchat.Chan.Channel;
+import com.feildmaster.chanchat.Chan.ChannelManager;
+import com.feildmaster.chanchat.Commands.*;
+import com.feildmaster.chanchat.Listeners.*;
+import com.feildmaster.chanchat.Util.*;
 import java.io.File;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
@@ -30,7 +30,7 @@ public class Chat extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
 
         // Events
-        logInOut loginout = new logInOut();
+        LogInOut loginout = new LogInOut();
         pm.registerEvent(Type.PLAYER_JOIN, loginout, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_QUIT, loginout, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_KICK, loginout, Priority.Monitor, this);

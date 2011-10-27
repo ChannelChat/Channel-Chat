@@ -1,8 +1,8 @@
-package com.feildmaster.ChanChat.Util;
+package com.feildmaster.chanchat.Util;
 
 import com.massivecraft.factions.Factions;
-import com.feildmaster.ChanChat.Chan.ChannelManager;
-import com.feildmaster.ChanChat.Chat;
+import com.feildmaster.chanchat.Chan.ChannelManager;
+import com.feildmaster.chanchat.Chat;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,7 +49,7 @@ public final class ChatUtil {
 
     public static void reload() {
         getChatPlugin().getCC1().reload();
-        getChatPlugin().getCC2().reload();
+        getChatPlugin().getCC2().reload(true);
     }
     public static void save() {
         getChatPlugin().getCC1().save();

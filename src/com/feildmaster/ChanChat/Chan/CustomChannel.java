@@ -1,4 +1,4 @@
-package com.feildmaster.ChanChat.Chan;
+package com.feildmaster.chanchat.Chan;
 
 public class CustomChannel extends Channel{
     public CustomChannel(String name) {

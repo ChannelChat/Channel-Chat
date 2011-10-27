@@ -1,6 +1,6 @@
-package com.feildmaster.ChanChat.Events;
+package com.feildmaster.chanchat.Events;
 
-import com.feildmaster.ChanChat.Chan.Channel;
+import com.feildmaster.chanchat.Chan.Channel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 

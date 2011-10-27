@@ -1,9 +1,9 @@
-package com.feildmaster.ChanChat.Listeners;
+package com.feildmaster.chanchat.Listeners;
 
-import com.feildmaster.ChanChat.Chan.Channel;
-import com.feildmaster.ChanChat.Chan.ChannelManager;
-import com.feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
-import com.feildmaster.ChanChat.Util.ChatUtil;
+import com.feildmaster.chanchat.Chan.Channel;
+import com.feildmaster.chanchat.Chan.ChannelManager;
+import com.feildmaster.chanchat.Events.ChannelPlayerChatEvent;
+import com.feildmaster.chanchat.Util.ChatUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
@@ -37,6 +37,9 @@ public class ChatListener extends PlayerListener {
             event.setCancelled(true);
             return;
         }
+
+        // !!! I want to format outside of the handleEvent...
+        event.setMessage(chan.getChatColor()+event.getMessage());
 
         chan.handleEvent(event);
     }

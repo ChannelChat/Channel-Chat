@@ -1,10 +1,10 @@
-package com.feildmaster.ChanChat.Listeners;
+package com.feildmaster.chanchat.Listeners;
 
-import com.feildmaster.ChanChat.Chan.ChannelManager;
-import com.feildmaster.ChanChat.Util.ChatUtil;
+import com.feildmaster.chanchat.Chan.ChannelManager;
+import com.feildmaster.chanchat.Util.ChatUtil;
 import org.bukkit.event.player.PlayerListener;
 
 public class MonitorPlayerListener extends PlayerListener {
     ChannelManager cm = ChatUtil.getCM();
-    
+
 }

@@ -1,15 +1,14 @@
-package com.feildmaster.ChanChat.Chan;
+package com.feildmaster.chanchat.Chan;
 
-import com.feildmaster.ChanChat.Chan.Channel.Type;
-import com.feildmaster.ChanChat.Events.ChannelPlayerChatEvent;
-import com.feildmaster.ChanChat.Util.ChatUtil;
+import com.feildmaster.chanchat.Chan.Channel.Type;
+import com.feildmaster.chanchat.Events.ChannelPlayerChatEvent;
+import com.feildmaster.chanchat.Util.ChatUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.entity.Player;
 
-// TODO: Alias
 public final class ChannelManager {
     private Map<Player, String> waitList = new HashMap<Player, String>();
 
@@ -34,8 +33,8 @@ public final class ChannelManager {
 
     //Channel manager
     private List<Channel> registry = new ArrayList<Channel>();
-    private Map<String, String> aliases = new HashMap<String, String>();
     private Map<String, String> activeChannel = new HashMap<String, String>();
+    private int ownerLimit = -1;
 
     // Message Handlers
     public void sendMessage(String channel, String msg) {sendMessage(getChannel(channel), msg);}
@@ -86,8 +85,8 @@ public final class ChannelManager {
         if(name == null) return false;
 
         for(Channel chan : getChannels())
-        if(chan.getName().equalsIgnoreCase(name))
-            return true;
+            if(chan.getName().equalsIgnoreCase(name) || (chan.getAlias() != null && chan.getAlias().equalsIgnoreCase(name)))
+                return true;
 
         return false;
     }
@@ -108,9 +107,11 @@ public final class ChannelManager {
      * @param name Name of channel to remove
      */
     public void delChannel(String name) {
+        // TODO: Channels Disposable, Does it effect usage?
         if(channelExists(name)) {
-            sendMessage(getChannel(name), "Has been deleted");
-            registry.remove(getChannel(name));
+            Channel chan = getChannel(name);
+            sendMessage(chan, " Has been deleted");
+            registry.remove(chan);
             checkActive();
         }
     }
@@ -226,8 +227,5 @@ public final class ChannelManager {
             if(chan.isSaved())
                 list.add(chan);
         return list;
-    }
-
-    public void setAlias(Channel chan, String alias) {
     }
 }

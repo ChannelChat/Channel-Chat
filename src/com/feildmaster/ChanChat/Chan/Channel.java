@@ -1,6 +1,6 @@
-package com.feildmaster.ChanChat.Chan;
+package com.feildmaster.chanchat.Chan;
 
-import com.feildmaster.ChanChat.Util.ChatUtil;
+import com.feildmaster.chanchat.Util.ChatUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,9 +22,9 @@ public class Channel {
     private Boolean listed = false;
     private Set<String> members = new HashSet<String>();
 
-    private Boolean readOnly = false;
+    private Boolean readOnly = false; // How should this be implimented
     private ChatColor fontColor = ChatColor.WHITE;
-    private String permission = "";
+    private String permission = ""; // !!! This isn't (easily) possible? Maybe... "if Set"
 
     public enum Type {
         Global,
@@ -112,7 +112,7 @@ public class Channel {
     }
     public final boolean setAlias(String s) {
         if(alias == s) return true;
-        
+
         if(s != null && ChatUtil.getCM().getChannel(s) != null) return false;
 
         alias = s;
@@ -149,7 +149,7 @@ public class Channel {
     }
     // If member functions
     public Boolean isSenderMember(Player player) {
-        return player.hasPermission("ChanChat.admin") || isMember(player);
+        return /*player.hasPermission("ChanChat.admin") ||*/ isMember(player);
     }
     public Boolean isMember(Player player) {
         if(player == null) return false;
@@ -221,7 +221,6 @@ public class Channel {
             for(Player p : new HashSet<Player>(event.getRecipients()))
                 if(!isMember(p))
                     event.getRecipients().remove(p);
-            // Should be moved into ChatListener on Monitor..
             event.setFormat(format(event.getFormat()));
         } else {
             event.getPlayer().sendMessage(format(" Not a member"));
@@ -231,9 +230,17 @@ public class Channel {
 
     // Custom Channel Methods
     public void callSave() {}
+    public void callReload() {}
 
     // Lovely Booleans
     public final Boolean isSaved() {
         return !type.equals(Type.Private) && !type.equals(Type.Custom);
+    }
+
+    public final void setChatColor(ChatColor color) {
+        fontColor = color;
+    }
+    public final ChatColor getChatColor() {
+        return fontColor;
     }
 }

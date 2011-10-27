@@ -1,4 +1,4 @@
-package com.feildmaster.ChanChat.Commands;
+package com.feildmaster.chanchat.Commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

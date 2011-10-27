@@ -1,7 +1,8 @@
-package com.feildmaster.ChanChat.Util;
+package com.feildmaster.chanchat.Util;
 
-import com.feildmaster.ChanChat.Chan.*;
-import com.feildmaster.ChanChat.Chan.Channel.Type;
+import com.feildmaster.chanchat.Chan.*;
+import com.feildmaster.chanchat.Chan.Channel.Type;
+import com.feildmaster.chanchat.Chat;
 import java.util.List;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
@@ -15,7 +16,7 @@ public class ChanConfig {
         if(config.getAll().isEmpty() && config.getHeader() == null)
             createDefault();
         setHeader();
-        loadChannels();
+        reload(false);
     }
 
     private void createDefault() {
@@ -23,13 +24,16 @@ public class ChanConfig {
         config.setProperty("General.auto_join", true);
         config.setProperty("General.tag", "[G]");
         config.setProperty("General.listed", true);
+        config.setProperty("General.alias", "g");
 
         config.setProperty("Local.type", "Local");
         config.setProperty("Local.tag", "[L]");
+        config.setProperty("Local.alias", "l");
         config.setProperty("Local.range", 1000);
 
         config.setProperty("World.type", "World");
         config.setProperty("World.tag", "[{World}]");
+        config.setProperty("World.alias", "w");
 
         config.save();
     }
@@ -46,6 +50,8 @@ public class ChanConfig {
                 config.setProperty(chan.getName()+".password", chan.getPass());
                 config.setProperty(chan.getName()+".listed", chan.isListed());
                 config.setProperty(chan.getName()+".auto_join", chan.isAuto());
+                config.setProperty(chan.getName()+".alias", chan.getAlias());
+                // !!! Font Color
 
                 // Channel Type Data
                 if(chan.getType().equals(Channel.Type.Local)) {
@@ -58,7 +64,7 @@ public class ChanConfig {
         config.save();
     }
 
-    public void reload() {
+    public final void reload(boolean bool) {
         config.load();
         List<String> keys = config.getKeys();
         // Erase non-existing channels!
@@ -71,19 +77,15 @@ public class ChanConfig {
 
             ConfigurationNode node = config.getNode(name);
 
-            if(ChatUtil.getCM().channelExists(name)) { // TODO: Fix Channel type thing...
+            if(ChatUtil.getCM().channelExists(name)) {
                 chan = ChatUtil.getCM().getChannel(name);
                 if(node != null) {
                     Channel.Type type = Channel.Type.betterValueOf(node.getString("type"));
                     if(!chan.getType().equals(type))
                         chan = ChatUtil.getCM().convertChannel(chan, type);
                 }
-            } else {
-                if(node != null)
-                    chan = ChatUtil.getCM().createChannel(name, Channel.Type.betterValueOf(node.getString("type")));
-                else
-                    chan = ChatUtil.getCM().createChannel(name, Channel.Type.Global);
-            }
+            } else
+                chan = ChatUtil.getCM().createChannel(name, node == null ? Channel.Type.Global : Channel.Type.betterValueOf(node.getString("type")));
 
             if(node != null) {
                 chan.setTag(node.getString("tag"));
@@ -101,6 +103,11 @@ public class ChanConfig {
 
             ChatUtil.getCM().addChannel(chan);
         }
+
+        if(bool)
+            for(Channel chan : Chat.getChannelManager().getChannels())
+                if(chan.getType().equals(Type.Custom))
+                    chan.callReload();
     }
 
     private void setHeader() {
@@ -114,8 +121,5 @@ public class ChanConfig {
             "#    type: #Global/Local/World",
             "#    password: #Channel Password",
             "#    shortcut: #Not yet. ;)");
-    }
-    private void loadChannels() { // For now, I keep this function
-        reload();
     }
 }

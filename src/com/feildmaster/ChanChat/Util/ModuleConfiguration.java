@@ -3,6 +3,9 @@ package com.feildmaster.chanchat.Util;
 import com.feildmaster.chanchat.Chat;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -100,23 +103,21 @@ public class ModuleConfiguration extends YamlConfiguration {
      * @param filename The filename to open
      */
     public final void loadDefaults(String filename) {
-        if(stream != null) closeStream(); // Close before loading new defaults
-
-        stream = plugin.getResource(filename);
+        try {
+            URL url = plugin.getClass().getClassLoader().getResource(filename);
+            URLConnection con = url.openConnection();
+            con.setUseCaches(false);
+            stream = con.getInputStream();
+        } catch (Exception ex) {
+            stream = null;
+            // Maybe add a logger message.
+        }
 
         if(stream != null)
             setDefaults(YamlConfiguration.loadConfiguration(stream));
     }
 
-    /**
-     * Call this function when disabling your plugin to prevent errors!!!
-     *
-     * This action "might" not be necissary, in this particular case, will test later.
-     */
-    public final void closeStream() {
-        try {
-            stream.close();
-        } catch (Exception ex) {}
-        stream = null;
+    public final ChatColor getChatColor(String path) {
+        return ChatColor.WHITE;
     }
 }
