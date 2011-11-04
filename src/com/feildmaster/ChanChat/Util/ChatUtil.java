@@ -1,6 +1,5 @@
 package com.feildmaster.chanchat.Util;
 
-import com.massivecraft.factions.Factions;
 import com.feildmaster.chanchat.Chan.ChannelManager;
 import com.feildmaster.chanchat.Chat;
 import java.util.logging.Logger;
@@ -16,7 +15,6 @@ public final class ChatUtil {
     private static final Server server = Bukkit.getServer();
     public static final Logger log = getServer().getLogger();
     private static Chat chatPlugin;
-    private static Factions factionPlugin;
     private static PluginManager pm;
 
     public static Server getServer() {
@@ -29,12 +27,8 @@ public final class ChatUtil {
     public static Chat getChatPlugin() {
         if(chatPlugin == null) {
             chatPlugin = (Chat)getPluginManager().getPlugin("ChannelChat");
-            factionPlugin = (Factions)getPluginManager().getPlugin("Factions");
         }
         return chatPlugin;
-    }
-    public static Factions getFactionPlugin() {
-        return factionPlugin;
     }
     public static ChannelManager getCM() {
         return getChatPlugin().getCM();

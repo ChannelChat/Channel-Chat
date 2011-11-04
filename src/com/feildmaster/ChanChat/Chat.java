@@ -6,6 +6,7 @@ import com.feildmaster.chanchat.Commands.*;
 import com.feildmaster.chanchat.Listeners.*;
 import com.feildmaster.chanchat.Util.*;
 import java.io.File;
+import org.blockface.stats.CallHome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -14,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 // TODO: Default "set" channel
-// TODO: Something secret with events... ;) (PlayerLogin/Logout)
 public class Chat extends JavaPlugin {
     private static final ChannelManager cm = new ChannelManager();
     private static File module_folder = new File("plugins/ChannelChat/modules");
@@ -27,6 +27,7 @@ public class Chat extends JavaPlugin {
     }
 
     public void onEnable() {
+        CallHome.load(this);
         PluginManager pm = getServer().getPluginManager();
 
         // Events

@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
 public final class WorldChannel extends Channel {
-    private World world = null;
+    private World world;
 
     protected WorldChannel(String name) {
         super(name, Type.World);

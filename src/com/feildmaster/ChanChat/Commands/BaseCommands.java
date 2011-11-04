@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 // TODO: admin commands
 // TODO: clean this more
-public abstract class BaseCommands implements ChatInterface {
+public abstract class BaseCommands implements ChatExecutor {
     private final ChannelManager cm = ChatUtil.getCM();
 
     // "list" commands
@@ -83,7 +83,7 @@ public abstract class BaseCommands implements ChatInterface {
             chan.addMember(player);
 
             if(cm.getActiveName(player) == null)
-                cm.setActiveChan(player, chan.getName());
+                cm.setActiveChannel(player, chan);
 
             cm.addChannel(chan);
         } else
@@ -94,7 +94,7 @@ public abstract class BaseCommands implements ChatInterface {
 
     // "delete" commands
     protected void deleteActiveChannel(Player player) {
-        deleteChannel(cm.getActiveName(player), player);
+        deleteChannel(cm.getActiveChannel(player), player);
     }
     protected void deleteChannel(String name, CommandSender sender) {
         if(cm.channelExists(name)) {
@@ -108,6 +108,17 @@ public abstract class BaseCommands implements ChatInterface {
                 cm.delChannel(name);
         } else
             sender.sendMessage("The channel doesn't exists!");
+    }
+    protected void deleteChannel(Channel channel, CommandSender sender) {
+        if(cm.channelExists(channel)) {
+            if(sender instanceof Player) {
+                if (channel.isOwner((Player)sender) || sender.hasPermission("ChanChat.admin"))
+                    cm.delChannel(channel);
+                else
+                    sender.sendMessage("You can't do that.");
+            } else
+                cm.delChannel(channel);
+        }
     }
 
     // "join" commands
@@ -137,7 +148,7 @@ public abstract class BaseCommands implements ChatInterface {
             player.sendMessage(error("Channel \""+name+"\" doesn't exist."));
     }
     protected void leaveActiveChannel(Player player) {
-        Channel chan = cm.getActiveChan(player);
+        Channel chan = cm.getActiveChannel(player);
         if(chan != null) {
             leaveChannel(player, chan);
         } else
@@ -161,7 +172,7 @@ public abstract class BaseCommands implements ChatInterface {
             return;
         }
 
-        Channel chan = cm.getActiveChan(player);
+        Channel chan = cm.getActiveChannel(player);
 
         if(chan == null)
             player.sendMessage(error("Active channel not set, or you have not joined a channel."));
@@ -180,7 +191,7 @@ public abstract class BaseCommands implements ChatInterface {
         if(cm.channelExists(name)) {
             Channel chan = cm.getChannel(name);
             if(chan.isMember(player)) {
-                cm.setActiveByChan(player, chan);
+                cm.setActiveChannel(player, chan);
                 player.sendMessage(info("Now talking in \""+chan.getName()+".\""));
             } else
                 player.sendMessage(info("You are not in \""+chan.getName()+".\""));

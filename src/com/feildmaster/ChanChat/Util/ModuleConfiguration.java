@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -66,11 +69,11 @@ public class ModuleConfiguration extends YamlConfiguration {
         try {
             options().copyDefaults(true);
             save(file);
-        } catch (Exception ex) {
-            return false;
-        } finally {
             options().copyDefaults(false);
             return true;
+        } catch (Exception ex) {
+            options().copyDefaults(false);
+            return false;
         }
     }
 
@@ -110,14 +113,33 @@ public class ModuleConfiguration extends YamlConfiguration {
             stream = con.getInputStream();
         } catch (Exception ex) {
             stream = null;
-            // Maybe add a logger message.
         }
 
         if(stream != null)
             setDefaults(YamlConfiguration.loadConfiguration(stream));
     }
 
+    /**
+     * Sets the defaults to an empty MemoryConfiguration
+     */
+    public final void clearDefaults() {
+        setDefaults(new MemoryConfiguration());
+    }
+
+    // !!! Might not use this
     public final ChatColor getChatColor(String path) {
         return ChatColor.WHITE;
+    }
+
+    public Map<String, Object> getMap(String path) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        Object o = get(path);
+        if(o instanceof Map) {
+            for(Map.Entry<Object, Object> entry : ((Map<Object, Object>)o).entrySet())
+                map.put(entry.getKey().toString(), entry.getValue());
+        }
+
+        return map;
     }
 }

@@ -33,8 +33,7 @@ public final class ChannelManager {
 
     //Channel manager
     private List<Channel> registry = new ArrayList<Channel>();
-    private Map<String, String> activeChannel = new HashMap<String, String>();
-    private int ownerLimit = -1;
+    private Map<String, Channel> activeChannel = new HashMap<String, Channel>();
 
     // Message Handlers
     public void sendMessage(String channel, String msg) {sendMessage(getChannel(channel), msg);}
@@ -43,7 +42,7 @@ public final class ChannelManager {
 
         channel.sendMessage(msg);
     }
-    public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChan(sender), msg);}
+    public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChannel(sender), msg);}
     public void sendMessage(Player sender, String channel, String msg) {sendMessage(sender, getChannel(channel), msg);}
     public void sendMessage (Player sender, Channel channel, String msg) {
         if(channel == null || sender == null || msg == null) {
@@ -71,7 +70,7 @@ public final class ChannelManager {
     public Channel getChannel(String name) {
         if(name == null) return null;
 
-        for(Channel chan : getChannels())
+        for(Channel chan : registry)
             if(chan.getName().equalsIgnoreCase(name) || (chan.getAlias() != null && chan.getAlias().equalsIgnoreCase(name)))
                 return chan;
 
@@ -84,22 +83,24 @@ public final class ChannelManager {
     public Boolean channelExists(String name) {
         if(name == null) return false;
 
-        for(Channel chan : getChannels())
+        for(Channel chan : registry)
             if(chan.getName().equalsIgnoreCase(name) || (chan.getAlias() != null && chan.getAlias().equalsIgnoreCase(name)))
                 return true;
 
         return false;
     }
+    public boolean channelExists(Channel channel) {
+        return registry.contains(channel);
+    }
     /**
      * Add a channel to the registry
      *
-     * @param chan The channel to add
+     * @param channel The channel to add
      */
-    public void addChannel(Channel chan) {
-        // TODO: Message? No. Not with the current system
-        if(channelExists(chan.getName())) return;
+    public boolean addChannel(Channel channel) {
+        if(channel == null || registry.contains(channel)) return false;
 
-        registry.add(chan);
+        return registry.add(channel);
     }
     /**
      * Remove channel from registry
@@ -107,11 +108,15 @@ public final class ChannelManager {
      * @param name Name of channel to remove
      */
     public void delChannel(String name) {
-        // TODO: Channels Disposable, Does it effect usage?
-        if(channelExists(name)) {
-            Channel chan = getChannel(name);
-            sendMessage(chan, " Channel has been deleted");
-            registry.remove(chan);
+        delChannel(getChannel(name));
+    }
+
+    public void delChannel(Channel channel) {
+        if(channel == null) return;
+        if(channel instanceof CustomChannel) return;
+        if(registry.contains(channel)) {
+            registry.remove(channel);
+            channel.sendMessage(" Channel has been deleted");
             checkActive();
         }
     }
@@ -134,23 +139,23 @@ public final class ChannelManager {
     /**
      * Usage of this funciton should be limited
      */
-    public Channel convertChannel(Channel chan, Type type) {
-        if(chan.getType().equals(type) || chan.getType().equals(Type.Custom) || type.equals(Type.Custom))
-            return chan;
+    public Channel convertChannel(Channel channel, Type type) {
+        if(channel.getType().equals(type) || channel.getType().equals(Type.Custom) || type.equals(Type.Custom))
+            return channel;
 
         Channel chan1;
 
         if(type == Type.Local)
-            chan1 = new LocalChannel(chan);
+            chan1 = new LocalChannel(channel);
         else if (type == Type.World)
-            chan1 = new WorldChannel(chan);
+            chan1 = new WorldChannel(channel);
         else if (type == Type.Private)
-            chan1 = new Channel(chan, Type.Private);
+            chan1 = new Channel(channel, Type.Private);
         else
-            chan1 = new Channel(chan, Type.Global);
+            chan1 = new Channel(channel, Type.Global);
 
-        if(registry.contains(chan)) {
-            registry.remove(chan);
+        if(registry.contains(channel)) {
+            registry.remove(channel);
             registry.add(chan1);
         }
 
@@ -159,21 +164,18 @@ public final class ChannelManager {
 
     // Active Channel Functions
     public String getActiveName(Player player) {
+        return getActiveChannel(player).getName();
+    }
+    public Channel getActiveChannel(Player player) {
         return activeChannel.get(player.getName());
     }
-    public Channel getActiveChan(Player player) {
-        return getChannel(getActiveName(player));
-    }
-    public void setActiveChan(Player player, String channel) {
+    public void setActiveChannel(Player player, Channel channel) {
         if (channel != null) {
-            if(channelExists(channel) && getChannel(channel).isMember(player))
+            if(channelExists(channel) && channel.isMember(player))
                 activeChannel.put(player.getName(), channel);
         } else {
             activeChannel.remove(player.getName());
         }
-    }
-    public void setActiveByChan(Player player, Channel chan) {
-        setActiveChan(player, chan.getName());
     }
     public void checkActive() {
         if(!activeChannel.isEmpty()) // Keyset errors on empty maps
@@ -183,47 +185,49 @@ public final class ChannelManager {
     public void checkActive(Player player) {
         if(player == null) return;
 
-        String channel = getActiveName(player);
+        Channel chan = getActiveChannel(player);
+
+        if(!registry.contains(chan)) {
+            setActiveChannel(player, null);
+            chan = null;
+        }
 
         List<Channel> joinedChannels = getJoinedChannels(player);
 
         // All is well with the world. :o
-        if((channel == null && joinedChannels.isEmpty()) ||
-                (channelExists(channel) && getChannel(channel).isMember(player))) return;
+        if((chan == null && joinedChannels.isEmpty()) ||
+                (channelExists(chan) && chan.isMember(player))) return;
 
-        if (channel != null && joinedChannels.isEmpty()) {
-            setActiveChan(player, null);
-        } else if (channel == null && !joinedChannels.isEmpty()) {
-            setActiveChan(player, joinedChannels.get(0).getName());
-        } else if (channel != null && channelExists(channel) && !getChannel(channel).isMember(player)) {
-            String nChan = joinedChannels.get(0).getName();
-            setActiveChan(player, nChan);
-            player.sendMessage(ChatUtil.info("You are now in channel \""+nChan+".\""));
+        if (chan != null && joinedChannels.isEmpty()) {
+            setActiveChannel(player, null);
+        } else if (chan == null && !joinedChannels.isEmpty()) {
+            setActiveChannel(player, joinedChannels.get(0));
+        } else if (chan != null && channelExists(chan) && !chan.isMember(player)) {
+            setActiveChannel(player, joinedChannels.get(0));
+            player.sendMessage(ChatUtil.info("You are now in channel \""+joinedChannels.get(0).getName()+".\""));
         }
     }
 
-    // Player Functions
     public List<Channel> getJoinedChannels(Player player) {
         List<Channel> list = new ArrayList<Channel>();
-        for (Channel chan : getChannels())
+        for (Channel chan : registry)
             if(chan.isMember(player))
                 list.add(chan);
         return list;
     }
-
     public List<Channel> getChannels() {
         return new ArrayList<Channel>(registry);
     }
     public List<Channel> getAutoChannels() {
         List<Channel> list = new ArrayList<Channel>();
-        for(Channel chan : getChannels())
+        for(Channel chan : registry)
             if(chan.isAuto())
                 list.add(chan);
         return list;
     }
     public List<Channel> getSavedChannels() {
         List<Channel> list = new ArrayList<Channel>();
-        for(Channel chan : getChannels())
+        for(Channel chan : registry)
             if(chan.isSaved())
                 list.add(chan);
         return list;

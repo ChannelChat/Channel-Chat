@@ -21,8 +21,6 @@ public class ChatListener extends PlayerListener {
 
         Player player = event.getPlayer();
 
-        if(ChatUtil.getFactionPlugin() != null && ChatUtil.getFactionPlugin().isPlayerFactionChatting(player)) return;
-
         if(cm.getJoinedChannels(player).isEmpty()) {
             player.sendMessage(ChatUtil.info("You are not in any channels."));
             event.setCancelled(true);
@@ -30,16 +28,18 @@ public class ChatListener extends PlayerListener {
         }
 
         cm.checkActive(player);
-        Channel chan = event instanceof ChannelPlayerChatEvent ? ((ChannelPlayerChatEvent)event).getChannel() : cm.getActiveChan(player);
+        Channel chan = event instanceof ChannelPlayerChatEvent ? ((ChannelPlayerChatEvent)event).getChannel() : cm.getActiveChannel(player);
 
         if(chan == null) {
             ChatUtil.log().info("[ChannelChat] Error Occured That Shouldn't Happen (chatListener.java)");
+            player.sendMessage("[ChannelChat] Error Occured That Shouldn't Happen");
             event.setCancelled(true);
             return;
         }
 
         // !!! I want to format outside of the handleEvent...
-        event.setMessage(chan.getChatColor()+event.getMessage());
+        // This wasn't supposed to be released! It breaks peoples formats!!
+        //event.setMessage(chan.getChatColor()+event.getMessage());
 
         chan.handleEvent(event);
     }
