@@ -2,16 +2,19 @@ package com.feildmaster.chanchat.Chan;
 
 import com.feildmaster.chanchat.Util.ChatUtil;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
 // TODO: AutoJoin on ChannelChange...
 // TODO: Channel Joining based on Permissions? Channel Permissions?
-public class Channel {
+public class Channel implements ConfigurationSerializable {
     private final String name;
     private final Type type;
     private String alias = null;
@@ -21,10 +24,6 @@ public class Channel {
     private Boolean auto_join = false;
     private Boolean listed = false;
     private Set<String> members = new HashSet<String>();
-
-    private Boolean readOnly = false; // How should this be implimented
-    private ChatColor fontColor = ChatColor.WHITE;
-    private String permission = ""; // !!! This isn't (easily) possible? Maybe... "if Set"
 
     public enum Type {
         Global,
@@ -216,6 +215,7 @@ public class Channel {
         return auto_join;
     }
 
+    // Various methods
     public void handleEvent(PlayerChatEvent event) {
         if(isSenderMember(event.getPlayer())) {
             for(Player p : new HashSet<Player>(event.getRecipients()))
@@ -227,20 +227,43 @@ public class Channel {
             event.setCancelled(true);
         }
     }
+    // Per-Channel "can join" checks. ^^
+    // !!! Make a "JoinChannel" Event
+    public boolean canJoin(Player player) {
 
-    // Custom Channel Methods
-    public void callSave() {}
-    public void callReload() {}
+
+        return false;
+    }
+
+    // Custom Channel Methods... BAD !!!
+    public void callSave() {} // !!! Save Event
+    public void callReload() {} /// !!! Reload Event... Use /cc reload <module> ?
 
     // Lovely Booleans
     public final Boolean isSaved() {
         return !type.equals(Type.Private) && !type.equals(Type.Custom);
     }
 
-    public final void setChatColor(ChatColor color) {
-        fontColor = color;
+    // This may or may not be pushed.
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("alias", alias);
+        map.put("tag", tag);
+        map.put("auto", this.auto_join);
+        map.put("listed", this.listed);
+        map.put("owner", this.owner);
+        map.put("pass", this.pass);
+
+        return map;
     }
-    public final ChatColor getChatColor() {
-        return fontColor;
+
+    public void deserialize(Map<String, Object> values) {
+        alias = (String) values.get("alias");
+        tag = (String) values.get("tag");
+        owner = (String) values.get("owner");
+        pass = (String) values.get("pass");
+        auto_join = (Boolean) values.get("auto");
+        listed = (Boolean) values.get("listed");
     }
 }
