@@ -1,12 +1,13 @@
 package com.feildmaster.chanchat.Chan;
 
-import com.feildmaster.chanchat.Util.ChatUtil;
+import static com.feildmaster.chanchat.Chan.ChannelManager.getManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 
 // TODO: AutoJoin on ChannelChange...
 // TODO: Channel Joining based on Permissions? Channel Permissions?
+@org.bukkit.configuration.serialization.SerializableAs("ChanChat-Channel")
 public class Channel implements ConfigurationSerializable {
     private final String name;
     private final Type type;
@@ -76,10 +78,10 @@ public class Channel implements ConfigurationSerializable {
 
         msg = format(msg);
 
-        System.out.print(msg.replaceAll("\u00A7.", ""));
+        System.out.print(ChatColor.stripColor(msg));
 
         for(String n : members) {
-            Player p = ChatUtil.getPlayer(n);
+            Player p = Bukkit.getPlayer(n);
             if(isMember(p)) // Check "is member" in case of an override
                 p.sendMessage(msg);
         }
@@ -112,7 +114,7 @@ public class Channel implements ConfigurationSerializable {
     public final boolean setAlias(String s) {
         if(alias == s) return true;
 
-        if(s != null && ChatUtil.getCM().getChannel(s) != null) return false;
+        if(s != null && getManager().getChannel(s) != null) return false;
 
         alias = s;
 
@@ -221,6 +223,7 @@ public class Channel implements ConfigurationSerializable {
             for(Player p : new HashSet<Player>(event.getRecipients()))
                 if(!isMember(p))
                     event.getRecipients().remove(p);
+            // !!! I want to format outside of the handleEvent...
             event.setFormat(format(event.getFormat()));
         } else {
             event.getPlayer().sendMessage(format(" Not a member"));
@@ -230,8 +233,6 @@ public class Channel implements ConfigurationSerializable {
     // Per-Channel "can join" checks. ^^
     // !!! Make a "JoinChannel" Event
     public boolean canJoin(Player player) {
-
-
         return false;
     }
 
@@ -248,22 +249,27 @@ public class Channel implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<String, Object>();
 
-        map.put("alias", alias);
-        map.put("tag", tag);
-        map.put("auto", this.auto_join);
-        map.put("listed", this.listed);
-        map.put("owner", this.owner);
-        map.put("pass", this.pass);
+        map.put("name", getName());
+        map.put("alias", getAlias());
+        map.put("tag", getTag());
+        map.put("auto", isAuto());
+        map.put("listed", isListed());
+        map.put("owner", getOwner());
+        map.put("pass", getPass());
 
         return map;
     }
 
-    public void deserialize(Map<String, Object> values) {
-        alias = (String) values.get("alias");
-        tag = (String) values.get("tag");
-        owner = (String) values.get("owner");
-        pass = (String) values.get("pass");
-        auto_join = (Boolean) values.get("auto");
-        listed = (Boolean) values.get("listed");
+    public static Channel deserialize(Map<String, Object> values) {
+        Channel chan = new Channel((String) values.get("name"), Type.Global);
+
+        chan.setAlias((String) values.get("alias"));
+        chan.setTag((String) values.get("tag"));
+        chan.setOwner((String) values.get("owner"));
+        chan.setPass((String) values.get("pass"));
+        chan.setAuto((Boolean) values.get("auto"));
+        chan.setListed((Boolean) values.get("listed"));
+
+        return chan;
     }
 }

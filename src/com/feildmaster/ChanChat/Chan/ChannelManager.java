@@ -1,8 +1,9 @@
 package com.feildmaster.chanchat.Chan;
 
 import com.feildmaster.chanchat.Chan.Channel.Type;
+import com.feildmaster.chanchat.Chat;
 import com.feildmaster.chanchat.Events.ChannelPlayerChatEvent;
-import com.feildmaster.chanchat.Util.ChatUtil;
+import static com.feildmaster.chanchat.Chat.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,10 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 
 public final class ChannelManager {
+    private static final ChannelManager manager = new ChannelManager();
+
+    ChannelManager() {}
+
     private Map<Player, String> waitList = new HashMap<Player, String>();
 
     // Waitlist functions
@@ -46,12 +51,12 @@ public final class ChannelManager {
     public void sendMessage(Player sender, String channel, String msg) {sendMessage(sender, getChannel(channel), msg);}
     public void sendMessage (Player sender, Channel channel, String msg) {
         if(channel == null || sender == null || msg == null) {
-            sender.sendMessage(ChatUtil.error("Missing info while trying to send message"));
+            sender.sendMessage(error("Missing info while trying to send message"));
             return;
         }
 
         ChannelPlayerChatEvent event = new ChannelPlayerChatEvent(sender, channel, msg);
-        ChatUtil.getPluginManager().callEvent(event);
+        Chat.plugin().getServer().getPluginManager().callEvent(event);
 
         if(event.isCancelled()) return;
 
@@ -180,7 +185,7 @@ public final class ChannelManager {
     public void checkActive() {
         if(!activeChannel.isEmpty()) // Keyset errors on empty maps
         for(String name : activeChannel.keySet())
-            checkActive(ChatUtil.getPlayer(name));
+            checkActive(Chat.plugin().getServer().getPlayer(name));
     }
     public void checkActive(Player player) {
         if(player == null) return;
@@ -204,7 +209,7 @@ public final class ChannelManager {
             setActiveChannel(player, joinedChannels.get(0));
         } else if (chan != null && channelExists(chan) && !chan.isMember(player)) {
             setActiveChannel(player, joinedChannels.get(0));
-            player.sendMessage(ChatUtil.info("You are now in channel \""+joinedChannels.get(0).getName()+".\""));
+            player.sendMessage(info("You are now in channel \""+joinedChannels.get(0).getName()+".\""));
         }
     }
 
@@ -231,5 +236,9 @@ public final class ChannelManager {
             if(chan.isSaved())
                 list.add(chan);
         return list;
+    }
+
+    public static ChannelManager getManager() {
+        return manager;
     }
 }

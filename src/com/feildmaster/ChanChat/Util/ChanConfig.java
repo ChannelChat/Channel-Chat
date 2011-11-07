@@ -2,10 +2,10 @@ package com.feildmaster.chanchat.Util;
 
 import com.feildmaster.chanchat.Chan.*;
 import com.feildmaster.chanchat.Chan.Channel.Type;
-import com.feildmaster.chanchat.Chat;
 import java.util.List;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
+import static com.feildmaster.chanchat.Chan.ChannelManager.getManager;
 
 public class ChanConfig {
     private final Configuration config;
@@ -42,7 +42,7 @@ public class ChanConfig {
         for(String key : config.getKeys())
             config.removeProperty(key);
 
-        for(Channel chan : ChatUtil.getCM().getChannels()) {
+        for(Channel chan : getManager().getChannels()) {
             if(chan.isSaved()) {
                 config.setProperty(chan.getName()+".type", chan.getType().name());
                 config.setProperty(chan.getName()+".tag", chan.getTag());
@@ -64,28 +64,28 @@ public class ChanConfig {
         config.save();
     }
 
-    public final void reload(boolean bool) {
+    public final void reload(boolean event) {
         config.load();
         List<String> keys = config.getKeys();
         // Erase non-existing channels!
-        for(Channel chan : ChatUtil.getCM().getSavedChannels())
+        for(Channel chan : getManager().getSavedChannels())
             if(!keys.contains(chan.getName()))
-                ChatUtil.getCM().delChannel(chan.getName());
+                getManager().delChannel(chan.getName());
 
         for(String name : keys) {
             Channel chan;
 
             ConfigurationNode node = config.getNode(name);
 
-            if(ChatUtil.getCM().channelExists(name)) {
-                chan = ChatUtil.getCM().getChannel(name);
+            if(getManager().channelExists(name)) {
+                chan = getManager().getChannel(name);
                 if(node != null) {
                     Channel.Type type = Channel.Type.betterValueOf(node.getString("type"));
                     if(!chan.getType().equals(type))
-                        chan = ChatUtil.getCM().convertChannel(chan, type);
+                        chan = getManager().convertChannel(chan, type);
                 }
             } else
-                chan = ChatUtil.getCM().createChannel(name, node == null ? Channel.Type.Global : Channel.Type.betterValueOf(node.getString("type")));
+                chan = getManager().createChannel(name, node == null ? Channel.Type.Global : Channel.Type.betterValueOf(node.getString("type")));
 
             if(node != null) {
                 chan.setTag(node.getString("tag"));
@@ -102,11 +102,11 @@ public class ChanConfig {
                 }
             }
 
-            ChatUtil.getCM().addChannel(chan);
+            getManager().addChannel(chan);
         }
 
-        if(bool)
-            for(Channel chan : Chat.getChannelManager().getChannels())
+        if(event)
+            for(Channel chan : getManager().getChannels())
                 if(chan.getType().equals(Type.Custom))
                     chan.callReload();
     }
