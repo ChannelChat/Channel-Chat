@@ -5,15 +5,31 @@ import org.bukkit.event.Event;
 public class ChannelEvent extends Event {
     private Type type;
     protected ChannelEvent(Type type) {
-        super(Event.Type.CUSTOM_EVENT);
+        super("ChannelEvent");
+        this.type = type;
     }
 
     public enum Type {
+        /**
+         * Called on /cc reload
+         */
         RELOAD,
+        /**
+         * Called when ChannelChat is disabled, or a save call is made.
+         */
         SAVE,
-        CHANNEL_CREATE,
-        CHANNEL_JOIN,
-        CHANNEL_LEAVE;
+        /**
+         * Called when a player creates a channel.
+         */
+        CREATE,
+        /**
+         * Called when a player joins a channel
+         */
+        JOIN,
+        /**
+         * Called when a player leaves a channel
+         */
+        LEAVE;
     }
 
     public Type getEventType() {

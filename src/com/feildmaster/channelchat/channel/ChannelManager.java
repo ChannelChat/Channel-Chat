@@ -259,7 +259,7 @@ public final class ChannelManager {
         }
     };
 
-    public static synchronized void callEvent(ChannelEvent event) {
+    public static synchronized ChannelEvent callEvent(ChannelEvent event) {
         for (RegisteredListener registration : getEventListeners(event.getEventType()))
             try {
                 registration.callEvent(event);
@@ -287,6 +287,8 @@ public final class ChannelManager {
 
         // Run through Bukkit's Event Handler!
         plugin().getServer().getPluginManager().callEvent(event);
+
+        return event;
     }
     public static void registerEvent(ChannelEvent.Type type, Listener listener, ChannelEvent.Priority priority, Plugin plugin) {
         getEventListeners(type).add(new RegisteredListener(listener, new EventExecutor() {

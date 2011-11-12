@@ -85,16 +85,15 @@ public class Chat extends JavaPlugin {
     }
 
     public static String format(ChatColor color, String msg) {
-        return "["+plugin.getDescription().getName()+"] "+color+msg;
+        return "["+plugin.getDescription().getName()+"] "+(color==null?"":color)+msg;
     }
 
-    public static ChannelManager getChannelManager() {
-        return ChannelManager.getManager();
+    public void sendMessage(Player player, String string) {
+        player.sendMessage(format(null, string));
     }
 
     static {
         org.bukkit.configuration.serialization.ConfigurationSerialization.registerClass(Channel.class);
-        //Channel.class.getDeclaredClasses(); // !!! Register subclasses
     }
 }
 

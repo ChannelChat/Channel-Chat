@@ -2,23 +2,23 @@ package com.feildmaster.channelchat.event.channel;
 
 import com.feildmaster.channelchat.channel.Channel;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 
-public class ChannelLeaveEvent extends ChannelPlayerEvent implements Cancellable {
-    private String leaveMessage;
+public class ChannelLeaveEvent extends ChannelPlayerEvent implements CancelReason {
+//    private String leaveMessage;
+    private String cancelReason;
     private boolean canceled;
 
     public ChannelLeaveEvent(Player player, Channel channel) {
-        super(channel, player, Type.CHANNEL_LEAVE);
+        super(channel, player, Type.LEAVE);
     }
-
-    public String getLeaveMessage() {
-        return leaveMessage;
-    }
-
-    public void setLeaveMessage(String message) {
-        leaveMessage = message;
-    }
+//
+//    public String getLeaveMessage() {
+//        return leaveMessage;
+//    }
+//
+//    public void setLeaveMessage(String message) {
+//        leaveMessage = message;
+//    }
 
     public boolean isCancelled() {
         return canceled;
@@ -26,5 +26,13 @@ public class ChannelLeaveEvent extends ChannelPlayerEvent implements Cancellable
 
     public void setCancelled(boolean cancel) {
         canceled = cancel;
+    }
+
+    public String getReason() {
+        return cancelReason;
+    }
+
+    public void setReason(String reason) {
+        cancelReason = reason;
     }
 }

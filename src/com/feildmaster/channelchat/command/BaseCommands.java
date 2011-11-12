@@ -73,13 +73,14 @@ public abstract class BaseCommands implements ChatExecutor {
                 return;
             }
 
+            // !!! Should handle this in the manager
             chan = getManager().createChannel(name, Channel.Type.Private);
             Player player = (Player)sender;
 
             chan.setOwner(player);
             chan.addMember(player);
 
-            // Channel Create Event
+            // !!! Channel Create Event
 
             if(getManager().getActiveName(player) == null)
                 getManager().setActiveChannel(player, chan);
@@ -104,7 +105,9 @@ public abstract class BaseCommands implements ChatExecutor {
     protected void deleteChannel(Channel channel, CommandSender sender) {
         if(getManager().channelExists(channel)) {
             if(sender instanceof Player) {
+                // !!! Should handle this in the manager ?
                 if (channel.isOwner((Player)sender) || sender.hasPermission("ChanChat.admin"))
+                    /// !!! ChannelDeleteEvent?
                     getManager().delChannel(channel);
                 else
                     sender.sendMessage("You can't do that.");
@@ -120,11 +123,11 @@ public abstract class BaseCommands implements ChatExecutor {
             if(chan.isMember(player))
                 player.sendMessage(ChatColor.GRAY+"You are already in \""+chan.getName()+".\"");
             else {
-                if(chan.getPass() != null) {
+                if(chan.getPass() != null) { // !!! Move this to an event? :o
                     player.sendMessage(ChatColor.GRAY+"["+chan.getName()+"] Please enter the password");
                     getManager().addToWaitlist(player, name);
                 } else {
-                    // Channel Join Event
+                    // !!! Channel Join Event
                     chan.addMember(player, true);
                 }
             }
@@ -149,11 +152,12 @@ public abstract class BaseCommands implements ChatExecutor {
             player.sendMessage("You are not in any channels to leave!");
     }
     private void leaveChannel(Player player, Channel chan) {
+         // !!! LeaveChannelEvent?
         chan.delMember(player, true);
     }
     private void leaveAll(Player player) {
         for(Channel c : getManager().getJoinedChannels(player))
-            c.delMember(player);
+            c.delMember(player); // Go through leaveChannel(player, c)?
 
         player.sendMessage(info("You have left all channels."));
     }
@@ -173,6 +177,7 @@ public abstract class BaseCommands implements ChatExecutor {
         else if(chan.isMember(player) && !chan.isMember(added)) {
             chan.sendMessage(info(ChatColor.stripColor(added.getDisplayName())+
                     " has been added by "+ChatColor.stripColor(player.getDisplayName())));
+            // !!! ChannelInviteEvent
             chan.addMember(added);
             added.sendMessage(info("You have been added to \""+chan.getName()+".\""));
         } else if (chan.isMember(player) && chan.isMember(added))

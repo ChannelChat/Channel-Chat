@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
 // TODO: AutoJoin on ChannelChange...
-// TODO: Channel Joining based on Permissions? Channel Permissions?
 @org.bukkit.configuration.serialization.SerializableAs("ChanChat-Channel")
 public class Channel implements ConfigurationSerializable {
     private final String name;
@@ -170,8 +169,6 @@ public class Channel implements ConfigurationSerializable {
         if(alert) sendJoinMessage(player);
     }
     private void addMember(String player) {
-        if(player == null) return;
-
         members.add(player);
     }
     // Remove members
@@ -229,15 +226,11 @@ public class Channel implements ConfigurationSerializable {
             event.setCancelled(true);
         }
     }
+
     // Per-Channel "can join" checks. ^^
-    // !!! Make a "JoinChannel" Event
     public boolean canJoin(Player player) {
         return false;
     }
-
-    // Custom Channel Methods... BAD !!!
-    public void callSave() {} // !!! Save Event
-    public void callReload() {} /// !!! Reload Event... Use /cc reload <module> ?
 
     // Lovely Booleans
     public final Boolean isSaved() {

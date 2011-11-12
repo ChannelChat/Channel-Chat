@@ -6,7 +6,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -124,11 +123,6 @@ public class ModuleConfiguration extends YamlConfiguration {
      */
     public final void clearDefaults() {
         setDefaults(new MemoryConfiguration());
-    }
-
-    // !!! Might not use this
-    public final ChatColor getChatColor(String path) {
-        return ChatColor.WHITE;
     }
 
     public Map<String, Object> getMap(String path) {

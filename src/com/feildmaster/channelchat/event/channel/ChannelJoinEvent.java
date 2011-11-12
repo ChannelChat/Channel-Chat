@@ -2,31 +2,30 @@ package com.feildmaster.channelchat.event.channel;
 
 import com.feildmaster.channelchat.channel.Channel;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 
-public class ChannelJoinEvent extends ChannelPlayerEvent implements Cancellable {
-    private String joinMessage;
-    private String denyMessage;
+public class ChannelJoinEvent extends ChannelPlayerEvent implements CancelReason {
+    private String cancelReason;
     private boolean canceled;
 
     public ChannelJoinEvent(Player player, Channel channel) {
-        super(channel, player, Type.CHANNEL_JOIN);
+        super(channel, player, Type.JOIN);
+    }
+//
+//    private String joinMessage;
+//    public String getJoinMessage() {
+//        return joinMessage;
+//    }
+//
+//    public void setJoinMessage(String message) {
+//        joinMessage = message;
+//    }
+
+    public String getReason() {
+        return cancelReason;
     }
 
-    public String getJoinMessage() {
-        return joinMessage;
-    }
-
-    public void setJoinMessage(String message) {
-        joinMessage = message;
-    }
-
-    public String getDenyMessage() {
-        return denyMessage;
-    }
-
-    public void setDenyMessage(String message) {
-        denyMessage = message;
+    public void setReason(String reason) {
+        cancelReason = reason;
     }
 
     public boolean isCancelled() {

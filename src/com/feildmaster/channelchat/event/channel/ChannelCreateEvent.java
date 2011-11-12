@@ -2,14 +2,13 @@ package com.feildmaster.channelchat.event.channel;
 
 import com.feildmaster.channelchat.channel.Channel;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 
-public class ChannelCreateEvent extends ChannelPlayerEvent implements Cancellable {
+public class ChannelCreateEvent extends ChannelPlayerEvent implements CancelReason {
     private String cancelReason;
     private boolean canceled;
 
     public ChannelCreateEvent(Player player, Channel channel) {
-        super(channel, player, Type.CHANNEL_CREATE);
+        super(channel, player, Type.CREATE);
     }
 
     public String getReason() {

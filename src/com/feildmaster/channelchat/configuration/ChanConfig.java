@@ -59,7 +59,6 @@ public class ChanConfig {
                     config.setProperty(chan.getName()+".null_message", ((LocalChannel)chan).getNullMessage());
                 }
             }
-            chan.callSave();
         }
         config.save();
     }
