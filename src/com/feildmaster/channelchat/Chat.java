@@ -8,6 +8,7 @@ import com.feildmaster.channelchat.listener.*;
 import com.feildmaster.channelchat.configuration.*;
 import static com.feildmaster.channelchat.event.ChannelEventFactory.*;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -88,8 +89,14 @@ public class Chat extends JavaPlugin {
         return "["+plugin.getDescription().getName()+"] "+(color==null?"":color)+msg;
     }
 
-    public void sendMessage(Player player, String string) {
-        player.sendMessage(format(null, string));
+    /**
+     * Formats message to include plugin name tag
+     *
+     * @param recipiant Player/Object recieving the message
+     * @param string The message to send
+     */
+    public void sendMessage(CommandSender recipiant, String string) {
+        recipiant.sendMessage(format(null, string));
     }
 
     static {

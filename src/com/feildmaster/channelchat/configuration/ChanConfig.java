@@ -51,10 +51,9 @@ public class ChanConfig {
                 config.setProperty(chan.getName()+".listed", chan.isListed());
                 config.setProperty(chan.getName()+".auto_join", chan.isAuto());
                 config.setProperty(chan.getName()+".alias", chan.getAlias());
-                // !!! Font Color
 
                 // Channel Type Data
-                if(chan.getType().equals(Channel.Type.Local)) {
+                if(chan.getType().isLocal()) {
                     config.setProperty(chan.getName()+".range", ((LocalChannel)chan).getRange());
                     config.setProperty(chan.getName()+".null_message", ((LocalChannel)chan).getNullMessage());
                 }

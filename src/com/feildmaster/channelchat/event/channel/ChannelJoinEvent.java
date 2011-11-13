@@ -6,12 +6,12 @@ import org.bukkit.entity.Player;
 public class ChannelJoinEvent extends ChannelPlayerEvent implements CancelReason {
     private String cancelReason;
     private boolean canceled;
+//    private String joinMessage;
 
     public ChannelJoinEvent(Player player, Channel channel) {
         super(channel, player, Type.JOIN);
     }
-//
-//    private String joinMessage;
+//    // !!!
 //    public String getJoinMessage() {
 //        return joinMessage;
 //    }
@@ -20,11 +20,11 @@ public class ChannelJoinEvent extends ChannelPlayerEvent implements CancelReason
 //        joinMessage = message;
 //    }
 
-    public String getReason() {
+    public String getCancelReason() {
         return cancelReason;
     }
 
-    public void setReason(String reason) {
+    public void setCancelReason(String reason) {
         cancelReason = reason;
     }
 
@@ -34,5 +34,10 @@ public class ChannelJoinEvent extends ChannelPlayerEvent implements CancelReason
 
     public void setCancelled(boolean cancel) {
         canceled = cancel;
+    }
+
+    public enum Reason {
+        Allowed,
+        Deny_Channel
     }
 }

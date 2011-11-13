@@ -3,7 +3,6 @@ package com.feildmaster.channelchat.configuration;
 import java.io.File;
 import org.bukkit.util.config.Configuration;
 
-// TODO: owner-limit
 public class ChatConfig extends Configuration {
     public ChatConfig(File file) {
         super(file);

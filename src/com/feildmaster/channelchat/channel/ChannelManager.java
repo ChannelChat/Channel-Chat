@@ -56,7 +56,7 @@ public final class ChannelManager {
     public void sendMessage(Channel channel, String msg) {
         if(channel == null || msg == null) return;
 
-        channel.sendMessage(msg);
+        channel.sendMessage(" "+msg);
     }
     public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChannel(sender), msg);}
     public void sendMessage(Player sender, String channel, String msg) {sendMessage(sender, getChannel(channel), msg);}
@@ -259,7 +259,7 @@ public final class ChannelManager {
         }
     };
 
-    public static synchronized ChannelEvent callEvent(ChannelEvent event) {
+    public static synchronized void callEvent(ChannelEvent event) {
         for (RegisteredListener registration : getEventListeners(event.getEventType()))
             try {
                 registration.callEvent(event);
@@ -287,8 +287,6 @@ public final class ChannelManager {
 
         // Run through Bukkit's Event Handler!
         plugin().getServer().getPluginManager().callEvent(event);
-
-        return event;
     }
     public static void registerEvent(ChannelEvent.Type type, Listener listener, ChannelEvent.Priority priority, Plugin plugin) {
         getEventListeners(type).add(new RegisteredListener(listener, new EventExecutor() {

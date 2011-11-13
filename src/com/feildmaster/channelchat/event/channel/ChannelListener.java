@@ -2,6 +2,7 @@ package com.feildmaster.channelchat.event.channel;
 
 import org.bukkit.event.CustomEventListener;
 import org.bukkit.event.Event;
+import org.bukkit.plugin.AuthorNagException;
 
 public class ChannelListener extends CustomEventListener {
     public void onReload(ReloadEvent event) {}
@@ -24,7 +25,7 @@ public class ChannelListener extends CustomEventListener {
         if(!(event instanceof ChannelEvent)) return;
 
         if(event instanceof ChannelCreateEvent)
-            onChannelCreate((ChannelCreateEvent)event);
+            onChannelCreate((ChannelCreateEvent) event);
         else if (event instanceof ChannelJoinEvent)
             onChannelJoin((ChannelJoinEvent) event);
         else if (event instanceof ChannelLeaveEvent)
@@ -33,5 +34,7 @@ public class ChannelListener extends CustomEventListener {
             onReload((ReloadEvent) event);
         else if (event instanceof SaveEvent)
             onSave((SaveEvent) event);
+        else
+            throw new AuthorNagException("Unsupported ChannelEvent Class");
     }
 }

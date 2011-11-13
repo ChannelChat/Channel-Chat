@@ -8,7 +8,7 @@ import static com.feildmaster.channelchat.channel.ChannelManager.callEvent;
 public class ChannelEventFactory {
     public static void callReloadEvent() {
         // Reload will actually have parameters at some point?
-        // !!! ie: /cc reload <module>
+        // ie: /cc reload <module>
         callEvent(new ReloadEvent());
     }
 
@@ -16,23 +16,27 @@ public class ChannelEventFactory {
         callEvent(new SaveEvent());
     }
 
-    // !!! Set Join/Deny message
     public static ChannelJoinEvent callChannelJoinEvent(Player player, Channel channel, String message) {
-        return (ChannelJoinEvent) callEvent(new ChannelJoinEvent(player, channel));
-    }
-    
-    public static ChannelJoinEvent callChannelInviteEvent(Player invited, Player inviter, Channel channel) {
-        return (ChannelJoinEvent) callEvent(new ChannelInviteEvent(invited, inviter, channel));
+        ChannelJoinEvent event = new ChannelJoinEvent(player, channel);
+        callEvent(event);
+        return event;
     }
 
-    // !!! Set leave message
-    public ChannelLeaveEvent ChannelLeaveEvent(Player player, Channel channel, String message) {
+    public static ChannelInviteEvent callChannelInviteEvent(Player invited, Player inviter, Channel channel) {
+        ChannelInviteEvent event = new ChannelInviteEvent(invited, inviter, channel);
+        callEvent(event);
+        return event;
+    }
+
+    public static ChannelLeaveEvent ChannelLeaveEvent(Player player, Channel channel) {
         ChannelLeaveEvent event = new ChannelLeaveEvent(player, channel);
         callEvent(event);
         return event;
     }
 
-    public ChannelCreateEvent ChannelCreateEvent(Player player, Channel channel) {
-        return (ChannelCreateEvent) callEvent(new ChannelCreateEvent(player, channel));
+    public static ChannelCreateEvent ChannelCreateEvent(Player player, Channel channel) {
+        ChannelCreateEvent event = new ChannelCreateEvent(player, channel);
+        callEvent(event);
+        return event;
     }
 }

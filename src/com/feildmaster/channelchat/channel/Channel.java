@@ -33,6 +33,13 @@ public class Channel implements ConfigurationSerializable {
         Private,
         Custom;
 
+        public boolean isLocal() {
+            return this.equals(Local);
+        }
+        private boolean isSaved() {
+            return !this.equals(Private) && !this.equals(Custom);
+        }
+
         static final List<String> list = new ArrayList<String>();
 
         public static boolean contains(String name) {
@@ -227,14 +234,14 @@ public class Channel implements ConfigurationSerializable {
         }
     }
 
-    // Per-Channel "can join" checks. ^^
+    // Per-Channel "can join" checks.
     public boolean canJoin(Player player) {
-        return false;
+        return true;
     }
 
     // Lovely Booleans
-    public final Boolean isSaved() {
-        return !type.equals(Type.Private) && !type.equals(Type.Custom);
+    public final boolean isSaved() {
+        return type.isSaved();
     }
 
     // This may or may not be pushed.

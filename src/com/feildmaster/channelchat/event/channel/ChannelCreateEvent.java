@@ -11,11 +11,11 @@ public class ChannelCreateEvent extends ChannelPlayerEvent implements CancelReas
         super(channel, player, Type.CREATE);
     }
 
-    public String getReason() {
+    public String getCancelReason() {
         return cancelReason;
     }
 
-    public void setReason(String reason) {
+    public void setCancelReason(String reason) {
         cancelReason = reason;
     }
 
@@ -25,5 +25,10 @@ public class ChannelCreateEvent extends ChannelPlayerEvent implements CancelReas
 
     public void setCancelled(boolean cancel) {
         canceled = cancel;
+    }
+
+    public enum Reason {
+        ALLOW,
+        DENY_PERMISSION,
     }
 }

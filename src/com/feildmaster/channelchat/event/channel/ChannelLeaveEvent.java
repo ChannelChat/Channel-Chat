@@ -28,11 +28,11 @@ public class ChannelLeaveEvent extends ChannelPlayerEvent implements CancelReaso
         canceled = cancel;
     }
 
-    public String getReason() {
+    public String getCancelReason() {
         return cancelReason;
     }
 
-    public void setReason(String reason) {
+    public void setCancelReason(String reason) {
         cancelReason = reason;
     }
 }
