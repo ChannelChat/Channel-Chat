@@ -250,8 +250,8 @@ public final class ChannelManager {
     }
 
     // Event Factory
-    private static final Map<ChannelEvent.Type, SortedSet<RegisteredListener>> listeners = new EnumMap<ChannelEvent.Type, SortedSet<RegisteredListener>>(ChannelEvent.Type.class);
-    private static final Comparator<RegisteredListener> comparer = new Comparator<RegisteredListener>() {
+    private final Map<ChannelEvent.Type, SortedSet<RegisteredListener>> listeners = new EnumMap<ChannelEvent.Type, SortedSet<RegisteredListener>>(ChannelEvent.Type.class);
+    private final Comparator<RegisteredListener> comparer = new Comparator<RegisteredListener>() {
         public int compare(RegisteredListener i, RegisteredListener j) {
             int result = i.getPriority().compareTo(j.getPriority());
             if ((result == 0) && (i != j)) result = 1;
@@ -259,7 +259,7 @@ public final class ChannelManager {
         }
     };
 
-    public static synchronized void callEvent(ChannelEvent event) {
+    public synchronized void callEvent(ChannelEvent event) {
         for (RegisteredListener registration : getEventListeners(event.getEventType()))
             try {
                 registration.callEvent(event);
@@ -288,11 +288,10 @@ public final class ChannelManager {
         // Run through Bukkit's Event Handler!
         plugin().getServer().getPluginManager().callEvent(event);
     }
-    public static void registerEvent(ChannelEvent.Type type, Listener listener, ChannelEvent.Priority priority, Plugin plugin) {
+    public void registerEvent(ChannelEvent.Type type, ChannelListener listener, Event.Priority priority, Plugin plugin) {
         getEventListeners(type).add(new RegisteredListener(listener, new EventExecutor() {
             public void execute(Listener ll, Event event) {
                 if(!(event instanceof ChannelEvent)) return;
-                ChannelEvent channelevent = (ChannelEvent) event;
                 if(event instanceof ChannelCreateEvent)
                     ((ChannelListener)ll).onChannelCreate((ChannelCreateEvent)event);
                 else if (event instanceof ChannelJoinEvent)
@@ -307,7 +306,7 @@ public final class ChannelManager {
         }, priority, plugin));
     }
 
-    private static SortedSet<RegisteredListener> getEventListeners(ChannelEvent.Type type) {
+    private SortedSet<RegisteredListener> getEventListeners(ChannelEvent.Type type) {
         SortedSet<RegisteredListener> eventListeners = listeners.get(type);
 
         if(eventListeners != null) return eventListeners;

@@ -10,7 +10,7 @@ import com.feildmaster.channelchat.Chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import static com.feildmaster.channelchat.channel.ChannelManager.*;
+import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 
 // TODO: admin commands
 // TODO: clean this more
@@ -86,7 +86,7 @@ public abstract class BaseCommands implements ChatExecutor {
                 event.setCancelReason("You can't do that.");
             }
 
-            callEvent(event);
+            getManager().callEvent(event);
 
             if(event.isCancelled()) {
                 sendCancelMessage(player, event);
