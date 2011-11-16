@@ -1,5 +1,6 @@
 package com.feildmaster.channelchat.command;
 
+import com.feildmaster.channelchat.event.channel.ChannelDeleteEvent;
 import com.feildmaster.channelchat.event.channel.CancelReason;
 import com.feildmaster.channelchat.event.channel.ChannelJoinEvent;
 import com.feildmaster.channelchat.event.channel.ChannelCreateEvent;
@@ -12,43 +13,43 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 
-// TODO: admin commands
+// TODO: admin command manager
 // TODO: clean this more
 public abstract class BaseCommands implements ChatExecutor {
     // "list" commands
     protected void listChannels(Player player, Boolean mem) {
         StringBuilder string = new StringBuilder();
         boolean color = true;
-        for(Channel chan : getManager().getChannels())
-            if(chan.isListed())
-                string.append(string.length()!=0?", ":"").append((color=!color)?ChatColor.GRAY:ChatColor.WHITE).append(chan.isMember(player)?"*":"").append(chan.getName());
+        for(Channel channel : getManager().getChannels())
+            if(channel.isListed())
+                string.append(string.length()!=0?", ":"").append((color=!color)?ChatColor.GRAY:ChatColor.WHITE).append(channel.isMember(player)?"*":"").append(channel.getName());
         player.sendMessage("Channels: "+string.toString());
     }
 
     // "quick chat"
     protected void quickChat(String name, Player player, String[] args) {
-        Channel chan = getManager().getChannel(name);
-        if(chan == null)
+        Channel channel = getManager().getChannel(name);
+        if(channel == null)
             player.sendMessage(info("Channel does not exist"));
-        else if(chan.isMember(player)) {
+        else if(channel.isMember(player)) {
             StringBuilder str = new StringBuilder();
             for(int x=1; x<args.length; x++)
                 str.append(x!=1?" ":"").append(args[x]);
 
-            getManager().sendMessage(player, chan, str.toString());
+            getManager().sendMessage(player, channel, str.toString());
         } else
-            player.sendMessage(info("You are not a member of \""+chan.getName()+".\""));
+            player.sendMessage(info("You are not a member of \""+channel.getName()+".\""));
     }
 
     // "who" commands
     protected void getChannelMembers(String name, Player player) {
-        Channel chan = getManager().getChannel(name);
+        Channel channel = getManager().getChannel(name);
 
-        if(getManager().channelExists(name) && chan.isMember(player)) {
+        if(getManager().channelExists(name) && channel.isMember(player)) {
             StringBuilder string = new StringBuilder();
             boolean color = true;
-            if(chan.getMembers(player).size() > 1)
-                for(String p : chan.getMembers(player))
+            if(channel.getMembers(player).size() > 1)
+                for(String p : channel.getMembers(player))
                     string.append(string.length()!=0?", ":"").append((color=!color)?ChatColor.GRAY:ChatColor.WHITE).append(ChatColor.stripColor(Chat.plugin().getServer().getPlayer(p).getDisplayName()));
             else
                 string.append(ChatColor.WHITE).append("Only you");
@@ -70,16 +71,16 @@ public abstract class BaseCommands implements ChatExecutor {
             return;
         }
 
-        Channel chan = null;
+        Channel channel = null;
 
         if(sender instanceof Player) {
-            chan = getManager().createChannel(name, Channel.Type.Private);
+            channel = getManager().createChannel(name, Channel.Type.Private);
             Player player = (Player)sender;
 
-            chan.setOwner(player);
-            chan.addMember(player);
+            channel.setOwner(player);
+            channel.addMember(player);
 
-            ChannelCreateEvent event = new ChannelCreateEvent(player, chan);
+            ChannelCreateEvent event = new ChannelCreateEvent(player, channel);
 
             if(!sender.hasPermission("ChanChat.create")){ // Allows for overriding permission
                 event.setCancelled(true);
@@ -93,15 +94,15 @@ public abstract class BaseCommands implements ChatExecutor {
                 return;
             }
 
-            getManager().addChannel(chan);
+            getManager().addChannel(channel);
 
             if(getManager().getActiveName(player) == null)
-                getManager().setActiveChannel(player, chan);
+                getManager().setActiveChannel(player, channel);
 
-            getManager().sendMessage(chan, "Created");
+            getManager().sendMessage(channel, "Created");
         } else if (sender instanceof ConsoleCommandSender) {
-            getManager().addChannel(chan = getManager().createChannel(name, Channel.Type.Global));
-            chan.sendMessage(" Created");
+            getManager().addChannel(channel = getManager().createChannel(name, Channel.Type.Global));
+            channel.sendMessage(" Created");
         }
     }
 
@@ -115,14 +116,24 @@ public abstract class BaseCommands implements ChatExecutor {
         } else
             sender.sendMessage("The channel doesn't exists!");
     }
+
     private void deleteChannel(Channel channel, CommandSender sender) {
         if(getManager().channelExists(channel)) {
             if(sender instanceof Player) {
-                if (channel.isOwner((Player)sender) || sender.hasPermission("ChanChat.admin"))
-                    /// !!! ChannelDeleteEvent?
-                    getManager().delChannel(channel);
-                else
-                    sender.sendMessage("You can't do that.");
+                ChannelDeleteEvent event = new ChannelDeleteEvent((Player)sender, channel);
+                if (!(channel.isOwner((Player)sender) || sender.hasPermission("ChanChat.admin"))) {
+                    event.setCancelled(true);
+                    event.setCancelReason("You can't do that.");
+                }
+
+                getManager().callEvent(event);
+
+                if(event.isCancelled()) {
+                    sendCancelMessage(event.getPlayer(), event);
+                    return;
+                }
+
+                getManager().delChannel(channel);
             } else
                 getManager().delChannel(channel);
         }
@@ -131,23 +142,25 @@ public abstract class BaseCommands implements ChatExecutor {
     // "join" commands
     protected void joinChannel(String name, Player player) {
         if(getManager().channelExists(name)) {
-            Channel chan = getManager().getChannel(name);
-            if(chan.isMember(player)) {
-                player.sendMessage(ChatColor.GRAY+"You are already in \""+chan.getName()+".\"");
+            Channel channel = getManager().getChannel(name);
+            if(channel.isMember(player)) {
+                player.sendMessage(ChatColor.GRAY+"You are already in \""+channel.getName()+".\"");
             }
 
-            if(chan.getPass() != null) { // !!! Move this to an event? :o
-                player.sendMessage(ChatColor.GRAY+"["+chan.getName()+"] Please enter the password");
+            if(channel.getPass() != null) { // !!! Move this to an event? :o
+                player.sendMessage(ChatColor.GRAY+"["+channel.getName()+"] Please enter the password");
                 getManager().addToWaitlist(player, name);
             } else {
-                ChannelJoinEvent event = ChannelEventFactory.callChannelJoinEvent(player, chan, name);
+                ChannelJoinEvent event = ChannelEventFactory.callChannelJoinEvent(player, channel, name);
 
                 if(event.isCancelled()) {
                     sendCancelMessage(player, event);
                     return;
                 }
 
-                chan.addMember(player, true);
+                channel.addMember(player, true);
+
+                if(Chat.plugin().getChatConfig().autoJoin()) setChannel(channel, player);
             }
         } else
             createChannel(name, player);
@@ -169,13 +182,13 @@ public abstract class BaseCommands implements ChatExecutor {
         } else
             player.sendMessage("You are not in any channels to leave!");
     }
-    private void leaveChannel(Player player, Channel chan) {
-        CancelReason event = ChannelEventFactory.ChannelLeaveEvent(player, chan);
+    private void leaveChannel(Player player, Channel channel) {
+        CancelReason event = ChannelEventFactory.ChannelLeaveEvent(player, channel);
         if(event.isCancelled()) {
             if(event.getCancelReason() != null)
             return;
         }
-        chan.delMember(player, true);
+        channel.delMember(player, true);
     }
     private void leaveAll(Player player) {
         for(Channel c : getManager().getJoinedChannels(player))
@@ -192,24 +205,24 @@ public abstract class BaseCommands implements ChatExecutor {
             return;
         }
 
-        Channel chan = getManager().getActiveChannel(player);
+        Channel channel = getManager().getActiveChannel(player);
 
-        if(chan == null)
+        if(channel == null)
             player.sendMessage(error("Active channel not set, or you have not joined a channel."));
-        else if (chan.isMember(player) && chan.isMember(added))
-            player.sendMessage(info("Player is already in channel \""+chan.getName()+".\""));
-        else if(chan.isMember(player) && !chan.isMember(added)) {
-            CancelReason event = ChannelEventFactory.callChannelInviteEvent(added, player, chan);
+        else if (channel.isMember(player) && channel.isMember(added))
+            player.sendMessage(info("Player is already in channel \""+channel.getName()+".\""));
+        else if(channel.isMember(player) && !channel.isMember(added)) {
+            CancelReason event = ChannelEventFactory.callChannelInviteEvent(added, player, channel);
 
             if(event.isCancelled()) {
                 sendCancelMessage(added, event);
                 return;
             }
 
-            chan.sendMessage(info(ChatColor.stripColor(added.getDisplayName())+" has been added by "+ChatColor.stripColor(player.getDisplayName())));
+            channel.sendMessage(info(ChatColor.stripColor(added.getDisplayName())+" has been added by "+ChatColor.stripColor(player.getDisplayName())));
 
-            chan.addMember(added);
-            added.sendMessage(info("You have been added to \""+chan.getName()+".\""));
+            channel.addMember(added);
+            added.sendMessage(info("You have been added to \""+channel.getName()+".\""));
         }
 
     }
@@ -217,14 +230,22 @@ public abstract class BaseCommands implements ChatExecutor {
     // "set" commands
     protected void setChannel(String name, Player player) {
         if(getManager().channelExists(name)) {
-            Channel chan = getManager().getChannel(name);
-            if(chan.isMember(player)) {
-                getManager().setActiveChannel(player, chan);
-                player.sendMessage(info("Now talking in \""+chan.getName()+".\""));
+            Channel channel = getManager().getChannel(name);
+            if(channel.isMember(player)) {
+                getManager().setActiveChannel(player, channel);
+                player.sendMessage(info("Now talking in \""+channel.getName()+".\""));
             } else
-                player.sendMessage(info("You are not in \""+chan.getName()+".\""));
+                player.sendMessage(info("You are not in \""+channel.getName()+".\""));
         } else
             player.sendMessage(error("Channel \""+name+"\" doesn't exist."));
+    }
+    private void setChannel(Channel channel, Player player) {
+        if(getManager().channelExists(channel)) {
+            if(channel.isMember(player)) {
+                getManager().setActiveChannel(player, channel);
+                player.sendMessage(info("Now talking in \""+channel.getName()+".\""));
+            }
+        }
     }
 
     // Reload

@@ -1,8 +1,7 @@
 package com.feildmaster.channelchat;
 
 import java.io.File;
-import com.feildmaster.channelchat.channel.Channel;
-import com.feildmaster.channelchat.channel.ChannelManager;
+import com.feildmaster.channelchat.channel.*;
 import com.feildmaster.channelchat.command.*;
 import com.feildmaster.channelchat.listener.*;
 import com.feildmaster.channelchat.configuration.*;
@@ -20,8 +19,8 @@ import org.bukkit.util.config.Configuration;
 // TODO: /cc help or something
 public class Chat extends JavaPlugin {
     private static Chat plugin;
-    private ChatConfig config;
-    private ChanConfig cConfig;
+    private ChatConfiguration config;
+    private ChannelConfiguration cConfig;
 
     public void onDisable() {
         save();
@@ -41,9 +40,8 @@ public class Chat extends JavaPlugin {
         pm.registerEvent(Type.PLAYER_CHAT, new ChatListener(), Priority.Highest, this);
         pm.registerEvent(Type.PLAYER_CHAT, new EarlyChatListener(), Priority.Lowest, this);
 
-        // Setup configs. :D !!! Update Configs
-        config = new ChatConfig(new File(getDataFolder(), "config.yml"));
-        cConfig = new ChanConfig(new Configuration(new File(getDataFolder(), "channels.yml")));
+        config = new ChatConfiguration(this, new File(getDataFolder(), "config.yml"));
+        cConfig = new ChannelConfiguration(new Configuration(new File(getDataFolder(), "channels.yml")));
 
         // Commands
         getCommand("channel-admin").setExecutor(new AdminCommand());
@@ -61,6 +59,10 @@ public class Chat extends JavaPlugin {
                 chan.addMember(player);
 
         getServer().getLogger().info(getDescription().getName()+" v"+getDescription().getVersion()+" enabled");
+    }
+
+    public ChatConfiguration getChatConfig() {
+        return config;
     }
 
     public void save() {
@@ -89,6 +91,11 @@ public class Chat extends JavaPlugin {
         return "["+plugin.getDescription().getName()+"] "+(color==null?"":color)+msg;
     }
 
+    // Because it's convenient.
+    public static ChannelManager getManager() {
+        return ChannelManager.getManager();
+    }
+
     /**
      * Formats message to include plugin name tag
      *
@@ -98,9 +105,9 @@ public class Chat extends JavaPlugin {
     public void sendMessage(CommandSender recipiant, String string) {
         recipiant.sendMessage(format(null, string));
     }
-
-    static {
-        org.bukkit.configuration.serialization.ConfigurationSerialization.registerClass(Channel.class);
-    }
+//
+//    static {
+//        org.bukkit.configuration.serialization.ConfigurationSerialization.registerClass(Channel.class);
+//    }
 }
 

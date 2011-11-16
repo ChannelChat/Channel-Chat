@@ -23,6 +23,10 @@ public class ChannelEvent extends Event {
          */
         CREATE,
         /**
+         * Called when a player deletes a channel
+         */
+        DELETE,
+        /**
          * Called when a player joins a channel
          */
         JOIN,

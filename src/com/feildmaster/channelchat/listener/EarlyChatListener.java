@@ -7,7 +7,6 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 
-
 public class EarlyChatListener extends PlayerListener {
     public void onPlayerChat(PlayerChatEvent event) {
         if(event.isCancelled()) return;

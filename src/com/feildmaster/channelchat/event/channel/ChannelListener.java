@@ -11,6 +11,8 @@ public class ChannelListener extends CustomEventListener {
 
     public void onChannelCreate(ChannelCreateEvent event) {}
 
+    public void onChannelDelete(ChannelDeleteEvent event) {}
+
     public void onChannelJoin(ChannelJoinEvent event) {}
 
     public void onChannelLeave(ChannelLeaveEvent event) {}
@@ -18,14 +20,14 @@ public class ChannelListener extends CustomEventListener {
     /**
      * A custom event called through Bukkit's Event Handler.
      * You should never use this, use the corisponding event function.
-     *
-     * @param event The relevent Event
      */
     public final void onCustomEvent(Event event) {
         if(!(event instanceof ChannelEvent)) return;
 
         if(event instanceof ChannelCreateEvent)
             onChannelCreate((ChannelCreateEvent) event);
+        else if(event instanceof ChannelDeleteEvent)
+            onChannelDelete((ChannelDeleteEvent) event);
         else if (event instanceof ChannelJoinEvent)
             onChannelJoin((ChannelJoinEvent) event);
         else if (event instanceof ChannelLeaveEvent)

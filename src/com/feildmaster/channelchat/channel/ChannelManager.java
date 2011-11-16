@@ -129,7 +129,6 @@ public final class ChannelManager {
 
     public void delChannel(Channel channel) {
         if(channel == null) return;
-        if(channel instanceof CustomChannel) return;
         if(registry.contains(channel)) {
             registry.remove(channel);
             channel.sendMessage(" Channel has been deleted");
@@ -260,7 +259,8 @@ public final class ChannelManager {
     };
 
     public synchronized void callEvent(ChannelEvent event) {
-        for (RegisteredListener registration : getEventListeners(event.getEventType()))
+        for (RegisteredListener registration : getEventListeners(event.getEventType())) {
+            if(!registration.getPlugin().isEnabled()) continue;
             try {
                 registration.callEvent(event);
             } catch (AuthorNagException ex) {
@@ -271,9 +271,9 @@ public final class ChannelManager {
 
                     String author = "<NoAuthorGiven>";
 
-                    if (plugin.getDescription().getAuthors().size() > 0) {
+                    if (plugin.getDescription().getAuthors().size() > 0)
                         author = plugin.getDescription().getAuthors().get(0);
-                    }
+
                     plugin().getServer().getLogger().log(Level.SEVERE, String.format(
                         "Nag author: '%s' of '%s' about the following: %s",
                         author,
@@ -284,9 +284,9 @@ public final class ChannelManager {
             } catch (Throwable ex) {
                 plugin().getServer().getLogger().log(Level.SEVERE, "Could not pass event " + event.getType() + " to " + registration.getPlugin().getDescription().getName(), ex);
             }
+        }
 
-        // Run through Bukkit's Event Handler!
-        plugin().getServer().getPluginManager().callEvent(event);
+        plugin().getServer().getPluginManager().callEvent(event); // Run through Bukkit's Event Handler!
     }
     public void registerEvent(ChannelEvent.Type type, ChannelListener listener, Event.Priority priority, Plugin plugin) {
         getEventListeners(type).add(new RegisteredListener(listener, new EventExecutor() {

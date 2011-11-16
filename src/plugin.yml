@@ -1,6 +1,6 @@
 name: ChannelChat
-main: com.feildmaster.chanchat.Chat
-version: 0.4.6 Beta
+main: com.feildmaster.channelchat.Chat
+version: 0.5 Beta
 author: feildmaster
 description: Simple channel chats.
 dev-url: http://dev.bukkit.org/server-mods/channel-chat/

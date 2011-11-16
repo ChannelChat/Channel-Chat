@@ -7,10 +7,11 @@ import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 
-public class ChanConfig {
+// !!! This one is going to be annoying to convert
+public class ChannelConfiguration {
     private final Configuration config;
 
-    public ChanConfig(Configuration c) {
+    public ChannelConfiguration(Configuration c) {
         config = c;
         config.load();
         if(config.getAll().isEmpty() && config.getHeader() == null)

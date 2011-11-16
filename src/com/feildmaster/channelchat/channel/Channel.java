@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+//import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
-// TODO: AutoJoin on ChannelChange...
-@org.bukkit.configuration.serialization.SerializableAs("ChanChat-Channel")
-public class Channel implements ConfigurationSerializable {
+//@org.bukkit.configuration.serialization.SerializableAs("ChanChat-Channel")
+//public class Channel implements ConfigurationSerializable {
+public class Channel {
     private final String name;
     private final Type type;
     private String alias = null;
@@ -155,7 +155,8 @@ public class Channel implements ConfigurationSerializable {
     }
     // If member functions
     public Boolean isSenderMember(Player player) {
-        return /*player.hasPermission("ChanChat.admin") ||*/ isMember(player);
+        //return player.hasPermission("ChanChat.admin") || isMember(player);
+        return isMember(player);
     }
     public Boolean isMember(Player player) {
         if(player == null) return false;
@@ -243,32 +244,32 @@ public class Channel implements ConfigurationSerializable {
     public final boolean isSaved() {
         return type.isSaved();
     }
-
-    // This may or may not be pushed.
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        map.put("name", getName());
-        map.put("alias", getAlias());
-        map.put("tag", getTag());
-        map.put("auto", isAuto());
-        map.put("listed", isListed());
-        map.put("owner", getOwner());
-        map.put("pass", getPass());
-
-        return map;
-    }
-
-    public static Channel deserialize(Map<String, Object> values) {
-        Channel chan = new Channel((String) values.get("name"), Type.Global);
-
-        chan.setAlias((String) values.get("alias"));
-        chan.setTag((String) values.get("tag"));
-        chan.setOwner((String) values.get("owner"));
-        chan.setPass((String) values.get("pass"));
-        chan.setAuto((Boolean) values.get("auto"));
-        chan.setListed((Boolean) values.get("listed"));
-
-        return chan;
-    }
+//
+//    // This may or may not be pushed.
+//    public Map<String, Object> serialize() {
+//        Map<String, Object> map = new HashMap<String, Object>();
+//
+//        map.put("name", getName());
+//        map.put("alias", getAlias());
+//        map.put("tag", getTag());
+//        map.put("auto", isAuto());
+//        map.put("listed", isListed());
+//        map.put("owner", getOwner());
+//        map.put("pass", getPass());
+//
+//        return map;
+//    }
+//
+//    public static Channel deserialize(Map<String, Object> values) {
+//        Channel chan = new Channel((String) values.get("name"), Type.Global);
+//
+//        chan.setAlias((String) values.get("alias"));
+//        chan.setTag((String) values.get("tag"));
+//        chan.setOwner((String) values.get("owner"));
+//        chan.setPass((String) values.get("pass"));
+//        chan.setAuto((Boolean) values.get("auto"));
+//        chan.setListed((Boolean) values.get("listed"));
+//
+//        return chan;
+//    }
 }

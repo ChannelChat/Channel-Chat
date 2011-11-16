@@ -1,1 +1,4 @@
+# Configuration
+# Creates automagically every start/reload
+
 auto-set-on-join: false
