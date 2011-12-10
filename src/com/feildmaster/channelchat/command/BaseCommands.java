@@ -230,12 +230,7 @@ public abstract class BaseCommands implements ChatExecutor {
     // "set" commands
     protected void setChannel(String name, Player player) {
         if(getManager().channelExists(name)) {
-            Channel channel = getManager().getChannel(name);
-            if(channel.isMember(player)) {
-                getManager().setActiveChannel(player, channel);
-                player.sendMessage(info("Now talking in \""+channel.getName()+".\""));
-            } else
-                player.sendMessage(info("You are not in \""+channel.getName()+".\""));
+            setChannel(getManager().getChannel(name), player);
         } else
             player.sendMessage(error("Channel \""+name+"\" doesn't exist."));
     }
@@ -244,7 +239,8 @@ public abstract class BaseCommands implements ChatExecutor {
             if(channel.isMember(player)) {
                 getManager().setActiveChannel(player, channel);
                 player.sendMessage(info("Now talking in \""+channel.getName()+".\""));
-            }
+            } else
+                player.sendMessage(info("You are not in \""+channel.getName()+".\""));
         }
     }
 
