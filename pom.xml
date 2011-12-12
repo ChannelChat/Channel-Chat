@@ -7,14 +7,14 @@
     <repositories>
         <repository>
             <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/artifactory/repo</url>
+            <url>http://ci.bukkit.org/plugin/repository/everything</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.0.0-R1-SNAPSHOT</version>
+            <version>1.0.1-R1</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

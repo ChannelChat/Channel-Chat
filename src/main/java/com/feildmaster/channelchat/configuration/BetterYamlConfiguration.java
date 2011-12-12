@@ -119,7 +119,7 @@ public class BetterYamlConfiguration extends YamlConfiguration {
     }
 
     public void checkDefaults() {
-        if(!getValues(true).equals(getDefaults().getValues(true))) {
+        if(getValues(true).size() < getDefaults().getValues(true).size()) {
             saveDefaults();
         }
     }
