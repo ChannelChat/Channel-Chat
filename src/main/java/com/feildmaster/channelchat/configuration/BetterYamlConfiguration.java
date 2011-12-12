@@ -118,8 +118,9 @@ public class BetterYamlConfiguration extends YamlConfiguration {
         setDefaults(new MemoryConfiguration());
     }
 
-    // !!! this.getDefaults().getValues(true) compared to this.getValues(true);
     public void checkDefaults() {
-        saveDefaults();
+        if(!getValues(true).equals(getDefaults().getValues(true))) {
+            saveDefaults();
+        }
     }
 }
