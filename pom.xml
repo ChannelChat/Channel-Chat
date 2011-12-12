@@ -7,7 +7,7 @@
     <repositories>
         <repository>
             <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/artifactory/repo</url>
+            <url>http://ci.bukkit.org/plugin/repository/everything</url>
         </repository>
     </repositories>
     <dependencies>
