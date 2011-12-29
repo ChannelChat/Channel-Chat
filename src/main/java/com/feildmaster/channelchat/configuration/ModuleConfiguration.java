@@ -28,16 +28,4 @@ public class ModuleConfiguration extends BetterYamlConfiguration {
 
         loadDefaults(configName);
     }
-
-//
-//    public Map<String, Object> getMap(String path) {
-//        Map<String, Object> map = new HashMap<String, Object>();
-//
-//        Object o = get(path);
-//        if(o instanceof ConfigurationSection) {
-//            return ((ConfigurationSection)o).getValues(false);
-//        }
-//
-//        return map;
-//    }
 }

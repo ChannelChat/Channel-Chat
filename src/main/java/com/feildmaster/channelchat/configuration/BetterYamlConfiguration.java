@@ -1,7 +1,6 @@
 package com.feildmaster.channelchat.configuration;
 
 import java.io.File;
-import java.net.URLConnection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -66,12 +65,7 @@ public class BetterYamlConfiguration extends YamlConfiguration {
      * @param filename The filename to open
      */
     public final void loadDefaults(String filename) {
-        try {
-            URLConnection con = plugin.getClass().getClassLoader().getResource(filename).openConnection();
-            con.setUseCaches(false);
-            if(con.getInputStream() != null)
-                setDefaults(YamlConfiguration.loadConfiguration(con.getInputStream()));
-        } catch (Exception ex) {}
+        setDefaults(YamlConfiguration.loadConfiguration(plugin.getResource(filename)));
     }
 
     /**

@@ -7,8 +7,7 @@ public final class ChatConfiguration extends BetterYamlConfiguration {
     public ChatConfiguration(Plugin p, File file) {
         super(file, p);
 
-        header("# Configuration",
-               "# Creates automagically every start/reload");
+        loadDefaults(file.getName());
 
         load();
 

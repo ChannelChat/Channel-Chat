@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.feildmaster.channelchat</groupId>
     <artifactId>ChannelChat</artifactId>
-    <version>0.5 Beta</version>
+    <version>0.6 Beta</version>
     <name>ChannelChat</name>
     <repositories>
         <repository>

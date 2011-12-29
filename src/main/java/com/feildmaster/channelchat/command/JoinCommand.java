@@ -6,15 +6,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class JoinCommand extends BaseCommands {
-
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(!(sender instanceof Player)) return false;
 
-        if(args.length == 0 || args[0].equals("?"))
+        if(args.length == 0 || args[0].equals("?")) {
             invalidCommand(sender, label);
-        else
-            for(String name : args)
+        } else {
+            for(String name : args) {
                 joinChannel(name, (Player)sender);
+            }
+        }
 
         return true;
     }

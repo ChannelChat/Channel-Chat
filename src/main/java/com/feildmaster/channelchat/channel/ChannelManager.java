@@ -26,6 +26,7 @@ public final class ChannelManager {
 
     ChannelManager() {}
 
+    // TODO: Modularize
     private Map<Player, String> waitList = new HashMap<Player, String>();
 
     // Waitlist functions
