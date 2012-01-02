@@ -66,7 +66,7 @@ public abstract class BaseCommands implements ChatExecutor {
         if(getManager().channelExists(name)) {
             sender.sendMessage("Channel Already Exists!");
             return;
-        } else if(getManager().isReserved(name)) {
+        } else if(getManager().isChannelReserved(name)) {
             sender.sendMessage("Channel Blacklisted.");
             return;
         }
@@ -133,9 +133,9 @@ public abstract class BaseCommands implements ChatExecutor {
                     return;
                 }
 
-                getManager().delChannel(channel);
+                getManager().deleteChannel(channel);
             } else
-                getManager().delChannel(channel);
+                getManager().deleteChannel(channel);
         }
     }
 
@@ -265,7 +265,7 @@ public abstract class BaseCommands implements ChatExecutor {
 
     // Booleans
     protected Boolean isReserved(String name) {
-        return getManager().isReserved(name);
+        return getManager().isChannelReserved(name);
     }
     protected Boolean channelExists(String name) {
         return getManager().channelExists(name);

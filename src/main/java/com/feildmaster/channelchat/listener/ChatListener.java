@@ -2,14 +2,13 @@ package com.feildmaster.channelchat.listener;
 
 import com.feildmaster.channelchat.channel.Channel;
 import com.feildmaster.channelchat.Chat;
-import com.feildmaster.channelchat.event.player.ChannelPlayerChatEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
 import static com.feildmaster.channelchat.Chat.info;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 
-/*
+/**
  * ChatListener
  * <p>
  * Handles player chat
@@ -27,7 +26,7 @@ public class ChatListener extends PlayerListener {
         }
 
         getManager().checkActive(player);
-        Channel chan = event instanceof ChannelPlayerChatEvent ? ((ChannelPlayerChatEvent)event).getChannel() : getManager().getActiveChannel(player);
+        Channel chan = getManager().getChannel(event);
 
         if(chan == null) {
             Chat.plugin().getServer().getLogger().info("[ChannelChat] Error Occured That Shouldn't Happen (chatListener.java)");

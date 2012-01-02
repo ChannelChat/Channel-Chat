@@ -69,7 +69,7 @@ public class ChannelConfiguration {
         // Erase non-existing channels!
         for(Channel chan : getManager().getSavedChannels())
             if(!keys.contains(chan.getName()))
-                getManager().delChannel(chan.getName());
+                getManager().deleteChannel(chan.getName());
 
         for(String name : keys) {
             Channel chan;

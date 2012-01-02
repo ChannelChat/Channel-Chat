@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.plugin.AuthorNagException;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
@@ -44,7 +45,7 @@ public final class ChannelManager {
     }
 
     // Reserved name settings/functions
-    public Boolean isReserved(String n) {
+    public Boolean isChannelReserved(String n) {
         return n.matches("(?i)(active|add|all|create|delete|join|leave|list|reload|who|\\?)");
     }
 
@@ -93,6 +94,16 @@ public final class ChannelManager {
 
         return null;
     }
+
+    /**
+     * Grabs the channel from a chat event.
+     *
+     * @param event The event to extract the channel from
+     * @return Channel tied to the event
+     */
+    public Channel getChannel(PlayerChatEvent event) {
+        return event instanceof ChannelPlayerChatEvent ? ((ChannelPlayerChatEvent)event).getChannel() : getActiveChannel(event.getPlayer());
+    }
     /**
      * @param name Name of Channel to check
      * @return True if channel is found
@@ -109,6 +120,7 @@ public final class ChannelManager {
     public boolean channelExists(Channel channel) {
         return registry.contains(channel);
     }
+
     /**
      * Add a channel to the registry
      *
@@ -119,16 +131,40 @@ public final class ChannelManager {
 
         return registry.add(channel);
     }
+
+    /**
+     * Remove channel from registry
+     *
+     * @param name Name of channel to remove
+     * @deprecated Use {@link deleteChannel}
+     */
+    @Deprecated
+    public void delChannel(String name) {
+        deleteChannel(name);
+    }
+
+    
+    /**
+     * Remove channel from registry
+     *
+     * @param Channel Channel to remove
+     * @deprecated Use {@link deleteChannel(Channel)}
+     */
+    @Deprecated
+    public void delChannel(Channel channel) {
+        deleteChannel(channel);
+    }
+
     /**
      * Remove channel from registry
      *
      * @param name Name of channel to remove
      */
-    public void delChannel(String name) {
-        delChannel(getChannel(name));
+    public void deleteChannel(String name) {
+        deleteChannel(getChannel(name));
     }
 
-    public void delChannel(Channel channel) {
+    public void deleteChannel(Channel channel) {
         if(channel == null) return;
         if(registry.contains(channel)) {
             registry.remove(channel);
@@ -180,7 +216,10 @@ public final class ChannelManager {
 
     // Active Channel Functions
     public String getActiveName(Player player) {
-        return getActiveChannel(player).getName();
+        Channel chan = getActiveChannel(player);
+        if(chan == null) return null;
+        
+        return chan.getName();
     }
     public Channel getActiveChannel(Player player) {
         return activeChannel.get(player.getName());
