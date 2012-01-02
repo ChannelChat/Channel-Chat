@@ -4,6 +4,9 @@
     <artifactId>ChannelChat</artifactId>
     <version>0.6 Beta</version>
     <name>ChannelChat</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <repositories>
         <repository>
             <id>bukkit-repo</id>
