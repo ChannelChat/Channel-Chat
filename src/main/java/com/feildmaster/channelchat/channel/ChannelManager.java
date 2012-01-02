@@ -4,14 +4,7 @@ import com.feildmaster.channelchat.event.channel.*;
 import com.feildmaster.channelchat.event.player.ChannelPlayerChatEvent;
 import com.feildmaster.channelchat.channel.Channel.Type;
 import static com.feildmaster.channelchat.Chat.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -50,7 +43,7 @@ public final class ChannelManager {
     }
 
     //Channel manager
-    private List<Channel> registry = new ArrayList<Channel>();
+    private List<Channel> registry = new LinkedList<Channel>();
     private Map<String, Channel> activeChannel = new HashMap<String, Channel>();
 
     // Message Handlers
