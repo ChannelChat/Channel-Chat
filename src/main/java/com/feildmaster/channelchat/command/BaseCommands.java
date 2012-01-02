@@ -96,7 +96,7 @@ public abstract class BaseCommands implements ChatExecutor {
 
             getManager().addChannel(channel);
 
-            if(getManager().getActiveName(player) == null)
+            if(getManager().getActiveChannel(player) == null)
                 getManager().setActiveChannel(player, channel);
 
             getManager().sendMessage(channel, "Created");
