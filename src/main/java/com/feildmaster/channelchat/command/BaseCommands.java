@@ -160,7 +160,7 @@ public abstract class BaseCommands implements ChatExecutor {
 
                 channel.addMember(player, true);
 
-                if(Chat.plugin().getChatConfig().autoJoin()) setChannel(channel, player);
+                if(Chat.plugin().getChatConfig().autoSet()) setChannel(channel, player);
             }
         } else
             createChannel(name, player);

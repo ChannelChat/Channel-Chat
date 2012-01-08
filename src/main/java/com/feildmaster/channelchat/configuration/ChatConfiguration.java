@@ -14,7 +14,7 @@ public final class ChatConfiguration extends BetterYamlConfiguration {
         checkDefaults();
     }
 
-    public boolean autoJoin() {
+    public boolean autoSet() {
         return getBoolean("auto_set_on_join");
     }
 }
