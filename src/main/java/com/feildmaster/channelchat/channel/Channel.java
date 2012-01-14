@@ -2,10 +2,8 @@ package com.feildmaster.channelchat.channel;
 
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -117,7 +115,7 @@ public class Channel {
         return alias;
     }
     public final boolean setAlias(String s) {
-        if(alias == s) return true;
+        if(alias.equals(s)) return true;
 
         if(s != null && getManager().getChannel(s) != null) return false;
 
