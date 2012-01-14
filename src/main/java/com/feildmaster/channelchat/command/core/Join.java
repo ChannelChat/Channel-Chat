@@ -1,25 +1,26 @@
-package com.feildmaster.channelchat.command;
+package com.feildmaster.channelchat.command.core;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SetCommand extends BaseCommands {
-
+public class Join extends BaseCommands {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(!(sender instanceof Player)) return false;
 
-        if(args.length == 0 || args.length > 1 || args[0].equals("?"))
+        if(args.length == 0 || args[0].equals("?")) {
             invalidCommand(sender, label);
-        else
-            setChannel(args[0], (Player) sender);
+        } else {
+            for(String name : args) {
+                joinChannel(name, (Player)sender);
+            }
+        }
 
         return true;
     }
 
     public void invalidCommand(CommandSender sender, String name) {
-        sender.sendMessage(ChatColor.RED+"Syntax: /"+name.toLowerCase()+" <channel>");
+        sender.sendMessage(ChatColor.RED+"Syntax: /"+name.toLowerCase()+" <channels...>");
     }
-
 }

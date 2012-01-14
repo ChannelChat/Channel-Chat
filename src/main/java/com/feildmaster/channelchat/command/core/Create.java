@@ -1,10 +1,10 @@
-package com.feildmaster.channelchat.command;
+package com.feildmaster.channelchat.command.core;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class CreateCommand extends BaseCommands {
+public class Create extends BaseCommands {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(args.length == 0 || args[0].equals("?"))

@@ -1,4 +1,4 @@
-package com.feildmaster.channelchat.command;
+package com.feildmaster.channelchat.command.core;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

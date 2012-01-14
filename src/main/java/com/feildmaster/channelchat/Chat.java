@@ -1,8 +1,9 @@
 package com.feildmaster.channelchat;
 
+import com.feildmaster.channelchat.command.core.*;
 import java.io.File;
 import com.feildmaster.channelchat.channel.*;
-import com.feildmaster.channelchat.command.*;
+//import com.feildmaster.channelchat.command.*;
 import com.feildmaster.channelchat.listener.*;
 import com.feildmaster.channelchat.configuration.*;
 import static com.feildmaster.channelchat.event.ChannelEventFactory.*;
@@ -44,14 +45,14 @@ public class Chat extends JavaPlugin {
         cConfig = new ChannelConfiguration(new Configuration(new File(getDataFolder(), "channels.yml")));
 
         // Commands
-        getCommand("channel-admin").setExecutor(new AdminCommand());
-        getCommand("channel-chat").setExecutor(new ChatCommand());
-        getCommand("channel-join").setExecutor(new JoinCommand());
-        getCommand("channel-leave").setExecutor(new LeaveCommand());
-        getCommand("channel-create").setExecutor(new CreateCommand());
-        getCommand("channel-delete").setExecutor(new DeleteCommand());
-        getCommand("channel-add").setExecutor(new AddCommand());
-        getCommand("channel-set").setExecutor(new SetCommand());
+        getCommand("channel-admin").setExecutor(new Admin());
+        getCommand("channel-chat").setExecutor(new Chat());
+        getCommand("channel-join").setExecutor(new Join());
+        getCommand("channel-leave").setExecutor(new Leave());
+        getCommand("channel-create").setExecutor(new Create());
+        getCommand("channel-delete").setExecutor(new Delete());
+        getCommand("channel-add").setExecutor(new Add());
+        getCommand("channel-set").setExecutor(new Set());
 
         // AutoJoin Channels!
         for(Player player : getServer().getOnlinePlayers())
@@ -105,9 +106,5 @@ public class Chat extends JavaPlugin {
     public void sendMessage(CommandSender recipiant, String string) {
         recipiant.sendMessage(format(null, string));
     }
-//
-//    static {
-//        org.bukkit.configuration.serialization.ConfigurationSerialization.registerClass(Channel.class);
-//    }
 }
 

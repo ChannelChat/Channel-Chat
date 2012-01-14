@@ -1,4 +1,4 @@
-package com.feildmaster.channelchat.command;
+package com.feildmaster.channelchat.command.core;
 
 import com.feildmaster.channelchat.event.channel.ChannelDeleteEvent;
 import com.feildmaster.channelchat.event.channel.CancelReason;

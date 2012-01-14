@@ -1,9 +1,9 @@
-package com.feildmaster.channelchat.command;
+package com.feildmaster.channelchat.command.core;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class AdminCommand extends BaseCommands {
+public class Admin extends BaseCommands {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         /* Commands:
          * - Ban

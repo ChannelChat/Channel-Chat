@@ -1,13 +1,14 @@
-package com.feildmaster.channelchat.command;
+package com.feildmaster.channelchat.command.core;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ChatCommand extends BaseCommands {
+public class Chat extends BaseCommands {
     String playerCommands = "active, create, delete, join, leave, add, set, list, who";
     String serverCommands = "create, delete";
+
     public boolean onCommand(CommandSender sender, Command cmd, String name, String[] args) {
         int size = args.length;
 
