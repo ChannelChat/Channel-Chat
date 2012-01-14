@@ -8,10 +8,9 @@ public final class ChatConfiguration extends BetterYamlConfiguration {
         super(file, p);
 
         loadDefaults(file.getName());
+        checkDefaults();
 
         load();
-
-        checkDefaults();
     }
 
     public boolean autoSet() {

@@ -1,6 +1,7 @@
 package com.feildmaster.channelchat.configuration;
 
 import java.io.File;
+import java.io.InputStream;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -34,6 +35,7 @@ public class BetterYamlConfiguration extends YamlConfiguration {
 
     public void reload() {
         load();
+        loadDefaults(file.getName());
     }
 
     /**
@@ -65,7 +67,10 @@ public class BetterYamlConfiguration extends YamlConfiguration {
      * @param filename The filename to open
      */
     public final void loadDefaults(String filename) {
-        setDefaults(YamlConfiguration.loadConfiguration(plugin.getResource(filename)));
+        InputStream stream = plugin.getResource(filename);
+        if(stream == null) return;
+
+        setDefaults(YamlConfiguration.loadConfiguration(stream));
     }
 
     /**
@@ -76,15 +81,13 @@ public class BetterYamlConfiguration extends YamlConfiguration {
      * @return True if saved successfully
      */
     public final boolean saveDefaults() {
-        try {
-            options().copyDefaults(true);
-            save();
-            options().copyDefaults(false);
-            return true;
-        } catch (Exception ex) {
-            options().copyDefaults(false);
-            return false;
-        }
+        options().copyDefaults(true);
+        options().copyHeader(true);
+        boolean e = !save();
+        options().copyDefaults(false);
+        options().copyHeader(false);
+
+        return !e;
     }
 
     public BetterYamlConfiguration header(String... header) {
