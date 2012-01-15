@@ -83,11 +83,11 @@ public class BetterYamlConfiguration extends YamlConfiguration {
     public final boolean saveDefaults() {
         options().copyDefaults(true);
         options().copyHeader(true);
-        boolean e = !save();
+        boolean success = save();
         options().copyDefaults(false);
         options().copyHeader(false);
 
-        return !e;
+        return success;
     }
 
     public BetterYamlConfiguration header(String... header) {
