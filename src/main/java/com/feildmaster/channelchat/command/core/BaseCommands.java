@@ -18,9 +18,14 @@ public abstract class BaseCommands implements ChatExecutor {
     protected void listChannels(Player player, Boolean mem) {
         StringBuilder string = new StringBuilder();
         boolean color = true;
-        for(Channel channel : getManager().getChannels())
-            if(channel.isListed())
-                string.append(string.length()!=0?", ":"").append((color=!color)?ChatColor.GRAY:ChatColor.WHITE).append(channel.isMember(player)?"*":"").append(channel.getName());
+        for(Channel channel : getManager().getChannels()) {
+            if(channel.isListed() || channel.isMember(player)) {
+                string.append(string.length()!=0?", ":"")
+                        .append((color=!color)?ChatColor.GRAY:ChatColor.WHITE)
+                        .append(channel.isMember(player)?"*":"")
+                        .append(channel.getName());
+            }
+        }
         player.sendMessage("Channels: "+string.toString());
     }
 
