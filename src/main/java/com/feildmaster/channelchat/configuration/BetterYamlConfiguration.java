@@ -2,6 +2,8 @@ package com.feildmaster.channelchat.configuration;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -119,5 +121,22 @@ public class BetterYamlConfiguration extends YamlConfiguration {
         if(getValues(true).size() < getDefaults().getValues(true).size()) {
             saveDefaults();
         }
+    }
+
+    private Map<String, Object> cache = new HashMap<String, Object>();
+    public Object get(String path, Object def) {
+        Object value = cache.get(path);
+        if(value != null) {
+            return value;
+        }
+
+        value = super.get(path, def);
+        cache.put(path, value);
+
+        return value;
+    }
+    public void set(String path, Object value) {
+        cache.put(path, value);
+        super.set(path, value);
     }
 }
