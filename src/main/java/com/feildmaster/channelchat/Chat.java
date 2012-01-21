@@ -10,9 +10,7 @@ import static com.feildmaster.channelchat.event.ChannelEventFactory.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
@@ -23,25 +21,21 @@ public class Chat extends JavaPlugin {
     private ChatConfiguration config;
     private ChannelConfiguration cConfig;
 
+    private Listener[] listeners = {new LoginListener(), new ChatListener()};
+
     public void onDisable() {
-        save();
+        saveConfig();
 
         getServer().getLogger().info(getDescription().getName()+" v"+getDescription().getVersion()+" disabled");
     }
 
     public void onEnable() {
         plugin = this;
-        PluginManager pm = getServer().getPluginManager();
 
         // Events
-        MonitorPlayerListener monitor = new MonitorPlayerListener();
-        pm.registerEvent(Type.PLAYER_JOIN, monitor, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_QUIT, monitor, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_KICK, monitor, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_CHAT, new ChatListener(), Priority.Highest, this);
-        pm.registerEvent(Type.PLAYER_CHAT, new EarlyChatListener(), Priority.Lowest, this);
-
-        config = new ChatConfiguration(this, new File(getDataFolder(), "config.yml"));
+        for(Listener l : listeners) {
+            getServer().getPluginManager().registerEvents(l, this);
+        }
         cConfig = new ChannelConfiguration(new Configuration(new File(getDataFolder(), "channels.yml")));
 
         // Commands
@@ -62,16 +56,21 @@ public class Chat extends JavaPlugin {
         getServer().getLogger().info(getDescription().getName()+" v"+getDescription().getVersion()+" enabled");
     }
 
-    public ChatConfiguration getChatConfig() {
+    public ChatConfiguration getConfig() {
+        if(config == null) {
+            config = new ChatConfiguration(this, new File(getDataFolder(), "config.yml"));
+        }
+
         return config;
     }
 
-    public void save() {
+    public void saveConfig() {
         config.save();
         cConfig.save();
         callSaveEvent();
     }
-    public void reload() {
+
+    public void reloadConfig() {
         config.reload();
         cConfig.reload();
         callReloadEvent();
@@ -92,7 +91,7 @@ public class Chat extends JavaPlugin {
         return "["+plugin.getDescription().getName()+"] "+(color==null?"":color)+msg;
     }
 
-    // Because it's convenient.
+    @Deprecated
     public static ChannelManager getManager() {
         return ChannelManager.getManager();
     }
