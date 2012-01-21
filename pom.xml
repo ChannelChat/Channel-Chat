@@ -10,14 +10,14 @@
     <repositories>
         <repository>
             <id>bukkit-repo</id>
-            <url>http://ci.bukkit.org/plugin/repository/everything</url>
+            <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.0.1-R1</version>
+            <version>1.1-R1-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

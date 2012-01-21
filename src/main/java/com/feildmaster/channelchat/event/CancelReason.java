@@ -1,4 +1,4 @@
-package com.feildmaster.channelchat.event.channel;
+package com.feildmaster.channelchat.event;
 
 import org.bukkit.event.Cancellable;
 

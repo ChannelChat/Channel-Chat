@@ -7,12 +7,9 @@ import java.util.List;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-//import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
-//@org.bukkit.configuration.serialization.SerializableAs("ChanChat-Channel")
-//public class Channel implements ConfigurationSerializable {
 public class Channel {
     private final String name;
     private final Type type;
@@ -31,9 +28,23 @@ public class Channel {
         Private,
         Custom;
 
-        public boolean isLocal() {
-            return this.equals(Local);
+        public boolean isGlobal() {
+            return this == Global;
         }
+        public boolean isWorld() {
+            return this == World;
+        }
+        public boolean isLocal() {
+            return this == Local;
+        }
+        public boolean isPrivate() {
+            return this == Private;
+        }
+        public boolean isCustom() {
+            return this == Custom;
+        }
+
+
         private boolean isSaved() {
             return !this.equals(Private) && !this.equals(Custom);
         }
@@ -85,8 +96,9 @@ public class Channel {
 
         for(String n : members) {
             Player p = Bukkit.getPlayer(n);
-            if(isMember(p)) // Check "is member" in case of an override
+            if(isMember(p)) { // Check "is member" in case of an override
                 p.sendMessage(msg);
+            }
         }
     }
     public void sendJoinMessage(Player player) {

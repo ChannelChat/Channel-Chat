@@ -1,7 +1,9 @@
 package com.feildmaster.channelchat.event.channel;
 
+import com.feildmaster.channelchat.event.CancelReason;
 import com.feildmaster.channelchat.channel.Channel;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 public class ChannelJoinEvent extends ChannelPlayerEvent implements CancelReason {
     private String cancelReason;
@@ -9,7 +11,7 @@ public class ChannelJoinEvent extends ChannelPlayerEvent implements CancelReason
 //    private String joinMessage;
 
     public ChannelJoinEvent(Player player, Channel channel) {
-        super(channel, player, Type.JOIN);
+        super(channel, player);
     }
 //    // !!! Messages through here!
 //    public String getJoinMessage() {
@@ -36,8 +38,11 @@ public class ChannelJoinEvent extends ChannelPlayerEvent implements CancelReason
         canceled = cancel;
     }
 
-    public enum Reason {
-        Allowed,
-        Deny_Channel
+    private static HandlerList handlers = new HandlerList();
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 }

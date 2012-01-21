@@ -1,10 +1,8 @@
 package com.feildmaster.channelchat.command.core;
 
-import com.feildmaster.channelchat.event.channel.ChannelDeleteEvent;
-import com.feildmaster.channelchat.event.channel.CancelReason;
-import com.feildmaster.channelchat.event.channel.ChannelJoinEvent;
-import com.feildmaster.channelchat.event.channel.ChannelCreateEvent;
-import com.feildmaster.channelchat.event.ChannelEventFactory;
+import org.bukkit.Bukkit;
+import com.feildmaster.channelchat.event.channel.*;
+import com.feildmaster.channelchat.event.*;
 import org.bukkit.command.ConsoleCommandSender;
 import com.feildmaster.channelchat.channel.Channel;
 import com.feildmaster.channelchat.Chat;
@@ -87,7 +85,7 @@ public abstract class BaseCommands implements ChatExecutor {
                 event.setCancelReason("You can't do that.");
             }
 
-            getManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
 
             if(event.isCancelled()) {
                 sendCancelMessage(player, event);
@@ -126,7 +124,7 @@ public abstract class BaseCommands implements ChatExecutor {
                     event.setCancelReason("You can't do that.");
                 }
 
-                getManager().callEvent(event);
+                Bukkit.getPluginManager().callEvent(event);
 
                 if(event.isCancelled()) {
                     sendCancelMessage(event.getPlayer(), event);
@@ -160,7 +158,7 @@ public abstract class BaseCommands implements ChatExecutor {
 
                 channel.addMember(player, true);
 
-                if(Chat.plugin().getChatConfig().autoSet()) setChannel(channel, player);
+                if(Chat.plugin().getConfig().autoSet()) setChannel(channel, player);
             }
         } else
             createChannel(name, player);
@@ -249,11 +247,11 @@ public abstract class BaseCommands implements ChatExecutor {
         if(isPlayer(sender)) {
             Player p = (Player)sender;
             if(p.hasPermission("ChanChat.reload")) {
-                Chat.plugin().reload();
+                Chat.plugin().reloadConfig();
                 p.sendMessage("[CC] Reloaded");
             }
         } else {
-            Chat.plugin().reload();
+            Chat.plugin().reloadConfig();
             sender.sendMessage("[CC] Reloaded");
         }
         return true;

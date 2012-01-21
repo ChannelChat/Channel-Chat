@@ -1,17 +1,14 @@
 package com.feildmaster.channelchat;
 
 import com.feildmaster.channelchat.configuration.ModuleConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Module extends JavaPlugin {
+public abstract class Module extends JavaPlugin {
     private ModuleConfiguration config;
 
-    public void onEnable() {
-        info("v"+getDescription().getVersion()+" Enabled!");
-    }
-
-    public void onDisable() {
-        info(format("Disabled!"));
+    public void registerEvents(Listener listener) {
+        getServer().getPluginManager().registerEvents(listener, this);
     }
 
     public ModuleConfiguration getConfig() {

@@ -1,23 +1,24 @@
 package com.feildmaster.channelchat.event.channel;
 
+import com.feildmaster.channelchat.channel.Channel;
 import org.bukkit.event.Event;
 
 public class ChannelEvent extends Event {
+    private Channel channel;
     private Type type;
-    protected ChannelEvent(Type type) {
-        super("ChannelEvent");
-        this.type = type;
+
+    protected ChannelEvent(Channel chan) {
+        channel = chan;
+    }
+    @Deprecated
+    protected ChannelEvent(Type type) {}
+
+    public Channel getChannel() {
+        return channel;
     }
 
+    @Deprecated
     public enum Type {
-        /**
-         * Called on /cc reload
-         */
-        RELOAD,
-        /**
-         * Called when ChannelChat is disabled, or a save call is made.
-         */
-        SAVE,
         /**
          * Called when a player creates a channel.
          */

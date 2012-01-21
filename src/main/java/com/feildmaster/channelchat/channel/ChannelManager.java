@@ -1,19 +1,11 @@
 package com.feildmaster.channelchat.channel;
 
-import com.feildmaster.channelchat.event.channel.*;
 import com.feildmaster.channelchat.event.player.ChannelPlayerChatEvent;
 import com.feildmaster.channelchat.channel.Channel.Type;
 import static com.feildmaster.channelchat.Chat.*;
 import java.util.*;
-import java.util.logging.Level;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.plugin.AuthorNagException;
-import org.bukkit.plugin.EventExecutor;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredListener;
 
 public final class ChannelManager {
     private static final ChannelManager manager = new ChannelManager();
@@ -279,75 +271,6 @@ public final class ChannelManager {
             if(chan.isSaved())
                 list.add(chan);
         return list;
-    }
-
-    // Event Factory
-    private final Map<ChannelEvent.Type, SortedSet<RegisteredListener>> listeners = new EnumMap<ChannelEvent.Type, SortedSet<RegisteredListener>>(ChannelEvent.Type.class);
-    private final Comparator<RegisteredListener> comparer = new Comparator<RegisteredListener>() {
-        public int compare(RegisteredListener i, RegisteredListener j) {
-            int result = i.getPriority().compareTo(j.getPriority());
-            if ((result == 0) && (i != j)) result = 1;
-            return result;
-        }
-    };
-
-    public synchronized void callEvent(ChannelEvent event) {
-        for (RegisteredListener registration : getEventListeners(event.getEventType())) {
-            if(!registration.getPlugin().isEnabled()) continue;
-            try {
-                registration.callEvent(event);
-            } catch (AuthorNagException ex) {
-                Plugin plugin = registration.getPlugin();
-
-                if (plugin.isNaggable()) {
-                    plugin.setNaggable(false);
-
-                    String author = "<NoAuthorGiven>";
-
-                    if (plugin.getDescription().getAuthors().size() > 0)
-                        author = plugin.getDescription().getAuthors().get(0);
-
-                    plugin().getServer().getLogger().log(Level.SEVERE, String.format(
-                        "Nag author: '%s' of '%s' about the following: %s",
-                        author,
-                        plugin.getDescription().getName(),
-                        ex.getMessage()
-                    ));
-                }
-            } catch (Throwable ex) {
-                plugin().getServer().getLogger().log(Level.SEVERE, "Could not pass event " + event.getType() + " to " + registration.getPlugin().getDescription().getName(), ex);
-            }
-        }
-
-        plugin().getServer().getPluginManager().callEvent(event); // Run through Bukkit's Event Handler!
-    }
-    public void registerEvent(ChannelEvent.Type type, ChannelListener listener, Event.Priority priority, Plugin plugin) {
-        getEventListeners(type).add(new RegisteredListener(listener, new EventExecutor() {
-            public void execute(Listener ll, Event event) {
-                if(!(event instanceof ChannelEvent)) return;
-                if(event instanceof ChannelCreateEvent)
-                    ((ChannelListener)ll).onChannelCreate((ChannelCreateEvent)event);
-                else if (event instanceof ChannelJoinEvent)
-                    ((ChannelListener)ll).onChannelJoin((ChannelJoinEvent) event);
-                else if (event instanceof ChannelLeaveEvent)
-                    ((ChannelListener)ll).onChannelLeave((ChannelLeaveEvent) event);
-                else if (event instanceof ReloadEvent)
-                    ((ChannelListener)ll).onReload((ReloadEvent) event);
-                else if (event instanceof SaveEvent)
-                    ((ChannelListener)ll).onSave((SaveEvent) event);
-            }
-        }, priority, plugin));
-    }
-
-    private SortedSet<RegisteredListener> getEventListeners(ChannelEvent.Type type) {
-        SortedSet<RegisteredListener> eventListeners = listeners.get(type);
-
-        if(eventListeners != null) return eventListeners;
-
-        eventListeners = new TreeSet<RegisteredListener>(comparer);
-        listeners.put(type, eventListeners);
-
-        return eventListeners;
     }
 
     public static ChannelManager getManager() {

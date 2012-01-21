@@ -1,16 +1,15 @@
 package com.feildmaster.channelchat.listener;
 
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.*;
+import org.bukkit.event.player.*;
 import org.bukkit.ChatColor;
 import com.feildmaster.channelchat.channel.Channel;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 import static com.feildmaster.channelchat.Chat.format;
 
-public class MonitorPlayerListener extends PlayerListener {
+public class LoginListener implements Listener {
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         for(Channel chan : getManager().getAutoChannels())
@@ -18,11 +17,15 @@ public class MonitorPlayerListener extends PlayerListener {
         getManager().checkActive(player);
         player.sendMessage(format(ChatColor.WHITE, ChatColor.YELLOW+"Your active channel is: "+getManager().getActiveName(player)));
     }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         for(Channel chan : getManager().getJoinedChannels(player))
            chan.delMember(player);
     }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
         for(Channel chan : getManager().getJoinedChannels(player))
