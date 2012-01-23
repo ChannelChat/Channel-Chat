@@ -1,3 +1,4 @@
 # Configuration
 
 auto-set-on-join: false
+persist-relogs: false
