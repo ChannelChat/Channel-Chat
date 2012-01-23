@@ -14,9 +14,4 @@ public class ChannelPlayerEvent extends ChannelEvent {
         super(channel);
         this.player = player;
     }
-
-    @Deprecated
-    protected ChannelPlayerEvent(Channel channel, Player player, Type type) {
-        this(channel, player);
-    }
 }

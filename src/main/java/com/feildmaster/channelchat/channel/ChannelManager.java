@@ -121,29 +121,6 @@ public final class ChannelManager {
      * Remove channel from registry
      *
      * @param name Name of channel to remove
-     * @deprecated Use {@link deleteChannel}
-     */
-    @Deprecated
-    public void delChannel(String name) {
-        deleteChannel(name);
-    }
-
-    
-    /**
-     * Remove channel from registry
-     *
-     * @param Channel Channel to remove
-     * @deprecated Use {@link deleteChannel(Channel)}
-     */
-    @Deprecated
-    public void delChannel(Channel channel) {
-        deleteChannel(channel);
-    }
-
-    /**
-     * Remove channel from registry
-     *
-     * @param name Name of channel to remove
      */
     public void deleteChannel(String name) {
         deleteChannel(getChannel(name));
@@ -202,25 +179,24 @@ public final class ChannelManager {
     // Active Channel Functions
     public String getActiveName(Player player) {
         Channel chan = getActiveChannel(player);
-        if(chan == null) return null;
-        
-        return chan.getName();
+        return chan == null ? null : chan.getName();
+    }
+    public boolean hasActiveChannel(Player player) {
+        return activeChannel.containsKey(player.getName());
     }
     public Channel getActiveChannel(Player player) {
         return activeChannel.get(player.getName());
     }
     public void setActiveChannel(Player player, Channel channel) {
-        if (channel != null) {
-            if(channelExists(channel) && channel.isMember(player))
-                activeChannel.put(player.getName(), channel);
-        } else {
-            activeChannel.remove(player.getName());
+        if (channel == null || (channelExists(channel) && channel.isMember(player))) {
+            activeChannel.put(player.getName(), channel);
         }
     }
     public void checkActive() {
-        if(!activeChannel.isEmpty()) // Keyset errors on empty maps
-        for(String name : activeChannel.keySet())
+        if (!activeChannel.isEmpty()) // Keyset errors on empty maps
+        for (String name : activeChannel.keySet()) {
             checkActive(plugin().getServer().getPlayer(name));
+        }
     }
     public void checkActive(Player player) {
         if(player == null) return;

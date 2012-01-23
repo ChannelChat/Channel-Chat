@@ -49,9 +49,11 @@ public class Chat extends JavaPlugin {
         getCommand("channel-set").setExecutor(new Set());
 
         // AutoJoin Channels!
-        for(Player player : getServer().getOnlinePlayers())
-            for(Channel chan : ChannelManager.getManager().getAutoChannels())
+        for(Player player : getServer().getOnlinePlayers()) {
+            for(Channel chan : ChannelManager.getManager().getAutoChannels()) {
                 chan.addMember(player);
+            }
+        }
 
         getServer().getLogger().info(getDescription().getName()+" v"+getDescription().getVersion()+" enabled");
     }
@@ -89,11 +91,6 @@ public class Chat extends JavaPlugin {
 
     public static String format(ChatColor color, String msg) {
         return "["+plugin.getDescription().getName()+"] "+(color==null?"":color)+msg;
-    }
-
-    @Deprecated
-    public static ChannelManager getManager() {
-        return ChannelManager.getManager();
     }
 
     /**
