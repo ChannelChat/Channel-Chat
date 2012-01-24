@@ -40,7 +40,7 @@ public class Chat extends JavaPlugin {
 
         // Commands
         getCommand("channel-admin").setExecutor(new Admin());
-        getCommand("channel-chat").setExecutor(new Chat());
+        getCommand("channel-chat").setExecutor(new CChat());
         getCommand("channel-join").setExecutor(new Join());
         getCommand("channel-leave").setExecutor(new Leave());
         getCommand("channel-create").setExecutor(new Create());
@@ -67,13 +67,13 @@ public class Chat extends JavaPlugin {
     }
 
     public void saveConfig() {
-        config.save();
+        getConfig().save();
         cConfig.save();
         callSaveEvent();
     }
 
     public void reloadConfig() {
-        config.reload();
+        getConfig().reload();
         cConfig.reload();
         callReloadEvent();
     }

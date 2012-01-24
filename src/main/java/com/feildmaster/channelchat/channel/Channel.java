@@ -127,7 +127,7 @@ public class Channel {
         return alias;
     }
     public final boolean setAlias(String s) {
-        if(alias.equals(s)) return true;
+        if(alias != null && alias.equals(s)) return true;
 
         if(s != null && getManager().getChannel(s) != null) return false;
 
