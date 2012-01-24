@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class Chat extends BaseCommands {
+public class CChat extends BaseCommands {
     String playerCommands = "active, create, delete, join, leave, add, set, list, who";
     String serverCommands = "create, delete";
 
