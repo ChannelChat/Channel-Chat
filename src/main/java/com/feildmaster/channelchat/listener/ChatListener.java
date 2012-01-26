@@ -20,7 +20,7 @@ public class ChatListener implements Listener {
         Player player = event.getPlayer();
         String msg = event.getMessage();
 
-        if(getManager().inWaitlist(player)) {
+        if(getManager().inWaitlist(player)) { // TODO: Modularize
             Channel chan =getManager().getWaitingChan(player);
             if(chan.getPass().equals(msg)) {
                 chan.addMember(player);

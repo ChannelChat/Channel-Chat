@@ -1,9 +1,10 @@
 package com.feildmaster.channelchat.configuration;
 
+import com.feildmaster.lib.configuration.EnhancedConfiguration;
 import java.io.File;
 import org.bukkit.plugin.Plugin;
 
-public final class ChatConfiguration extends BetterYamlConfiguration {
+public final class ChatConfiguration extends EnhancedConfiguration {
     public ChatConfiguration(Plugin p, File file) {
         super(file, p);
 

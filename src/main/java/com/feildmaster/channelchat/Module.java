@@ -1,34 +1,11 @@
 package com.feildmaster.channelchat;
 
-import com.feildmaster.channelchat.configuration.ModuleConfiguration;
+import com.feildmaster.lib.configuration.PluginWrapper;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public abstract class Module extends JavaPlugin {
-    private ModuleConfiguration config;
-
+public abstract class Module extends PluginWrapper {
     public void registerEvents(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
-    }
-
-    public ModuleConfiguration getConfig() {
-        if(config == null) {
-            reloadConfig();
-        }
-
-        return config;
-    }
-
-    public void reloadConfig() {
-        if(config == null) {
-            config = new ModuleConfiguration(this);
-        }
-
-        config.reload();
-    }
-
-    public void saveConfig() {
-        config.save();
     }
 
     public void info(String message) {

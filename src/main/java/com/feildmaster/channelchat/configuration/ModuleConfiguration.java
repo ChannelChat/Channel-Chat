@@ -1,12 +1,13 @@
 package com.feildmaster.channelchat.configuration;
 
+import com.feildmaster.lib.configuration.EnhancedConfiguration;
 import java.io.File;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Configuration class for simple configuration setting for ChannelChat Plugins
  */
-public class ModuleConfiguration extends BetterYamlConfiguration {
+public class ModuleConfiguration extends EnhancedConfiguration {
     /**
      * Creates a new ModuleConfiguration for ChannelChat modules.
      * Uses plugin name for file name
