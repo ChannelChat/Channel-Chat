@@ -17,23 +17,21 @@ import org.bukkit.util.config.Configuration;
 // TODO: Default "set" channel
 // TODO: /cc help or something
 public class Chat extends JavaPlugin {
+
     private static Chat plugin;
     private ChatConfiguration config;
     private ChannelConfiguration cConfig;
-
     private Listener[] listeners = {new LoginListener(), new ChatListener()};
 
     public void onDisable() {
         saveConfig();
-
-        getServer().getLogger().info(getDescription().getName()+" v"+getDescription().getVersion()+" disabled");
     }
 
     public void onEnable() {
         plugin = this;
 
         // Events
-        for(Listener l : listeners) {
+        for (Listener l : listeners) {
             getServer().getPluginManager().registerEvents(l, this);
         }
         cConfig = new ChannelConfiguration(new Configuration(new File(getDataFolder(), "channels.yml")));
@@ -49,20 +47,16 @@ public class Chat extends JavaPlugin {
         getCommand("channel-set").setExecutor(new Set());
 
         // AutoJoin Channels!
-        for(Player player : getServer().getOnlinePlayers()) {
-            for(Channel chan : ChannelManager.getManager().getAutoChannels()) {
-                chan.addMember(player);
-            }
+        for (Player player : getServer().getOnlinePlayers()) {
+            ChannelManager.getManager().joinAutoChannels(player);
+            ChannelManager.getManager().checkActive(player); // Fixes null "active"
         }
-
-        getServer().getLogger().info(getDescription().getName()+" v"+getDescription().getVersion()+" enabled");
     }
 
     public ChatConfiguration getConfig() {
-        if(config == null) {
+        if (config == null) {
             config = new ChatConfiguration(this, new File(getDataFolder(), "config.yml"));
         }
-
         return config;
     }
 
@@ -73,7 +67,7 @@ public class Chat extends JavaPlugin {
     }
 
     public void reloadConfig() {
-        getConfig().reload();
+        getConfig().load();
         cConfig.reload();
         callReloadEvent();
     }
@@ -83,14 +77,15 @@ public class Chat extends JavaPlugin {
     }
 
     public static String error(String msg) {
-        return format(ChatColor.RED,msg);
+        return format(ChatColor.RED, msg);
     }
+
     public static String info(String msg) {
         return format(ChatColor.YELLOW, msg);
     }
 
     public static String format(ChatColor color, String msg) {
-        return "["+plugin.getDescription().getName()+"] "+(color==null?"":color)+msg;
+        return "[" + plugin.getDescription().getName() + "] " + (color == null ? "" : color) + msg;
     }
 
     /**
@@ -103,4 +98,3 @@ public class Chat extends JavaPlugin {
         recipiant.sendMessage(format(null, string));
     }
 }
-

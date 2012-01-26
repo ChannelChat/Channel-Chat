@@ -220,10 +220,9 @@ public final class ChannelManager {
             setActiveChannel(player, joinedChannels.get(0));
         } else if (chan != null && channelExists(chan) && !chan.isMember(player)) {
             setActiveChannel(player, joinedChannels.get(0));
-            player.sendMessage(info("You are now in channel \""+joinedChannels.get(0).getName()+".\""));
+            player.sendMessage(info("You are now speaking in \""+joinedChannels.get(0).getName()+".\""));
         }
     }
-
     public List<Channel> getJoinedChannels(Player player) {
         List<Channel> list = new ArrayList<Channel>();
         for (Channel chan : registry)
@@ -240,6 +239,18 @@ public final class ChannelManager {
             if(chan.isAuto())
                 list.add(chan);
         return list;
+    }
+    /**
+     * Autojoins channels if persist allows it.
+     * 
+     * @param player Player to add to channels
+     */
+    public void joinAutoChannels(Player player) {
+        if((!plugin().getConfig().persistRelog()) || (plugin().getConfig().persistRelog() && !hasActiveChannel(player))) {
+            for(Channel chan : getManager().getAutoChannels()) {
+                chan.addMember(player);
+            }
+        }
     }
     public List<Channel> getSavedChannels() {
         List<Channel> list = new ArrayList<Channel>();
