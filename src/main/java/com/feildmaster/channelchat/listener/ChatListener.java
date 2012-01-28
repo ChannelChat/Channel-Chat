@@ -28,8 +28,9 @@ public class ChatListener implements Listener {
                 getManager().deleteFromWaitlist(player);
             } else if(msg.equalsIgnoreCase("cancel")) {
                 getManager().deleteFromWaitlist(player);
-            } else
+            } else {
                 player.sendMessage(ChatColor.GRAY+"Password incorrect, try again. (cancel to stop)");
+            }
             event.setCancelled(true);
         } else if (msg.startsWith("#")) {
             msg = msg.substring(1);

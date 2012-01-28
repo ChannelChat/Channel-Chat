@@ -14,12 +14,11 @@ permissions:
       ChanChat.reload: true
 
   ChanChat.reload:
-    description: Player can reload files
+    description: 'Player can reload files'
   ChanChat.admin:
-    description: Player can delete any channel
+    description: 'Player can delete any channel'
   ChanChat.create:
-    description: Player can create channels
-    default: true
+    description: 'Player can create channels (bypasses allow-create-channels)'
 
 commands:
   channel-admin:
