@@ -1,6 +1,6 @@
-name: ChannelChat
+name: ${name}
 main: com.feildmaster.channelchat.Chat
-version: 0.6 Beta-SNAPSHOT
+version: ${version}
 author: feildmaster
 description: Simple channel chats.
 dev-url: http://dev.bukkit.org/server-mods/channel-chat/
