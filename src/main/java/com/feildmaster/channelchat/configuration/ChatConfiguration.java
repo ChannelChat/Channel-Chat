@@ -1,17 +1,14 @@
 package com.feildmaster.channelchat.configuration;
 
 import com.feildmaster.lib.configuration.EnhancedConfiguration;
-import java.io.File;
 import org.bukkit.plugin.Plugin;
 
 public final class ChatConfiguration extends EnhancedConfiguration {
-    public ChatConfiguration(Plugin p, File file) {
-        super(file, p);
-
-        loadDefaults(file.getName());
-        checkDefaults();
-
-        load();
+    public ChatConfiguration(Plugin p) {
+        super(p);
+        if(!loadDefaults()) {
+            System.out.print(getLastException());
+        }
     }
 
     public boolean autoSet() {
@@ -20,5 +17,13 @@ public final class ChatConfiguration extends EnhancedConfiguration {
 
     public boolean persistRelog() {
         return getBoolean("persist_relogs");
+    }
+
+    public boolean allowCreateChannels() {
+        return getBoolean("allow-create-channels");
+    }
+
+    public boolean needsUpdate() {
+        return !fileExists() || !checkDefaults();
     }
 }

@@ -7,16 +7,16 @@ import org.bukkit.command.CommandSender;
 public class Create extends BaseCommands {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(args.length == 0 || args[0].equals("?"))
+        if (args.length == 0 || args[0].equals("?")) {
             invalidCommand(sender, label);
-        else
+        } else {
             createChannel(args[0], sender);
+        }
 
         return true;
     }
 
     public void invalidCommand(CommandSender sender, String name) {
-        sender.sendMessage(ChatColor.RED+"Syntax: /"+name.toLowerCase()+" <channel>");
+        sender.sendMessage(ChatColor.RED + "Syntax: /" + name.toLowerCase() + " <channel>");
     }
-
 }

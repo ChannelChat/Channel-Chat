@@ -34,6 +34,11 @@ public class Chat extends JavaPlugin {
         for (Listener l : listeners) {
             getServer().getPluginManager().registerEvents(l, this);
         }
+
+        if(getConfig().needsUpdate()) {
+            getConfig().saveDefaults();
+        }
+
         cConfig = new ChannelConfiguration(new Configuration(new File(getDataFolder(), "channels.yml")));
 
         // Commands
@@ -55,7 +60,7 @@ public class Chat extends JavaPlugin {
 
     public ChatConfiguration getConfig() {
         if (config == null) {
-            config = new ChatConfiguration(this, new File(getDataFolder(), "config.yml"));
+            config = new ChatConfiguration(this);
         }
         return config;
     }
