@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.feildmaster.channelchat</groupId>
     <artifactId>ChannelChat</artifactId>
-    <version>0.6-beta</version>
+    <version>0.7-beta-SNAPSHOT</version>
     <name>ChannelChat</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
