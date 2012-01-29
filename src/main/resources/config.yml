@@ -1,4 +1,5 @@
 # Configuration
 
 auto-set-on-join: false
+allow-create-channels: true
 persist-relogs: false
