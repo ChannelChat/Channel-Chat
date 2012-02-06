@@ -3,7 +3,7 @@
     <groupId>com.feildmaster.channelchat</groupId>
     <artifactId>ChannelChat</artifactId>
     <version>0.7-beta-SNAPSHOT</version>
-    <name>ChannelChat</name>
+    <name>${artifactId}</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -58,6 +58,12 @@
                                     <include>com.feildmaster.lib.configuration:*</include>
                                 </includes>
                             </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.feildmaster.lib.configuration</pattern>
+                                    <shadedPattern>com.feildmaster.lib.configuration.${name}</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
