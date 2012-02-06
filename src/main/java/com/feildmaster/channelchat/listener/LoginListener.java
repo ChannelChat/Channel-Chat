@@ -26,15 +26,4 @@ public class LoginListener implements Listener {
            chan.delMember(player);
         }
     }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerKick(PlayerKickEvent event) {
-        if(event.isCancelled()) return;
-        //if(Chat.plugin().getConfig().persistRelog()) return;
-
-        Player player = event.getPlayer();
-        for(Channel chan : getManager().getJoinedChannels(player)) {
-           chan.delMember(player);
-        }
-    }
 }
