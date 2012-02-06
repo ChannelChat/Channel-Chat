@@ -12,11 +12,11 @@ public final class ChatConfiguration extends EnhancedConfiguration {
     }
 
     public boolean autoSet() {
-        return getBoolean("auto_set_on_join");
+        return getBoolean("auto-set-on-join");
     }
 
     public boolean persistRelog() {
-        return getBoolean("persist_relogs");
+        return getBoolean("persist-relogs");
     }
 
     public boolean allowCreateChannels() {
