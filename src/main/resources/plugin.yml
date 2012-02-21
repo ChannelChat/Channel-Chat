@@ -26,6 +26,7 @@ commands:
     aliases:
       - chan
       - channel
+      - chan-admin
 
   channel-chat:
     description: Base Commands
