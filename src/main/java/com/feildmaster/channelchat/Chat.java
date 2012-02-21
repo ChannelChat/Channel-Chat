@@ -1,7 +1,7 @@
 package com.feildmaster.channelchat;
 
-import com.feildmaster.channelchat.command.core.*;
 import java.io.File;
+import com.feildmaster.channelchat.command.core.*;
 import com.feildmaster.channelchat.channel.*;
 //import com.feildmaster.channelchat.command.*;
 import com.feildmaster.channelchat.listener.*;

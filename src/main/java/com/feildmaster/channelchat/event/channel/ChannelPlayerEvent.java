@@ -3,7 +3,7 @@ package com.feildmaster.channelchat.event.channel;
 import com.feildmaster.channelchat.channel.Channel;
 import org.bukkit.entity.Player;
 
-public class ChannelPlayerEvent extends ChannelEvent {
+public abstract class ChannelPlayerEvent extends ChannelEvent {
     private Player player;
 
     public Player getPlayer() {

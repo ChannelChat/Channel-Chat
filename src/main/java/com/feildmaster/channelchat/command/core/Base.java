@@ -13,7 +13,7 @@ import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 
 // TODO: admin command manager
 // TODO: clean this more
-public abstract class BaseCommands implements ChatExecutor {
+public abstract class Base implements Executor {
     // "list" commands
 
     protected void listChannels(Player player, Boolean mem) {

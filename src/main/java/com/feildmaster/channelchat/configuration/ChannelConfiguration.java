@@ -3,8 +3,7 @@ package com.feildmaster.channelchat.configuration;
 import com.feildmaster.channelchat.channel.*;
 import com.feildmaster.channelchat.channel.Channel.Type;
 import java.util.List;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.util.config.*;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 
 // !!! This one is going to be annoying to convert

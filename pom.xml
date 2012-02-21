@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.feildmaster.channelchat</groupId>
     <artifactId>ChannelChat</artifactId>
-    <version>0.7-beta-SNAPSHOT</version>
+    <version>0.6.2</version>
     <name>${artifactId}</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.1-R1</version>
+            <version>1.1-R5-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
