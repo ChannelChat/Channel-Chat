@@ -1,0 +1,24 @@
+# ChannelName: #No spaces in name
+#    auto_join: #true/false
+#    listed: #true/false
+#    owner: #Owner Name"
+#    range: #For Local Channels"
+#    tag: #Channel Tag"
+#    type: #Global/Local/World"
+#    password: #Channel Password"
+#    shortcut: #Not yet. ;)
+
+General:
+  auto_join: true
+  tag: '[G]'
+  listed: true
+  alias: g
+Local:
+  type: Local
+  tag: '[L]'
+  alias: l
+  range: 1000
+World:
+  type: World
+  tag: '[{World}]'
+  alias: w

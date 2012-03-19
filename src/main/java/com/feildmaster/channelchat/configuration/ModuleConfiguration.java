@@ -29,8 +29,4 @@ public class ModuleConfiguration extends EnhancedConfiguration {
 
         loadDefaults(configName);
     }
-
-    public boolean needsUpdate() {
-        return !fileExists() || !checkDefaults();
-    }
 }

@@ -11,7 +11,7 @@ public abstract class Module extends PluginWrapper {
         getServer().getPluginManager().registerEvents(listener, this);
     }
 
-    // I'm a moron
+    @Override
     public ModuleConfiguration getConfig() {
         if(config == null) {
             config = new ModuleConfiguration(this);

@@ -1,10 +1,7 @@
 package com.feildmaster.channelchat.channel;
 
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -253,6 +250,20 @@ public class Channel {
     // Lovely Booleans
     public final boolean isSaved() {
         return type.isSaved();
+    }
+
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new HashMap();
+
+        map.put("type", getType().name());
+        map.put("tag", getTag());
+        map.put("owner", getOwner());
+        map.put("password", getPass());
+        map.put("listed", isListed());
+        map.put("auto_join", isAuto());
+        map.put("alias", getAlias());
+
+        return map;
     }
 //
 //    // This may or may not be pushed.

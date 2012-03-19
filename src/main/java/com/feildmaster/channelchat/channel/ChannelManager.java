@@ -3,12 +3,15 @@ package com.feildmaster.channelchat.channel;
 import com.feildmaster.channelchat.event.player.ChannelPlayerChatEvent;
 import com.feildmaster.channelchat.channel.Channel.Type;
 import static com.feildmaster.channelchat.Chat.*;
+//import com.feildmaster.channelchat.command.CommandManager;
 import java.util.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 
 public final class ChannelManager {
     private static final ChannelManager manager = new ChannelManager();
+    //private final CommandManager commandManager = new CommandManager();
 
     ChannelManager() {}
 
@@ -41,7 +44,7 @@ public final class ChannelManager {
     // Message Handlers
     public void sendMessage(String channel, String msg) {sendMessage(getChannel(channel), msg);}
     public void sendMessage(Channel channel, String msg) {
-        if(channel == null || msg == null) return;
+        if(channel == null || msg == null || msg.length() == 0) return;
 
         channel.sendMessage(" "+msg);
     }
@@ -54,15 +57,16 @@ public final class ChannelManager {
         }
 
         ChannelPlayerChatEvent event = new ChannelPlayerChatEvent(sender, channel, msg);
-        plugin().getServer().getPluginManager().callEvent(event);
+        Bukkit.getServer().getPluginManager().callEvent(event);
 
         if(event.isCancelled()) return;
 
-        msg = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
+        msg = String.format(event.getFormat(), sender.getDisplayName(), event.getMessage());
 
         System.out.println(msg.replaceAll("\u00A7.", ""));
-        for(Player p : event.getRecipients())
+        for(Player p : event.getRecipients()) {
             p.sendMessage(msg);
+        }
     }
 
     // Channel Functions
@@ -195,7 +199,7 @@ public final class ChannelManager {
     public void checkActive() {
         if (!activeChannel.isEmpty()) // Keyset errors on empty maps
         for (String name : activeChannel.keySet()) {
-            checkActive(plugin().getServer().getPlayer(name));
+            checkActive(Bukkit.getServer().getPlayer(name));
         }
     }
     public void checkActive(Player player) {
@@ -235,32 +239,40 @@ public final class ChannelManager {
     }
     public List<Channel> getAutoChannels() {
         List<Channel> list = new ArrayList<Channel>();
-        for(Channel chan : registry)
-            if(chan.isAuto())
+        for(Channel chan : registry) {
+            if(chan.isAuto()) {
                 list.add(chan);
+            }
+        }
         return list;
     }
     /**
-     * Autojoins channels if persist allows it.
-     * 
+     * Auto join channels if persist allows it.
+     *
      * @param player Player to add to channels
      */
     public void joinAutoChannels(Player player) {
         if((!plugin().getConfig().persistRelog()) || (plugin().getConfig().persistRelog() && !hasActiveChannel(player))) {
-            for(Channel chan : getManager().getAutoChannels()) {
+            for(Channel chan : getAutoChannels()) {
                 chan.addMember(player);
             }
         }
     }
     public List<Channel> getSavedChannels() {
         List<Channel> list = new ArrayList<Channel>();
-        for(Channel chan : registry)
-            if(chan.isSaved())
+        for(Channel chan : registry) {
+            if(chan.isSaved()) {
                 list.add(chan);
+            }
+        }
         return list;
     }
 
     public static ChannelManager getManager() {
         return manager;
     }
+//
+//    public CommandManager getCommandManager() {
+//        return commandManager;
+//    }
 }

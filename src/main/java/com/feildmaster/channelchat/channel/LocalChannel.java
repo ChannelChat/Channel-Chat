@@ -1,5 +1,6 @@
 package com.feildmaster.channelchat.channel;
 
+import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -63,5 +64,15 @@ public final class LocalChannel extends Channel {
         }
 
         location = null;
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = super.serialize();
+
+        map.put("range", getRange());
+        map.put("null_message", getNullMessage());
+
+        return map;
     }
 }

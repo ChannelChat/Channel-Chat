@@ -1,6 +1,5 @@
 package com.feildmaster.channelchat;
 
-import java.io.File;
 import com.feildmaster.channelchat.command.core.*;
 import com.feildmaster.channelchat.channel.*;
 //import com.feildmaster.channelchat.command.*;
@@ -12,12 +11,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
 // TODO: Default "set" channel
 // TODO: /cc help or something
 public class Chat extends JavaPlugin {
-
     private static Chat plugin;
     private ChatConfiguration config;
     private ChannelConfiguration cConfig;
@@ -35,11 +32,11 @@ public class Chat extends JavaPlugin {
             getServer().getPluginManager().registerEvents(l, this);
         }
 
-        if(getConfig().needsUpdate()) {
+        if (getConfig().needsUpdate()) {
             getConfig().saveDefaults();
         }
 
-        cConfig = new ChannelConfiguration(new Configuration(new File(getDataFolder(), "channels.yml")));
+        cConfig = new ChannelConfiguration(this);
 
         // Commands
         getCommand("channel-admin").setExecutor(new Admin());
