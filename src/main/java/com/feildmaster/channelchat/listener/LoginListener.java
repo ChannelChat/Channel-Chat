@@ -25,5 +25,6 @@ public class LoginListener implements Listener {
         for(Channel chan : getManager().getJoinedChannels(player)) {
            chan.delMember(player);
         }
+        getManager().checkActive(player);
     }
 }
