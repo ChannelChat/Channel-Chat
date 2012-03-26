@@ -31,8 +31,9 @@ public class ChannelConfiguration extends NullEnhancedConfiguration {
     }
 
     public final void reload() {
+        // !!! This function is actually broken
         // Erase non-existing channels!
-//        for (Channel chan : getManager().getSavedChannels()) { // This function is actually broken
+//        for (Channel chan : getManager().getSavedChannels()) {
 //            if (!keys.contains(chan.getName())) {
 //                getManager().deleteChannel(chan.getName());
 //            }
@@ -51,7 +52,6 @@ public class ChannelConfiguration extends NullEnhancedConfiguration {
                     }
                 }
             } else {
-                getPlugin().getLogger().info("Creating channel: "+name);
                 chan = getManager().createChannel(name, node == null ? Channel.Type.Global : Channel.Type.betterValueOf(node.getString("type")));
             }
 
