@@ -69,6 +69,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>com.feildmaster.lib:EnhancedConfiguration</include>
+                                    <include>com.feildmaster.lib:NullEnhancedConfiguration</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
