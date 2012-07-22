@@ -63,7 +63,16 @@ public abstract class Base implements Executor {
             boolean color = true;
             if (channel.getMembers(player).size() > 1) {
                 for (String p : channel.getMembers(player)) {
-                    string.append(string.length() != 0 ? ", " : "").append((color = !color) ? ChatColor.GRAY : ChatColor.WHITE).append(ChatColor.stripColor(Chat.plugin().getServer().getPlayer(p).getDisplayName()));
+                    if (p.equals(player.getName())) continue;
+
+                    Player pl = Chat.plugin().getServer().getPlayer(p);
+                    if (pl != null && player.canSee(pl)) {
+                        String plName = pl.getDisplayName() == null ? p : ChatColor.stripColor(pl.getDisplayName());
+                        string.append(string.length() != 0 ? ", " : "").append((color = !color) ? ChatColor.GRAY : ChatColor.WHITE).append(plName);
+                    }
+                }
+                if (string.length() == 0) {
+                    string.append(ChatColor.WHITE).append("Only you");
                 }
             } else {
                 string.append(ChatColor.WHITE).append("Only you");
