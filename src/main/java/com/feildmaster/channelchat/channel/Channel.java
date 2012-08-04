@@ -5,7 +5,7 @@ import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class Channel {
     private final String name;
@@ -229,7 +229,7 @@ public class Channel {
     }
 
     // Various methods
-    public void handleEvent(PlayerChatEvent event) {
+    public void handleEvent(AsyncPlayerChatEvent event) {
         if(isSenderMember(event.getPlayer())) {
             for(Player p : new HashSet<Player>(event.getRecipients()))
                 if(!isMember(p))

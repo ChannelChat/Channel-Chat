@@ -4,19 +4,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.*;
 import com.feildmaster.channelchat.channel.Channel;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import static com.feildmaster.channelchat.Chat.*;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 
 /**
  * ChatListener
- * <p>
+ * <p />
  * Handles player chat
  */
 public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onEarlyPlayerChat(PlayerChatEvent event) {
+    public void onEarlyPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
         }
@@ -47,7 +47,7 @@ public class ChatListener implements Listener {
                     msg1.append(msg1.length() == 0 ? "" : " ").append(args[x]);
                 }
                 if (msg1.length() > 0 && chan.isMember(player)) {
-                    getManager().sendMessage(player, chan, msg1.toString());
+                    getManager().sendMessage(player, chan, msg1.toString(), true);
                 } else {
                     player.sendMessage("Not member of channel");
                 }
@@ -65,7 +65,7 @@ public class ChatListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerChat(PlayerChatEvent event) {
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
         }

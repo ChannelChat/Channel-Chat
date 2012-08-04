@@ -2,7 +2,7 @@ package com.feildmaster.channelchat.channel;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public final class WorldChannel extends Channel {
     private World world;
@@ -34,7 +34,7 @@ public final class WorldChannel extends Channel {
         return super.isMember(player) && world.equals(player.getWorld());
     }
 
-    public void handleEvent(PlayerChatEvent event) {
+    public void handleEvent(AsyncPlayerChatEvent event) {
         world = event.getPlayer().getWorld();
 
         super.handleEvent(event);

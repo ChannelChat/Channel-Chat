@@ -3,7 +3,7 @@ package com.feildmaster.channelchat.channel;
 import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public final class LocalChannel extends Channel {
     private int range = 1000;
@@ -53,7 +53,7 @@ public final class LocalChannel extends Channel {
         return super.isMember(player) && !outOfRange(player.getLocation());
     }
 
-    public void handleEvent(PlayerChatEvent event) {
+    public void handleEvent(AsyncPlayerChatEvent event) {
         location = event.getPlayer().getLocation();
 
         super.handleEvent(event);

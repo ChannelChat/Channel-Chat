@@ -93,7 +93,7 @@ public class Chat extends JavaPlugin {
     /**
      * Formats message to include plugin name tag
      *
-     * @param recipiant Player/Object recieving the message
+     * @param recipiant Player/Object receiving the message
      * @param string The message to send
      */
     public void sendMessage(CommandSender recipiant, String string) {

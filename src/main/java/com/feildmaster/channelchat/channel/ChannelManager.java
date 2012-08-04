@@ -7,7 +7,7 @@ import static com.feildmaster.channelchat.Chat.*;
 import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public final class ChannelManager {
     private static final ChannelManager manager = new ChannelManager();
@@ -51,12 +51,19 @@ public final class ChannelManager {
     public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChannel(sender), msg);}
     public void sendMessage(Player sender, String channel, String msg) {sendMessage(sender, getChannel(channel), msg);}
     public void sendMessage (Player sender, Channel channel, String msg) {
+        sendMessage(sender, channel, msg, false);
+    }
+
+    public void sendMessage (Player sender, Channel channel, String msg, boolean async) {
         if(channel == null || sender == null || msg == null) {
             sender.sendMessage(error("Missing info while trying to send message"));
             return;
         }
 
-        ChannelPlayerChatEvent event = new ChannelPlayerChatEvent(sender, channel, msg);
+        Set players = new HashSet();
+        Collections.addAll(players, sender.getServer().getOnlinePlayers());
+
+        ChannelPlayerChatEvent event = new ChannelPlayerChatEvent(sender, channel, msg, players, async);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if(event.isCancelled()) return;
@@ -90,7 +97,7 @@ public final class ChannelManager {
      * @param event The event to extract the channel from
      * @return Channel tied to the event
      */
-    public Channel getChannel(PlayerChatEvent event) {
+    public Channel getChannel(AsyncPlayerChatEvent event) {
         return event instanceof ChannelPlayerChatEvent ? ((ChannelPlayerChatEvent)event).getChannel() : getActiveChannel(event.getPlayer());
     }
     /**
