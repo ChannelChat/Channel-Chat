@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import static com.feildmaster.channelchat.Chat.*;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
+import com.feildmaster.channelchat.event.player.ChannelPlayerChatEvent;
 
 /**
  * ChatListener
@@ -20,6 +21,10 @@ public class ChatListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
+        if (event instanceof ChannelPlayerChatEvent) {
+            return;
+        }
+
         Player player = event.getPlayer();
         String msg = event.getMessage();
 
@@ -47,7 +52,7 @@ public class ChatListener implements Listener {
                     msg1.append(msg1.length() == 0 ? "" : " ").append(args[x]);
                 }
                 if (msg1.length() > 0 && chan.isMember(player)) {
-                    getManager().sendMessage(player, chan, msg1.toString(), true);
+                    getManager().sendMessage(player, chan, msg1.toString(), event.isAsynchronous());
                 } else {
                     player.sendMessage("Not member of channel");
                 }
@@ -67,6 +72,11 @@ public class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
+            return;
+        }
+
+        if (event instanceof ChannelPlayerChatEvent) {
+            ((ChannelPlayerChatEvent) event).getChannel().handleEvent(event);
             return;
         }
 

@@ -16,7 +16,7 @@ public class Channel {
     private String pass = null;
     private Boolean auto_join = false;
     private Boolean listed = false;
-    private Set<String> members = new HashSet<String>();
+    private volatile Set<String> members = new HashSet<String>();
 
     public enum Type {
         Global,

@@ -50,11 +50,11 @@ public final class ChannelManager {
     }
     public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChannel(sender), msg);}
     public void sendMessage(Player sender, String channel, String msg) {sendMessage(sender, getChannel(channel), msg);}
-    public void sendMessage (Player sender, Channel channel, String msg) {
+    public void sendMessage(Player sender, Channel channel, String msg) {
         sendMessage(sender, channel, msg, false);
     }
 
-    public void sendMessage (Player sender, Channel channel, String msg, boolean async) {
+    public void sendMessage(Player sender, Channel channel, String msg, boolean async) {
         if(channel == null || sender == null || msg == null) {
             sender.sendMessage(error("Missing info while trying to send message"));
             return;
@@ -162,7 +162,7 @@ public final class ChannelManager {
     }
 
     /**
-     * Usage of this funciton should be limited
+     * Usage of this function should be limited
      */
     public Channel convertChannel(Channel channel, Type type) {
         if(channel.getType().equals(type) || channel.getType().equals(Type.Custom) || type.equals(Type.Custom))
