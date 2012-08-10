@@ -15,6 +15,10 @@
             <id>fm-repo</id>
             <url>http://repo.feildmaster.com/</url>
         </repository>
+        <repository>
+            <id>onarandombox</id>
+            <url>http://repo.onarandombox.com/content/groups/public/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
