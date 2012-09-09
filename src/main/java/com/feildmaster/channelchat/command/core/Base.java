@@ -175,6 +175,7 @@ public abstract class Base implements Executor {
             Channel channel = getManager().getChannel(name);
             if (channel.isMember(player)) {
                 player.sendMessage(ChatColor.GRAY + "You are already in \"" + channel.getName() + ".\"");
+                return;
             }
 
             if (channel.getPass() != null) { // !!! Move this to an event? :o
