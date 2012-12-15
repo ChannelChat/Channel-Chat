@@ -5,6 +5,7 @@ import com.feildmaster.channelchat.channel.Channel.Type;
 import static com.feildmaster.channelchat.Chat.*;
 //import com.feildmaster.channelchat.command.CommandManager;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,11 +14,14 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 public final class ChannelManager {
     private static final ChannelManager manager = new ChannelManager();
     //private final CommandManager commandManager = new CommandManager();
+    //Channel manager
+    private final List<Channel> registry = Collections.synchronizedList(new LinkedList<Channel>());
+    private final Map<String, Channel> activeChannel = new ConcurrentHashMap<String, Channel>();
 
     ChannelManager() {
     }
     // TODO: Modularize
-    private Map<Player, String> waitList = new HashMap<Player, String>();
+    private Map<Player, String> waitList = new ConcurrentHashMap<Player, String>();
 
     // Waitlist functions
     public void deleteFromWaitlist(Player player) {
@@ -40,9 +44,6 @@ public final class ChannelManager {
     public Boolean isChannelReserved(String n) {
         return n.matches("(?i)(active|add|all|create|delete|join|leave|list|reload|who|\\?)");
     }
-    //Channel manager
-    private List<Channel> registry = new LinkedList<Channel>();
-    private Map<String, Channel> activeChannel = new HashMap<String, Channel>();
 
     // Message Handlers
     public void sendMessage(String channel, String msg) {
@@ -162,19 +163,30 @@ public final class ChannelManager {
      *
      * @param name Name of channel to remove
      */
+    @Deprecated
     public void deleteChannel(String name) {
         deleteChannel(getChannel(name));
     }
 
+    @Deprecated
     public void deleteChannel(Channel channel) {
         if (channel == null) {
             return;
         }
-        if (registry.contains(channel)) {
+        removeChannel(channel).sendMessage(" Channel has been deleted");
+        checkActive();
+    }
+
+    public Channel removeChannel(String name) {
+        return removeChannel(getChannel(name));
+    }
+
+    public Channel removeChannel(Channel channel) {
+        if (channel != null && registry.contains(channel)) {
             registry.remove(channel);
-            channel.sendMessage(" Channel has been deleted");
-            checkActive();
         }
+
+        return channel;
     }
 
     public Channel createChannel(String name, Type type) {
@@ -228,11 +240,17 @@ public final class ChannelManager {
     }
 
     public boolean hasActiveChannel(Player player) {
-        return activeChannel.containsKey(player.getName());
+        return channelExists(activeChannel.get(player.getName()));
     }
 
     public Channel getActiveChannel(Player player) {
-        return activeChannel.get(player.getName());
+        Channel active = activeChannel.get(player.getName());
+        if (channelExists(active)) {
+            return active;
+        }
+
+        setActiveChannel(player, null);
+        return null;
     }
 
     public void setActiveChannel(Player player, Channel channel) {
@@ -242,11 +260,9 @@ public final class ChannelManager {
     }
 
     public void checkActive() {
-        if (!activeChannel.isEmpty()) // Keyset errors on empty maps
-        {
-            for (String name : activeChannel.keySet()) {
-                checkActive(Bukkit.getServer().getPlayer(name));
-            }
+        Iterator<String> iterator = activeChannel.keySet().iterator();
+        while (iterator.hasNext()) {
+            checkActive(Bukkit.getServer().getPlayer(iterator.next()));
         }
     }
 

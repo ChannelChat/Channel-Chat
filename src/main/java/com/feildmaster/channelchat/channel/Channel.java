@@ -100,10 +100,11 @@ public class Channel {
 
         System.out.print(ChatColor.stripColor(msg));
 
-        for (String n : members.keySet()) {
-            Player p = Bukkit.getPlayer(n);
-            if (isMember(p)) { // Check "is member" in case of an override
-                p.sendMessage(msg);
+        Iterator<String> iterator = members.keySet().iterator();
+        while (iterator.hasNext()) {
+            Player player = Bukkit.getPlayer(iterator.next());
+            if (isMember(player)) { // Check "is member" in case of an override
+                player.sendMessage(msg);
             }
         }
     }
