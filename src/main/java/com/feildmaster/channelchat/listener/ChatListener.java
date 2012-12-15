@@ -10,12 +10,9 @@ import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 import com.feildmaster.channelchat.event.player.ChannelPlayerChatEvent;
 
 /**
- * ChatListener
- * <p />
- * Handles player chat
+ * ChatListener <p /> Handles player chat
  */
 public class ChatListener implements Listener {
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEarlyPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled() || event instanceof ChannelPlayerChatEvent) {

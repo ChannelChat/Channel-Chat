@@ -13,7 +13,7 @@ public abstract class Module extends PluginWrapper {
 
     @Override
     public ModuleConfiguration getConfig() {
-        if(config == null) {
+        if (config == null) {
             config = new ModuleConfiguration(this);
         }
         return config;

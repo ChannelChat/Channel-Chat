@@ -63,7 +63,9 @@ public abstract class Base implements Executor {
             boolean color = true;
             if (channel.getMembers(player).size() > 1) {
                 for (String p : channel.getMembers(player)) {
-                    if (p.equals(player.getName())) continue;
+                    if (p.equals(player.getName())) {
+                        continue;
+                    }
 
                     Player pl = Chat.plugin().getServer().getPlayer(p);
                     if (pl != null && player.canSee(pl)) {
@@ -97,7 +99,7 @@ public abstract class Base implements Executor {
             return;
         }
 
-        Channel channel = null;
+        Channel channel;
 
         if (sender instanceof Player) {
             channel = getManager().createChannel(name, Channel.Type.Private);

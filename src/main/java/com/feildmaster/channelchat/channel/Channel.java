@@ -29,24 +29,26 @@ public class Channel {
         public boolean isGlobal() {
             return this == Global;
         }
+
         public boolean isWorld() {
             return this == World;
         }
+
         public boolean isLocal() {
             return this == Local;
         }
+
         public boolean isPrivate() {
             return this == Private;
         }
+
         public boolean isCustom() {
             return this == Custom;
         }
 
-
         private boolean isSaved() {
             return !this.equals(Private) && !this.equals(Custom);
         }
-
         static final List<String> list = new ArrayList<String>();
 
         public static boolean contains(String name) {
@@ -54,17 +56,21 @@ public class Channel {
         }
 
         public static Type betterValueOf(String name) {
-            if(name != null)
-                for(Type t : values())
-                    if(t.name().equals(name))
+            if (name != null) {
+                for (Type t : values()) {
+                    if (t.name().equals(name)) {
                         return t;
+                    }
+                }
+            }
 
             return Type.Global;
         }
 
         static {
-            for(Type t : values())
+            for (Type t : values()) {
                 list.add(t.name());
+            }
         }
     }
 
@@ -86,37 +92,43 @@ public class Channel {
 
     // Send messages to channel
     public final void sendMessage(String msg) {
-        if(members.isEmpty()) return;
+        if (members.isEmpty()) {
+            return;
+        }
 
         msg = format(msg);
 
         System.out.print(ChatColor.stripColor(msg));
 
-        for(String n : members.keySet()) {
+        for (String n : members.keySet()) {
             Player p = Bukkit.getPlayer(n);
-            if(isMember(p)) { // Check "is member" in case of an override
+            if (isMember(p)) { // Check "is member" in case of an override
                 p.sendMessage(msg);
             }
         }
     }
+
     public void sendJoinMessage(Player player) {
-        sendMessage(" "+ChatColor.YELLOW+ChatColor.stripColor(player.getDisplayName())+" has joined.");
+        sendMessage(" " + ChatColor.YELLOW + ChatColor.stripColor(player.getDisplayName()) + " has joined.");
     }
+
     public void sendLeaveMessage(Player player) {
-        sendMessage(" "+ChatColor.YELLOW+ChatColor.stripColor(player.getDisplayName())+" has left.");
+        sendMessage(" " + ChatColor.YELLOW + ChatColor.stripColor(player.getDisplayName()) + " has left.");
     }
 
     // Channel Formatting
     public final String format(String old) {
-        return getDisplayName()+(old.equals("<%1$s> %2$s")?" ":"")+old;
+        return getDisplayName() + (old.equals("<%1$s> %2$s") ? " " : "") + old;
     }
+
     public String getDisplayName() {
-        return tag==null?"["+name+"]":(tag.replaceAll("(?i)`(?=[0-9A-F])", "\u00A7")+ChatColor.WHITE);
+        return tag == null ? "[" + name + "]" : (tag.replaceAll("(?i)`(?=[0-9A-F])", "\u00A7") + ChatColor.WHITE);
     }
 
     public final String getName() {
         return name;
     }
+
     public final Type getType() {
         return type;
     }
@@ -124,10 +136,15 @@ public class Channel {
     public final String getAlias() {
         return alias;
     }
-    public final boolean setAlias(String s) {
-        if(alias != null && alias.equals(s)) return true;
 
-        if(s != null && getManager().getChannel(s) != null) return false;
+    public final boolean setAlias(String s) {
+        if (alias != null && alias.equals(s)) {
+            return true;
+        }
+
+        if (s != null && getManager().getChannel(s) != null) {
+            return false;
+        }
 
         alias = s;
 
@@ -138,6 +155,7 @@ public class Channel {
     public final void setTag(String t) {
         tag = t;
     }
+
     public final String getTag() {
         return tag;
     }
@@ -146,14 +164,19 @@ public class Channel {
     public String getOwner() {
         return owner;
     }
+
     public void setOwner(Player player) {
         setOwner(player.getName());
     }
+
     public void setOwner(String name) {
         owner = name;
     }
+
     public Boolean isOwner(Player player) {
-        if(owner == null || owner.length() == 0) return false;
+        if (owner == null || owner.length() == 0) {
+            return false;
+        }
         return owner.equalsIgnoreCase(player.getName());
     }
 
@@ -161,43 +184,62 @@ public class Channel {
     public Set<String> getMembers(Player player) {
         return new HashSet<String>(members.keySet());
     }
+
     // If member functions
     public Boolean isSenderMember(Player player) {
         //return player.hasPermission("ChanChat.admin") || isMember(player);
         return isMember(player);
     }
+
     public Boolean isMember(Player player) {
-        if(player == null) return false;
+        if (player == null) {
+            return false;
+        }
         return isMember(player.getName());
     }
+
     private Boolean isMember(String player) {
         return members.containsKey(player);
     }
+
     // Add members
     public final void addMember(Player player) {
         addMember(player, false);
     }
+
     public final void addMember(Player player, Boolean alert) {
-        if(player == null) return;
+        if (player == null) {
+            return;
+        }
 
         addMember(player.getName());
 
-        if(alert) sendJoinMessage(player);
+        if (alert) {
+            sendJoinMessage(player);
+        }
     }
+
     private void addMember(String player) {
         members.put(player, true);
     }
+
     // Remove members
     public final void delMember(Player player) {
         delMember(player, false);
     }
-    public final void delMember(Player player, Boolean alert) {
-        if(player == null || !isMember(player)) return;
 
-        if(alert) sendLeaveMessage(player);
+    public final void delMember(Player player, Boolean alert) {
+        if (player == null || !isMember(player)) {
+            return;
+        }
+
+        if (alert) {
+            sendLeaveMessage(player);
+        }
 
         delMember(player.getName());
     }
+
     private void delMember(String player) {
         members.remove(player);
     }
@@ -206,9 +248,11 @@ public class Channel {
     public final void removePass() {
         setPass(null);
     }
+
     public final String getPass() {
         return pass;
     }
+
     public final void setPass(String p) {
         pass = p;
     }
@@ -217,6 +261,7 @@ public class Channel {
     public final void setListed(Boolean l) {
         listed = l;
     }
+
     public final Boolean isListed() {
         return listed;
     }
@@ -225,16 +270,19 @@ public class Channel {
     public final void setAuto(Boolean v) {
         auto_join = v;
     }
+
     public final Boolean isAuto() {
         return auto_join;
     }
 
     // Various methods
     public void handleEvent(AsyncPlayerChatEvent event) {
-        if(isSenderMember(event.getPlayer())) {
-            for(Player p : new HashSet<Player>(event.getRecipients()))
-                if(!isMember(p))
+        if (isSenderMember(event.getPlayer())) {
+            for (Player p : new HashSet<Player>(event.getRecipients())) {
+                if (!isMember(p)) {
                     event.getRecipients().remove(p);
+                }
+            }
             // !!! I want to format outside of the handleEvent...
             event.setFormat(format(event.getFormat()));
         } else {

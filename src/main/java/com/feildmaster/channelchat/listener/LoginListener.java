@@ -15,15 +15,17 @@ public class LoginListener implements Listener {
         Player player = event.getPlayer();
         getManager().joinAutoChannels(player);
         getManager().checkActive(player);
-        player.sendMessage(format(ChatColor.WHITE, ChatColor.YELLOW+"Your active channel is: "+getManager().getActiveName(player)));
+        player.sendMessage(format(ChatColor.WHITE, ChatColor.YELLOW + "Your active channel is: " + getManager().getActiveName(player)));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if(Chat.plugin().getConfig().persistRelog()) return;
+        if (Chat.plugin().getConfig().persistRelog()) {
+            return;
+        }
         Player player = event.getPlayer();
-        for(Channel chan : getManager().getJoinedChannels(player)) {
-           chan.delMember(player);
+        for (Channel chan : getManager().getJoinedChannels(player)) {
+            chan.delMember(player);
         }
         getManager().checkActive(player);
     }
