@@ -2,6 +2,7 @@ package com.feildmaster.channelchat.event.player;
 
 import com.feildmaster.channelchat.channel.Channel;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
@@ -9,7 +10,7 @@ public class ChannelPlayerChatEvent extends AsyncPlayerChatEvent {
     private final Channel chan;
 
     public ChannelPlayerChatEvent(Player player, Channel chan, String msg, final Set<Player> players) {
-        this(player, chan, msg, players, false);
+        this(player, chan, msg, players, !Bukkit.isPrimaryThread());
     }
 
     public ChannelPlayerChatEvent(Player player, Channel chan, String msg, final Set<Player> players, boolean async) {

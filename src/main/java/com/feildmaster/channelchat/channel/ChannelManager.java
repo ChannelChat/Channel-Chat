@@ -52,7 +52,7 @@ public final class ChannelManager {
     public void sendMessage(Player sender, String msg) {sendMessage(sender, getActiveChannel(sender), msg);}
     public void sendMessage(Player sender, String channel, String msg) {sendMessage(sender, getChannel(channel), msg);}
     public void sendMessage(Player sender, Channel channel, String msg) {
-        sendMessage(sender, channel, msg, false);
+        sendMessage(sender, channel, msg, !Bukkit.isPrimaryThread());
     }
 
     public void sendMessage(Player sender, Channel channel, String msg, boolean async) {
