@@ -18,10 +18,7 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEarlyPlayerChat(AsyncPlayerChatEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-        if (event instanceof ChannelPlayerChatEvent) {
+        if (event.isCancelled() || event instanceof ChannelPlayerChatEvent) {
             return;
         }
 
