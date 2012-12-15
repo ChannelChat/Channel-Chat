@@ -2,6 +2,7 @@ package com.feildmaster.channelchat.channel;
 
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class Channel {
     private String pass = null;
     private Boolean auto_join = false;
     private Boolean listed = false;
-    private volatile Set<String> members = new HashSet<String>();
+    private final Map<String, Boolean> members = new ConcurrentHashMap<String, Boolean>();
 
     public enum Type {
         Global,
@@ -75,7 +76,7 @@ public class Channel {
         pass = c.pass;
         auto_join = c.auto_join;
         listed = c.listed;
-        members = c.members;
+        members.putAll(c.members);
     }
 
     protected Channel(String n, Type t) {
@@ -91,7 +92,7 @@ public class Channel {
 
         System.out.print(ChatColor.stripColor(msg));
 
-        for(String n : members) {
+        for(String n : members.keySet()) {
             Player p = Bukkit.getPlayer(n);
             if(isMember(p)) { // Check "is member" in case of an override
                 p.sendMessage(msg);
@@ -158,7 +159,7 @@ public class Channel {
 
     // Member Functions - For use with /cc who
     public Set<String> getMembers(Player player) {
-        return new HashSet<String>(members);
+        return new HashSet<String>(members.keySet());
     }
     // If member functions
     public Boolean isSenderMember(Player player) {
@@ -170,7 +171,7 @@ public class Channel {
         return isMember(player.getName());
     }
     private Boolean isMember(String player) {
-        return members.contains(player);
+        return members.containsKey(player);
     }
     // Add members
     public final void addMember(Player player) {
@@ -184,7 +185,7 @@ public class Channel {
         if(alert) sendJoinMessage(player);
     }
     private void addMember(String player) {
-        members.add(player);
+        members.put(player, true);
     }
     // Remove members
     public final void delMember(Player player) {
