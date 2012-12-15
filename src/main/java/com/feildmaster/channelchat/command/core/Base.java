@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
+import org.apache.commons.lang.StringUtils;
 
 // TODO: admin command manager
 // TODO: clean this more
@@ -43,12 +44,7 @@ public abstract class Base implements Executor {
         if (channel == null) {
             player.sendMessage(info("Channel does not exist"));
         } else if (channel.isMember(player)) {
-            StringBuilder str = new StringBuilder();
-            for (int x = 1; x < args.length; x++) {
-                str.append(x != 1 ? " " : "").append(args[x]);
-            }
-
-            getManager().sendMessage(player, channel, str.toString());
+            getManager().sendMessage(player, channel, StringUtils.join(args, " "));
         } else {
             player.sendMessage(info("You are not a member of \"" + channel.getName() + ".\""));
         }

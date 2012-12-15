@@ -8,6 +8,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import static com.feildmaster.channelchat.Chat.*;
 import static com.feildmaster.channelchat.channel.ChannelManager.getManager;
 import com.feildmaster.channelchat.event.player.ChannelPlayerChatEvent;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * ChatListener <p /> Handles player chat
@@ -41,12 +42,8 @@ public class ChatListener implements Listener {
             Channel chan = getManager().getChannel(args[0]);
 
             if (args.length > 1 && chan != null) {
-                StringBuilder msg1 = new StringBuilder();
-                for (int x = 1; x < args.length; x++) {
-                    msg1.append(msg1.length() == 0 ? "" : " ").append(args[x]);
-                }
-                if (msg1.length() > 0 && chan.isMember(player)) {
-                    getManager().sendMessage(player, chan, msg1.toString(), event.isAsynchronous());
+                if (chan.isMember(player)) {
+                    getManager().sendMessage(player, chan, StringUtils.join(args, " "), event.isAsynchronous());
                 } else {
                     player.sendMessage("Not member of channel");
                 }
