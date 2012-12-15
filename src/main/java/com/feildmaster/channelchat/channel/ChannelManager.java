@@ -6,6 +6,7 @@ import static com.feildmaster.channelchat.Chat.*;
 //import com.feildmaster.channelchat.command.CommandManager;
 import java.util.*;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
@@ -70,7 +71,7 @@ public final class ChannelManager {
 
         msg = String.format(event.getFormat(), sender.getDisplayName(), event.getMessage());
 
-        System.out.println(msg.replaceAll("\u00A7.", ""));
+        System.out.println(ChatColor.stripColor(msg));
         for(Player p : event.getRecipients()) {
             p.sendMessage(msg);
         }
